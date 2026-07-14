@@ -1,0 +1,127 @@
+src/components/BaseHead.astro
+  s_44fb38c224c892::t_c531946bb68195 2,5,10-12,16-17,23,25-26,28,31-33,37,44,46,50-52,59
+astro.config.mjs
+  s_44fb38c224c892::t_daec649b61c6d5 13-37
+src/pages/download.astro
+  s_44fb38c224c892::t_3115f3d51bbb4e 106-108
+  s_44fb38c224c892::t_c35239d94b571f 161-163
+  s_44fb38c224c892::t_f0184ce4f049d6 4
+  s_44fb38c224c892::t_137ecb3bd2820c 141
+  s_44fb38c224c892::t_f8bb8b8bfa9c60 142
+  s_44fb38c224c892::t_1da4a2c3793283 15,137
+  s_44fb38c224c892::t_8dfb3065f763dc 1-3,5-14,16-105,109-136,138-140,143-160,164-286
+src/layouts/Site.astro
+  s_44fb38c224c892::t_219339d9df5f25 1-13,16-17,19-25,27-76
+  s_44fb38c224c892::t_7311479933eaac 14-15,18,26
+src/pages/index.astro
+  s_44fb38c224c892::t_eef6edbb984fe0 2-10,36-39,41-43,47-71,73-75,77-125,127-147,149-168,170-189,191-224,226-245,247-253,255-346,348-354,356-372,374-436,438-440,442-554,558-723
+  s_44fb38c224c892::t_05947abbf34872 11-32,35
+  s_44fb38c224c892::t_1da4a2c3793283 40,72,126,148,169,190,225,254,355,373,437
+  s_44fb38c224c892::t_7598e89f3a2674 44-45
+  s_44fb38c224c892::t_c35239d94b571f 555-557
+src/pages/404.astro
+  s_44fb38c224c892::t_fb5f643a95307a 1-10,12-67
+  s_44fb38c224c892::t_1da4a2c3793283 11
+src/layouts/BlogPost.astro
+  s_44fb38c224c892::t_5df022ab847a75 9-19,22
+  s_44fb38c224c892::t_923dc9d1f22c8e 3,8,23-51,53-108
+src/consts.ts
+  s_44fb38c224c892::t_93fa2fa99b5c55 1-3,7-12,19-69
+  s_44fb38c224c892::t_18be19f905d867 13-18
+src/components/MockDesktop.astro
+  s_44fb38c224c892::t_0b44698c50dc96 1-260
+public/favicon.svg
+  s_44fb38c224c892::t_ab49069967c466 1-48
+src/components/MockRebase.astro
+  s_44fb38c224c892::t_db0ef1faa329e9 1-129
+src/pages/desktop.astro
+  s_44fb38c224c892::t_8aa1076a790a16 62-63
+  s_44fb38c224c892::t_037b11933953f0 150-151
+  s_44fb38c224c892::t_c35239d94b571f 280-284
+  s_44fb38c224c892::t_1da4a2c3793283 40,60,73,89,121,146,175
+  s_44fb38c224c892::t_264d77baacef9e 136
+  s_44fb38c224c892::t_be825e958a764d 6
+  s_44fb38c224c892::t_1bb3fdfe2f4c37 1-5,7-14,29-30,32-39,41-43,46-59,61,64-72,74-88,90-120,122,126-134,137-145,147-149,152-165,168-174,176-279,285-341
+  s_44fb38c224c892::t_c70795ff674df6 166-167
+  s_44fb38c224c892::t_541862516d6200 15-28,31
+  s_44fb38c224c892::t_4eb9cbd55918b1 44-45
+  s_44fb38c224c892::t_5aa752e9c7b2d0 123-125
+  s_44fb38c224c892::t_6f88af701535d6 135
+src/assets/brand/gitstudio-mark.svg
+  s_44fb38c224c892::t_c6397c2b5cdb1d 1-38
+src/components/GraphField.astro
+  s_44fb38c224c892::t_9eb6eada5084a7 1-124
+src/components/InstallCmd.astro
+  s_44fb38c224c892::t_67ce181be7abdc 1-80
+src/assets/brand/gitstudio-mark-mono-white.svg
+  s_44fb38c224c892::t_c6397c2b5cdb1d 1-38
+src/components/MockMerge.astro
+  s_44fb38c224c892::t_c85a4a13505849 1-158
+src/pages/blog/index.astro
+  s_44fb38c224c892::t_1da4a2c3793283 19
+  s_44fb38c224c892::t_2fc0ce4614ec67 3,9-12,15-18,20-41,43-99
+public/downloads/SHA256SUMS.txt
+  s_44fb38c224c892::t_c6397c2b5cdb1d 1
+src/assets/brand/gitstudio-icon.svg
+  s_44fb38c224c892::t_c6397c2b5cdb1d 1-58
+src/components/MockGraph.astro
+  s_44fb38c224c892::t_8a07a7df971869 1-227
+.gitignore
+  s_44fb38c224c892::t_4d183eaf568378 25-26
+src/components/WindowFrame.astro
+  s_44fb38c224c892::t_2fce004f7759f3 1-21
+src/components/SiteNav.astro
+  s_44fb38c224c892::t_18823039be8283 1-269
+src/components/MockAssistant.astro
+  s_44fb38c224c892::t_6a50a62607cb67 1-160
+src/assets/brand/gitstudio-mark-mono-ink.svg
+  s_44fb38c224c892::t_c6397c2b5cdb1d 1-38
+src/components/SiteFooter.astro
+  s_44fb38c224c892::t_e90aca42ac29fa 2
+  s_44fb38c224c892::t_69654538edf144 41-42
+  s_44fb38c224c892::t_bf1bce09fab58d 36
+  s_44fb38c224c892::t_68e96c52fa3812 1,3-35,37-40,43-156
+src/pages/extension.astro
+  s_44fb38c224c892::t_c35239d94b571f 297-299,340-342
+  s_44fb38c224c892::t_38b44a8d0a6c79 86-99,102
+  s_44fb38c224c892::t_3ec1002d914390 72
+  s_44fb38c224c892::t_5e036e657b9823 1-71,73-85,100-101,103-105,107-132,134-156,158-178,180-200,202-296,300-339,343-386
+  s_44fb38c224c892::t_1da4a2c3793283 106,133,157,179,201
+src/pages/merge-studio.astro
+  s_44fb38c224c892::t_61b0d061278b68 36-49,52
+  s_44fb38c224c892::t_1da4a2c3793283 62,105,130
+  s_44fb38c224c892::t_f6d74e1b29615f 108-109
+  s_44fb38c224c892::t_9dd11a94d41b28 1-35,50-51,53-61,63-104,106-107,110-129,131-216
+src/styles/global.css
+  s_44fb38c224c892::t_e10f0bc3e91d62 1-6,9-18,21-56,58-71,74-82,84-90,92,96-102,104,106-109,111,113-115,117,119-121,123-125,127-131,133-138,141-142,144-150,152-159,161-169,171-175,177-181,183-186,188-192,194-205,207-213,215-345,348-355,357,359-448,450-462,465-480,482-603,607-703,707-709,713-729
+  s_44fb38c224c892::t_a96118e26d95e5 19-20
+  s_44fb38c224c892::t_fe706088aae94a 356,358
+src/assets/brand/gitstudio-favicon.svg
+  s_44fb38c224c892::t_c6397c2b5cdb1d 1-49
+public/robots.txt
+  s_3efce2bc137abc::t_084fdecd41ef9b 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "2ac3bcd45959d1fd7d1132186a8e02ed0c35cbc4",
+  "prompts": {},
+  "sessions": {
+    "s_3efce2bc137abc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7055c8ea-52bc-4534-b243-ea89c1007665",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    },
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
