@@ -1,6 +1,7 @@
 ---
 import Site from '../layouts/Site.astro';
 import MockMerge from '../components/MockMerge.astro';
+import MockConflicts from '../components/MockConflicts.astro';
 import { MERGE } from '../consts';
 
 const title = 'Merge Studio — 3-way merge & conflict resolver for VS Code & Cursor';
@@ -86,7 +87,7 @@ const jsonLd = {
 	<section class="section">
 		<div class="container">
 			<p class="eyebrow" data-reveal>What you get</p>
-			<h2 data-reveal>Small tool. <em class="fx">Sharp</em> edges.</h2>
+			<h2 data-reveal>One job. Done <em class="fx">properly.</em></h2>
 			<div class="grid">
 				{feats.map((f, i) => (
 					<div class="card" data-reveal style={`--reveal-delay:${(i % 3) * 0.07}s`}>
@@ -94,6 +95,29 @@ const jsonLd = {
 						<p>{f.p}</p>
 					</div>
 				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container feature">
+			<div class="f-copy" data-reveal>
+				<p class="eyebrow">Mid-merge control</p>
+				<h2>The dashboard keeps <em class="fx">score.</em></h2>
+				<p class="lede">
+					A merge with nine conflicted files shouldn't live in your head. The dashboard
+					tracks every conflicted file, what's resolved, and what's left — with per-file
+					actions and a <strong>named undo history</strong> for the whole session. Abandon
+					ship or continue, always knowing exactly where you stand.
+				</p>
+				<ul class="ticks">
+					<li>Conflicts auto-open as they appear — no hunting through the file tree</li>
+					<li>Step back through decisions, not keystrokes</li>
+					<li>Large files fall back to a mode that keeps huge merges workable</li>
+				</ul>
+			</div>
+			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
+				<MockConflicts />
 			</div>
 		</div>
 	</section>
@@ -182,6 +206,42 @@ const jsonLd = {
 		gap: 1.1rem;
 		margin-top: 2.4rem;
 	}
+	.feature {
+		display: grid;
+		grid-template-columns: 0.95fr 1.05fr;
+		gap: clamp(2rem, 5vw, 4.5rem);
+		align-items: center;
+	}
+	.feature > * {
+		min-width: 0;
+	}
+	.ticks {
+		list-style: none;
+		margin: 1.2rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+	}
+	.ticks li {
+		position: relative;
+		padding-left: 1.7rem;
+		color: var(--muted);
+		font-size: var(--fs-1);
+		line-height: 1.6;
+	}
+	.ticks li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.52em;
+		width: 13px;
+		height: 13px;
+		border-radius: 50%;
+		background: var(--violet-wash);
+		border: 1.5px solid var(--violet);
+		box-shadow: inset 0 0 0 2.5px var(--bg-1);
+	}
 	.origin {
 		display: grid;
 		grid-template-columns: 1.15fr 0.85fr;
@@ -204,7 +264,8 @@ const jsonLd = {
 		.grid {
 			grid-template-columns: 1fr 1fr;
 		}
-		.origin {
+		.origin,
+		.feature {
 			grid-template-columns: 1fr;
 		}
 	}

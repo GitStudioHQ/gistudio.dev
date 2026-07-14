@@ -1,6 +1,7 @@
 ---
 import Site from '../layouts/Site.astro';
 import MockGraph from '../components/MockGraph.astro';
+import MockBlame from '../components/MockBlame.astro';
 import InstallCmd from '../components/InstallCmd.astro';
 import { EXT, GITHUB_REPO_URL } from '../consts';
 
@@ -130,7 +131,7 @@ const jsonLd = {
 	<section class="section">
 		<div class="container">
 			<p class="eyebrow" data-reveal>Six pillars</p>
-			<h2 data-reveal>Deep on every <em class="fx">pillar.</em></h2>
+			<h2 data-reveal>Six pillars. Zero <em class="fx">paywalls.</em></h2>
 			<div class="pillars">
 				{pillars.map((p, i) => (
 					<div class="card pillar" data-reveal style={`--reveal-delay:${(i % 2) * 0.07}s`}>
@@ -146,6 +147,29 @@ const jsonLd = {
 						</ul>
 					</div>
 				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container feature">
+			<div class="f-copy" data-reveal>
+				<p class="eyebrow">Ambient history</p>
+				<h2>Blame that names <em class="fx">names.</em></h2>
+				<p class="lede">
+					Authorship on the current line and in the status bar, always. Turn on full-file
+					annotations and every line carries its author, age, and commit — with
+					a <strong>code-age heatmap</strong> in the gutter: recent changes run warm, old code
+					cools down. One glance tells you where the repo is still moving.
+				</p>
+				<ul class="ticks">
+					<li>Hover any line for the commit, the diff, and one-click actions</li>
+					<li>Line history: step a single line through every revision that touched it</li>
+					<li>Reflog time-machine for the day a branch simply vanishes</li>
+				</ul>
+			</div>
+			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
+				<MockBlame />
 			</div>
 		</div>
 	</section>
@@ -297,6 +321,42 @@ const jsonLd = {
 	.keysec > * {
 		min-width: 0;
 	}
+	.feature {
+		display: grid;
+		grid-template-columns: 0.95fr 1.05fr;
+		gap: clamp(2rem, 5vw, 4.5rem);
+		align-items: center;
+	}
+	.feature > * {
+		min-width: 0;
+	}
+	.ticks {
+		list-style: none;
+		margin: 1.2rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+	}
+	.ticks li {
+		position: relative;
+		padding-left: 1.7rem;
+		color: var(--muted);
+		font-size: var(--fs-1);
+		line-height: 1.6;
+	}
+	.ticks li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.52em;
+		width: 13px;
+		height: 13px;
+		border-radius: 50%;
+		background: var(--violet-wash);
+		border: 1.5px solid var(--violet);
+		box-shadow: inset 0 0 0 2.5px var(--bg-1);
+	}
 	.keysec {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -376,6 +436,7 @@ const jsonLd = {
 	@media (max-width: 960px) {
 		.pillars,
 		.keysec,
+		.feature,
 		.install {
 			grid-template-columns: 1fr;
 		}

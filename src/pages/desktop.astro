@@ -2,6 +2,8 @@
 import Site from '../layouts/Site.astro';
 import MockDesktop from '../components/MockDesktop.astro';
 import MockAssistant from '../components/MockAssistant.astro';
+import MockTerminal from '../components/MockTerminal.astro';
+import MockModels from '../components/MockModels.astro';
 import InstallCmd from '../components/InstallCmd.astro';
 import { APP, AI_PROVIDERS, GITHUB_RELEASES_URL, DOCS_AI_URL } from '../consts';
 
@@ -69,8 +71,8 @@ const jsonLd = {
 
 	<section class="section">
 		<div class="container">
-			<p class="eyebrow" data-reveal>GitHub, minus the tabs</p>
-			<h2 data-reveal>Your GitHub lives here <em class="fx">now.</em></h2>
+			<p class="eyebrow" data-reveal>The GitHub client</p>
+			<h2 data-reveal>Close the tabs. It's all <em class="fx">here.</em></h2>
 			<p class="lede" data-reveal>
 				Review pull requests, triage issues, answer notifications, manage releases, browse
 				org repos, keep gists — every GitHub surface as a first-class native view, tied to
@@ -86,31 +88,66 @@ const jsonLd = {
 		<div class="container feature">
 			<div class="f-copy" data-reveal>
 				<p class="eyebrow">The terminal</p>
-				<h2>A terminal that keeps <em class="fx">up.</em></h2>
+				<h2>A terminal with <em class="fx">receipts.</em></h2>
 				<p class="lede">
-					A real PTY — not an emulation of one — with command blocks that group each run and
-					its output, context-aware autocomplete from your history, PATH, and cwd, and a
-					command menu when you'd rather pick than type.
+					A real PTY — not an emulation of one — where every run becomes
+					a <strong>command block</strong>: the command, its output, its exit code, and its
+					timing, kept as a card you can scan, copy, or rerun. Autocomplete reads your
+					history, your PATH, and your cwd, so it suggests the thing you actually meant.
 				</p>
 				<ul class="ticks">
-					<li>Command blocks: every run is a card you can scan, copy, or rerun</li>
-					<li>Prefix-based autocomplete that actually knows your repo</li>
-					<li>Agent mode: hand the prompt to the Assistant without leaving the terminal</li>
+					<li>Blocks are receipts — what ran, when, and how it went, at a glance</li>
+					<li>Autocomplete that knows your repo, not just your alphabet</li>
+					<li>One keystroke hands the prompt to the Assistant — agent mode, in place</li>
+				</ul>
+			</div>
+			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
+				<MockTerminal />
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container feature flip">
+			<div class="f-copy" data-reveal>
+				<p class="eyebrow">The Assistant</p>
+				<h2>An agent on a <em class="fx">leash.</em></h2>
+				<p class="lede">
+					The Assistant reads real status, diffs, and history before it says anything —
+					and <strong>asks before every write</strong>. You set the permission level: read-only,
+					commits, or everything. Every tool call it makes is visible, live, in the
+					conversation.
+				</p>
+				<ul class="ticks">
+					<li>Quick actions for the daily stuff: draft a commit, explain a diff, release notes</li>
+					<li>Destructive operations take a second, explicit yes</li>
+					<li>Full chat history persists per repo — pick up where you left off</li>
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
 				<MockAssistant />
 			</div>
 		</div>
-		<div class="container">
-			<ul class="providers" aria-label="Supported AI providers" data-reveal>
-				{AI_PROVIDERS.map((p) => <li class="chip">{p}</li>)}
-			</ul>
-			<p class="fine center-fine" data-reveal>
-				Keys are encrypted at rest with your OS keychain and never leave the main process.
-				Local models via Ollama or LM Studio keep everything on your machine.
-				With nothing connected, the AI simply isn't there.
-			</p>
+	</section>
+
+	<section class="section">
+		<div class="container feature">
+			<div class="f-copy" data-reveal>
+				<p class="eyebrow">AI Models</p>
+				<h2>Any model. Your <em class="fx">rules.</em></h2>
+				<p class="lede">
+					Ten cloud providers and two local runtimes, behind one settings panel. Keep several
+					connections — <strong>your Claude for work, a local Llama for offline</strong> —
+					and switch the default anytime. Keys are encrypted in the OS keychain and never
+					leave the main process. No GitStudio account, no proxy, no markup.
+				</p>
+				<ul class="providers-inline" data-reveal>
+					{AI_PROVIDERS.map((p) => <li class="chip">{p}</li>)}
+				</ul>
+			</div>
+			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
+				<MockModels />
+			</div>
 		</div>
 	</section>
 
@@ -172,7 +209,7 @@ const jsonLd = {
 
 	<section class="section final">
 		<div class="container center">
-			<h2 data-reveal>Desk space well <em class="fx">spent.</em></h2>
+			<h2 data-reveal>It earns the <em class="fx">dock icon.</em></h2>
 			<div class="cta-row centered" data-reveal>
 				<a class="btn btn-primary btn-lg" href="/download#desktop">Get the beta</a>
 				<a class="btn btn-ghost btn-lg" href="/extension">Prefer it in your editor?</a>
@@ -252,14 +289,17 @@ const jsonLd = {
 		border: 1.5px solid var(--violet);
 		box-shadow: inset 0 0 0 2.5px var(--bg-1);
 	}
-	.providers {
+	.providers-inline {
 		list-style: none;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.55rem;
-		justify-content: center;
-		margin: 3rem 0 0;
+		gap: 0.45rem;
+		margin: 1.4rem 0 0;
 		padding: 0;
+	}
+	.providers-inline .chip {
+		font-size: 0.68rem;
+		padding: 0.28rem 0.6rem;
 	}
 	.fine {
 		font-size: 0.85rem;

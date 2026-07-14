@@ -11,6 +11,12 @@ import WindowFrame from './WindowFrame.astro';
 			<span>read-only</span><span class="on">commits</span><span>everything</span>
 		</span>
 	</div>
+	<div class="quick" aria-hidden="true">
+		<span>✦ Draft a commit</span>
+		<span>Explain this diff</span>
+		<span>Release notes</span>
+		<span>Tidy branches</span>
+	</div>
 	<div class="chat">
 		<p class="user">draft release notes since v0.1.22</p>
 		<div class="tools">
@@ -64,6 +70,25 @@ import WindowFrame from './WindowFrame.astro';
 		background: var(--violet-wash);
 		color: var(--violet-hi);
 		border-inline: 1px solid var(--hairline);
+	}
+	.quick {
+		display: flex;
+		gap: 0.35rem;
+		padding: 0.55rem 0.9rem 0;
+		flex-wrap: wrap;
+	}
+	.quick span {
+		font-size: 0.62rem;
+		color: var(--muted);
+		border: 1px solid var(--hairline);
+		border-radius: 999px;
+		padding: 0.24rem 0.55rem;
+		background: var(--bg-2);
+	}
+	.quick span:first-child {
+		color: var(--violet-hi);
+		border-color: var(--violet-line);
+		background: var(--violet-wash);
 	}
 	.chat {
 		padding: 0.9rem;

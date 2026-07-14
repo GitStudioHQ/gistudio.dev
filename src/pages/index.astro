@@ -123,7 +123,7 @@ const jsonLd = [
 		<div class="container feature">
 			<div class="f-copy" data-reveal>
 				<p class="eyebrow">01 · Visualize</p>
-				<h2>History you can actually <em class="fx">read.</em></h2>
+				<h2>History you can <em class="fx">read.</em></h2>
 				<p class="lede">
 					A real commit graph — virtualized, so it stays fast at tens of thousands of commits —
 					with colored lanes, ref chips, and keyboard navigation. Inline blame on the current
@@ -241,6 +241,9 @@ const jsonLd = [
 			</div>
 		</div>
 		<div class="container">
+			<p class="prov-note mono" data-reveal>
+				10 cloud providers · 2 local runtimes · one settings panel · zero lock-in
+			</p>
 			<ul class="providers" aria-label="Supported AI providers" data-reveal>
 				{AI_PROVIDERS.map((p) => <li class="chip">{p}</li>)}
 			</ul>
@@ -370,7 +373,7 @@ const jsonLd = [
 		<div class="container faq-wrap">
 			<div>
 				<p class="eyebrow" data-reveal>FAQ</p>
-				<h2 data-reveal>Fair <em class="fx">questions.</em></h2>
+				<h2 data-reveal>Asked and <em class="fx">answered.</em></h2>
 			</div>
 			<div class="faqs" data-reveal>
 				<details>
@@ -434,7 +437,7 @@ const jsonLd = [
 	<!-- ============ FINAL CTA ============ -->
 	<section class="section final">
 		<div class="container center">
-			<h2 data-reveal>Your move, <em class="fx">git.</em></h2>
+			<h2 data-reveal>Give your repo the <em class="fx">studio</em> treatment.</h2>
 			<p class="lede" data-reveal>
 				Two minutes from now your editor can have a commit graph, a real merge editor,
 				and an Undo button. That's the whole ask.
@@ -610,13 +613,21 @@ const jsonLd = [
 	}
 
 	/* AI */
+	.prov-note {
+		text-align: center;
+		font-size: 0.72rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--violet);
+		margin: 3.2rem 0 1rem;
+	}
 	.ai .providers {
 		list-style: none;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.55rem;
 		justify-content: center;
-		margin: 3.2rem 0 0;
+		margin: 0;
 		padding: 0;
 	}
 

@@ -1,0 +1,132 @@
+---
+// Inline blame + code-age heatmap, as the extension renders them: a heat
+// strip in the gutter (recent = warm, old = cool), ghosted authorship on the
+// current line, and the status-bar blame item.
+import WindowFrame from './WindowFrame.astro';
+
+const lines = [
+	{ n: 10, heat: '#52a8ff', code: [{ t: 'export function ', c: 'kw' }, { t: 'computeGraphLayout', c: 'fn' }, { t: '(rows: WireRow[]) {', c: '' }] },
+	{ n: 11, heat: '#2dccca', code: [{ t: '  const ', c: 'kw' }, { t: 'lanes', c: '' }, { t: ' = ', c: '' }, { t: 'new', c: 'kw' }, { t: ' LaneAllocator();', c: '' }] },
+	{ n: 12, heat: '#3ad17f', code: [{ t: '  for', c: 'kw' }, { t: ' (', c: '' }, { t: 'const', c: 'kw' }, { t: ' row ', c: '' }, { t: 'of', c: 'kw' }, { t: ' rows) {', c: '' }] },
+	{ n: 13, heat: '#f56a9b', active: true, code: [{ t: '    row.lane = lanes.', c: '' }, { t: 'assign', c: 'fn' }, { t: '(row.parents);', c: '' }], blame: 'You, 2 days ago · Enhance graph rendering and styling' },
+	{ n: 14, heat: '#edb14a', code: [{ t: '    row.color = palette[row.lane % ', c: '' }, { t: '8', c: 'lit' }, { t: '];', c: '' }] },
+	{ n: 15, heat: '#3ad17f', code: [{ t: '  }', c: '' }] },
+	{ n: 16, heat: '#52a8ff', code: [{ t: '  return', c: 'kw' }, { t: ' { rows, laneCount: lanes.size };', c: '' }] },
+	{ n: 17, heat: '#52a8ff', code: [{ t: '}', c: '' }] },
+];
+---
+
+<WindowFrame title="graphLayout.ts — blame on" class="mock-blame">
+	<div class="editor">
+		{lines.map((l) => (
+			<div class:list={['line', { active: l.active }]}>
+				<span class="heat" style={`--h:${l.heat}`} aria-hidden="true"></span>
+				<span class="num">{l.n}</span>
+				<span class="code">
+					{l.code.map((seg) => <span class={seg.c}>{seg.t}</span>)}
+					{l.blame && <span class="blame">{l.blame}</span>}
+				</span>
+			</div>
+		))}
+	</div>
+	<div class="statusbar">
+		<span class="item vio">⎇ main</span>
+		<span class="item">You, 2 days ago — graph rendering</span>
+		<span class="legend" aria-hidden="true">
+			<i style="--h:#f56a9b"></i><i style="--h:#edb14a"></i><i style="--h:#3ad17f"></i><i style="--h:#2dccca"></i><i style="--h:#52a8ff"></i>
+			<span>new → old</span>
+		</span>
+	</div>
+</WindowFrame>
+
+<style>
+	.editor {
+		padding: 0.6rem 0;
+		font-size: 0.72rem;
+		line-height: 1.9;
+	}
+	.line {
+		display: flex;
+		align-items: center;
+		gap: 0;
+		padding-right: 0.8rem;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+	.line.active {
+		background: rgba(169, 140, 255, 0.07);
+	}
+	.heat {
+		flex: none;
+		width: 3px;
+		align-self: stretch;
+		background: var(--h);
+		opacity: 0.85;
+	}
+	.num {
+		flex: none;
+		width: 2.4rem;
+		text-align: right;
+		padding-right: 0.8rem;
+		color: var(--faint);
+		font-size: 0.64rem;
+		user-select: none;
+	}
+	.line.active .num {
+		color: var(--violet-hi);
+	}
+	.code {
+		color: var(--text);
+		min-width: 0;
+		white-space: pre;
+	}
+	.kw {
+		color: #c586c0;
+	}
+	.fn {
+		color: #dcdcaa;
+	}
+	.lit {
+		color: #b5cea8;
+	}
+	.blame {
+		color: var(--faint);
+		font-style: italic;
+		margin-left: 1.6rem;
+		font-size: 0.66rem;
+	}
+	.statusbar {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 0.45rem 0.9rem;
+		border-top: 1px solid var(--hairline);
+		font-size: 0.64rem;
+		color: var(--muted);
+	}
+	.item.vio {
+		color: var(--violet-hi);
+	}
+	.legend {
+		margin-left: auto;
+		display: flex;
+		align-items: center;
+		gap: 3px;
+		color: var(--faint);
+	}
+	.legend i {
+		width: 10px;
+		height: 4px;
+		border-radius: 2px;
+		background: var(--h);
+		display: inline-block;
+	}
+	.legend span {
+		margin-left: 0.35rem;
+	}
+	@media (max-width: 480px) {
+		.blame {
+			display: none;
+		}
+	}
+</style>
