@@ -16,18 +16,17 @@ export const DOCS_AI_URL = GITHUB_REPO_URL;
 export const BRAND_KIT_URL = GITHUB_REPO_URL;
 export const LICENSE_URL = 'https://www.apache.org/licenses/LICENSE-2.0';
 
-/** GitStudio — the flagship VS Code / Cursor extension. */
+/** GitStudio — the flagship VS Code / Cursor extension. v1.0.0, live everywhere. */
 export const EXT = {
 	id: 'gitstudio.gitstudio',
-	version: '0.1.23',
+	version: '1.0.0',
 	license: 'Apache-2.0',
-	vsixPath: '/downloads/gitstudio-0.1.23.vsix',
-	vsixFile: 'gitstudio-0.1.23.vsix',
-	vsixSizeMb: '2.3',
-	vsixSha256: '519c910d8d4bde294f5bf397b0af8fc838a2a465947b36d6510e1986fc119929',
-	// Marketplace listings are rolling out; flip these to real URLs when live.
-	marketplaceUrl: null as string | null,
-	openVsxUrl: null as string | null,
+	marketplaceUrl: 'https://marketplace.visualstudio.com/items?itemName=gitstudio.gitstudio',
+	openVsxUrl: 'https://open-vsx.org/extension/gitstudio/gitstudio',
+	vsixPath: '/downloads/gitstudio-1.0.0.vsix',
+	vsixFile: 'gitstudio-1.0.0.vsix',
+	vsixSizeMb: '2.5',
+	vsixSha256: '37d43b76929ca24d75d00ccafcb1bd86b6493b106424b82c9e9fed60ce3f00d3',
 	minVsCode: '1.74',
 	commands: 77,
 };
@@ -41,11 +40,20 @@ export const MERGE = {
 	openVsxUrl: 'https://open-vsx.org/extension/gitstudio/merge-studio',
 };
 
-/** GitStudio Desktop — Electron app, beta. */
+const APP_DL = 'https://github.com/GitStudioHQ/gitstudio/releases/download/app-v1.0.0';
+
+/** GitStudio Desktop — v1.0.0, installers on GitHub Releases. */
 export const APP = {
-	version: '0.1.0',
+	version: '1.0.0',
 	license: 'Apache-2.0',
 	releasesUrl: GITHUB_RELEASES_URL,
+	downloads: [
+		{ os: 'macOS', arch: 'Apple Silicon', format: '.dmg', url: `${APP_DL}/GitStudio-1.0.0-arm64.dmg` },
+		{ os: 'macOS', arch: 'Intel', format: '.dmg', url: `${APP_DL}/GitStudio-1.0.0-x64.dmg` },
+		{ os: 'Windows', arch: 'x64', format: '.exe', url: `${APP_DL}/GitStudio-Setup-1.0.0.exe` },
+		{ os: 'Linux', arch: 'universal', format: '.AppImage', url: `${APP_DL}/GitStudio-1.0.0-x86_64.AppImage` },
+		{ os: 'Linux', arch: 'Debian / Ubuntu', format: '.deb', url: `${APP_DL}/GitStudio-1.0.0-amd64.deb` },
+	],
 	platforms: [
 		{ os: 'macOS', arch: 'Apple Silicon & Intel', format: '.dmg / .zip' },
 		{ os: 'Windows', arch: 'x64', format: '.exe (NSIS)' },

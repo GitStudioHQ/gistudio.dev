@@ -1,6 +1,6 @@
 ---
 import Site from '../layouts/Site.astro';
-import MockGraph from '../components/MockGraph.astro';
+import GraphLive from '../components/GraphLive.astro';
 import MockBlame from '../components/MockBlame.astro';
 import InstallCmd from '../components/InstallCmd.astro';
 import { EXT, GITHUB_REPO_URL } from '../consts';
@@ -91,6 +91,7 @@ const jsonLd = {
 	name: 'GitStudio for VS Code & Cursor',
 	description,
 	url: 'https://gitstudio.dev/extension',
+	installUrl: EXT.marketplaceUrl,
 	downloadUrl: 'https://gitstudio.dev/download',
 	applicationCategory: 'DeveloperApplication',
 	operatingSystem: 'VS Code 1.74+, Cursor, VSCodium, Windsurf',
@@ -124,7 +125,8 @@ const jsonLd = {
 			</div>
 		</div>
 		<div class="container heromock" data-reveal>
-			<MockGraph />
+			<GraphLive />
+			<p class="live-note mono">Not a mockup — the shipping graph component, rendering this repo's real history. Scroll it, click around.</p>
 		</div>
 	</section>
 
@@ -224,16 +226,22 @@ const jsonLd = {
 				<p class="eyebrow">Install</p>
 				<h2>Two minutes, <em class="fx">tops.</em></h2>
 				<ol class="steps">
-					<li><a href={EXT.vsixPath} download>Download the VSIX</a> ({EXT.vsixSizeMb} MB, SHA-256 on the <a href="/download#extension">download page</a>)</li>
-					<li>Install it from your terminal — or in the editor: <strong>Extensions → ··· → Install from VSIX</strong></li>
-					<li>Open any repo. The GitStudio icon appears in the activity bar. Done.</li>
+					<li>Search <strong>“GitStudio”</strong> in your editor's Extensions view — or use a command below</li>
+					<li>Open any repo. The GitStudio icon appears in the activity bar.</li>
+					<li>That's it. The graph, blame, merge, rebase, and PRs are all on.</li>
 				</ol>
-				<p class="req">Requires VS Code {EXT.minVsCode}+ or any editor built on it, and git on your PATH. Marketplace listings are rolling out — the VSIX is the same build CI publishes.</p>
+				<p class="req">
+					Requires VS Code {EXT.minVsCode}+ or any editor built on it, and git on your PATH.
+					Stock VS Code installs from the Marketplace; Cursor, VSCodium, and Windsurf pull the
+					same build from Open VSX. Prefer an artifact? The <a href="/download#extension">download page</a> has
+					the VSIX with a SHA-256.
+				</p>
 			</div>
 			<div class="cmds" data-reveal style="--reveal-delay:.08s">
-				<InstallCmd cmd={`code --install-extension ${EXT.vsixFile}`} />
-				<InstallCmd cmd={`cursor --install-extension ${EXT.vsixFile}`} />
-				<a class="btn btn-primary" href="/download#extension">Go to downloads</a>
+				<a class="btn btn-primary" href={EXT.marketplaceUrl} target="_blank" rel="noopener">VS Code Marketplace</a>
+				<a class="btn btn-ghost" href={EXT.openVsxUrl} target="_blank" rel="noopener">Open VSX — Cursor &amp; friends</a>
+				<InstallCmd cmd={`code --install-extension ${EXT.id}`} />
+				<InstallCmd cmd={`cursor --install-extension ${EXT.id}`} />
 			</div>
 		</div>
 	</section>
@@ -259,6 +267,13 @@ const jsonLd = {
 		flex-wrap: wrap;
 		gap: 0.5rem;
 		margin-top: 1.6rem;
+	}
+	.live-note {
+		margin-top: 0.8rem;
+		font-size: 0.7rem;
+		letter-spacing: 0.04em;
+		color: var(--faint);
+		text-align: center;
 	}
 	.heromock {
 		margin-top: 3.2rem;
@@ -429,8 +444,7 @@ const jsonLd = {
 		gap: 0.7rem;
 	}
 	.cmds .btn {
-		align-self: flex-start;
-		margin-top: 0.4rem;
+		justify-content: center;
 	}
 
 	@media (max-width: 960px) {

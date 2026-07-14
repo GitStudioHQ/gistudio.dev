@@ -1,5 +1,5 @@
 ---
-import { GITHUB_REPO_URL, MERGE } from '../consts';
+import { GITHUB_REPO_URL } from '../consts';
 import mark from '../assets/brand/gitstudio-mark.svg';
 
 const path = Astro.url.pathname;
@@ -16,9 +16,9 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
 
 <div class="announce">
 	<div class="container">
-		<a href={MERGE.marketplaceUrl} target="_blank" rel="noopener">
+		<a href="/download">
 			<span class="pulse" aria-hidden="true"></span>
-			Merge Studio is live on the VS Code Marketplace<span class="hide-sm"> and Open VSX</span> <span class="arr">→</span>
+			GitStudio 1.0 is out — Marketplace, Open VSX<span class="hide-sm"> &amp; desktop installers</span> <span class="arr">→</span>
 		</a>
 	</div>
 </div>

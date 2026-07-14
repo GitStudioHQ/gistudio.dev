@@ -1,7 +1,7 @@
 ---
 import Site from '../layouts/Site.astro';
 import GraphField from '../components/GraphField.astro';
-import MockGraph from '../components/MockGraph.astro';
+import GraphLive from '../components/GraphLive.astro';
 import MockMerge from '../components/MockMerge.astro';
 import MockRebase from '../components/MockRebase.astro';
 import MockAssistant from '../components/MockAssistant.astro';
@@ -91,7 +91,7 @@ const jsonLd = [
 
 				<a class="card product" href="/desktop" data-reveal style="--reveal-delay:.08s">
 					<div class="p-head">
-						<span class="badge beta">Beta</span>
+						<span class="badge">macOS · Windows · Linux</span>
 						<span class="ver">v{APP.version}</span>
 					</div>
 					<h3>GitStudio <span class="p-sub">the desktop app</span></h3>
@@ -104,7 +104,7 @@ const jsonLd = [
 
 				<a class="card product" href="/merge-studio" data-reveal style="--reveal-delay:.16s">
 					<div class="p-head">
-						<span class="badge live">● Live on both marketplaces</span>
+						<span class="badge live">● On both marketplaces</span>
 						<span class="ver">v{MERGE.version}</span>
 					</div>
 					<h3>Merge Studio <span class="p-sub">the original</span></h3>
@@ -136,7 +136,10 @@ const jsonLd = [
 					<li>Line history — watch a single line evolve across revisions</li>
 				</ul>
 			</div>
-			<div class="f-visual" data-reveal style="--reveal-delay:.1s"><MockGraph /></div>
+			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
+				<GraphLive />
+				<p class="live-note mono">Not a mockup — the shipping graph component, rendering this repo's real history. Scroll it, click around.</p>
+			</div>
 		</div>
 	</section>
 
@@ -416,18 +419,21 @@ const jsonLd = [
 				<details>
 					<summary>What's the state of the desktop app?</summary>
 					<p>
-						Honest answer: v{APP.version} beta. It shares the proven engine with the extension
-						and already does more than most Git clients — graph, diffs, merges, a real
-						terminal, GitHub PRs/issues/gists/notifications, and the Assistant. You can build
-						it from source today; signed installers land on GitHub Releases.
+						v{APP.version} shipped with installers for macOS (Apple Silicon and Intel), Windows,
+						and Linux, with auto-update built in. It shares the proven engine with the
+						extension and already does more than most Git clients — graph, diffs, merges, a
+						real terminal, GitHub PRs/issues/gists/notifications, and the Assistant. It's
+						young and it moves fast; updates ship as <code>app-v*</code> tags.
 					</p>
 				</details>
 				<details>
-					<summary>Why should I trust a VSIX downloaded from a website?</summary>
+					<summary>How do I install it?</summary>
 					<p>
-						You shouldn't — you should verify it. Every download ships with a SHA-256 checksum,
-						and the entire source is public, so you can audit it or build the VSIX yourself
-						with two commands. That's more than you can do for most marketplace listings.
+						The extension is on the VS Code Marketplace and Open VSX — search
+						"GitStudio" in your editor's Extensions view, or
+						run <code>code --install-extension gitstudio.gitstudio</code>. The desktop installers
+						are on the download page with SHA-256 checksums, and the whole thing is
+						open source if you'd rather build it yourself.
 					</p>
 				</details>
 			</div>
@@ -554,6 +560,13 @@ const jsonLd = [
 		flex: 1;
 	}
 
+	.live-note {
+		margin-top: 0.8rem;
+		font-size: 0.7rem;
+		letter-spacing: 0.04em;
+		color: var(--faint);
+		text-align: center;
+	}
 	/* FEATURES */
 	.feature > * {
 		min-width: 0;

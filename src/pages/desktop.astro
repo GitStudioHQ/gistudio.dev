@@ -34,9 +34,9 @@ const jsonLd = {
 	<section class="hero">
 		<div class="container">
 			<div class="statusline" data-reveal>
-				<span class="badge beta">Beta</span>
-				<span class="chip">v{APP.version}</span>
+				<span class="badge live">● v{APP.version} out now</span>
 				<span class="chip">macOS · Windows · Linux</span>
+				<span class="chip">Auto-updates</span>
 				<span class="chip">Apache-2.0</span>
 			</div>
 			<h1 data-reveal>A Git client with a <em class="fx">brain.</em></h1>
@@ -47,7 +47,7 @@ const jsonLd = {
 				on <strong>your</strong> keys and asks before every write.
 			</p>
 			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary btn-lg" href="/download#desktop">Get the beta</a>
+				<a class="btn btn-primary btn-lg" href="/download#desktop">Download for your OS</a>
 				<a class="btn btn-ghost btn-lg" href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases</a>
 			</div>
 		</div>
@@ -179,13 +179,13 @@ const jsonLd = {
 	<section class="section">
 		<div class="container beta">
 			<div data-reveal>
-				<p class="eyebrow">Honest beta notes</p>
-				<h2>It's a beta. Here's exactly what that <em class="fx">means.</em></h2>
+				<p class="eyebrow">Get it</p>
+				<h2>An installer for every <em class="fx">desk.</em></h2>
 				<p class="lede">
-					v{APP.version} is young and moving fast — the engine underneath is the same tested
-					core as the extension, but the app around it is weeks old, not years. Today you build
-					it from source; signed installers land
-					on <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases</a> as they're cut:
+					Native builds for all three platforms, with auto-update built in — install once
+					and <code>app-v*</code> releases keep you current. Every artifact lives
+					on <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases</a>, and
+					the <a href="/download#desktop">download page</a> links each one directly:
 				</p>
 				<ul class="plat">
 					{APP.platforms.map((p) => (
@@ -194,15 +194,11 @@ const jsonLd = {
 				</ul>
 			</div>
 			<div class="cmds" data-reveal style="--reveal-delay:.08s">
-				<p class="cmds-h">Build it from source (Node 22+):</p>
+				<a class="btn btn-primary" href="/download#desktop">Download v{APP.version}</a>
+				<p class="cmds-h">Or build from source (Node 22+):</p>
 				<InstallCmd cmd="git clone https://github.com/GitStudioHQ/gitstudio.git" />
 				<InstallCmd cmd="cd gitstudio && npm install" />
-				<InstallCmd cmd="npm run dev --workspace apps/desktop" />
-				<p class="fine">
-					That builds the bundles and launches Electron against your local checkout.
-					Want an installer instead?
-					<code>npm run dist --workspace apps/desktop</code> produces one for your OS.
-				</p>
+				<InstallCmd cmd="npm run dist --workspace apps/desktop" />
 			</div>
 		</div>
 	</section>
@@ -211,7 +207,7 @@ const jsonLd = {
 		<div class="container center">
 			<h2 data-reveal>It earns the <em class="fx">dock icon.</em></h2>
 			<div class="cta-row centered" data-reveal>
-				<a class="btn btn-primary btn-lg" href="/download#desktop">Get the beta</a>
+				<a class="btn btn-primary btn-lg" href="/download#desktop">Download v{APP.version}</a>
 				<a class="btn btn-ghost btn-lg" href="/extension">Prefer it in your editor?</a>
 			</div>
 		</div>

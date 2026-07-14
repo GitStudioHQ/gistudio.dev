@@ -1,0 +1,183 @@
+---
+// THE REAL THING: the shipping <gitstudio-graph> Lit element from
+// @gitstudio/webview-ui, bundled verbatim into /vendor/gitstudio-graph.js and
+// mounted here with this repo's actual history (160 commits, laid out by the
+// real engine). The element themes itself off the --vscode-* custom-property
+// seam — exactly how the desktop app skins it — so we hand it the site's
+// brand tokens through the same seam.
+import WindowFrame from './WindowFrame.astro';
+
+interface Props {
+	/** Rows of the boot skeleton before the element mounts. */
+	skeletonRows?: number;
+}
+const { skeletonRows = 9 } = Astro.props;
+---
+
+<WindowFrame title="Commit Graph — the shipping component, live" class="graph-live">
+	<div class="live-host" data-graph-live>
+		<div class="boot" aria-hidden="true">
+			{Array.from({ length: skeletonRows }).map(() => (
+				<div class="sk-row">
+					<span class="sk-node"></span>
+					<span class="sk-line" style={`width:${45 + Math.round(Math.random() * 40)}%`}></span>
+				</div>
+			))}
+		</div>
+		<noscript><p class="nojs">Enable JavaScript to drive the live commit graph — the real component from the extension, rendering this repo's history.</p></noscript>
+	</div>
+</WindowFrame>
+
+<script>
+	const hosts = document.querySelectorAll<HTMLElement>('[data-graph-live]');
+	if (hosts.length > 0) {
+		let booted: Promise<{ data: any }> | undefined;
+		const boot = () => {
+			booted ??= (async () => {
+				const link = document.createElement('link');
+				link.rel = 'stylesheet';
+				link.href = '/vendor/gitstudio-graph.css';
+				document.head.appendChild(link);
+				// A plain module <script src> — the supported way to run JS that
+				// lives in /public, and it works identically in dev and prod.
+				await new Promise<void>((resolve, reject) => {
+					const s = document.createElement('script');
+					s.type = 'module';
+					s.src = '/vendor/gitstudio-graph.js';
+					s.onload = () => resolve();
+					s.onerror = () => reject(new Error('vendor bundle failed to load'));
+					document.head.appendChild(s);
+				});
+				await customElements.whenDefined('gitstudio-graph');
+				const data = await (await fetch('/vendor/graph-data.json')).json();
+				return { data };
+			})();
+			return booted;
+		};
+
+		const mount = async (host: HTMLElement) => {
+			try {
+				// Embed sizing: the element is tuned for wide IDE panels. Seed its
+				// own persisted column prefs (only when the visitor hasn't set
+				// any) — hide the stats column (no host answers requestStats
+				// here) and slim the fixed tracks so subjects keep real width.
+				const narrow = host.getBoundingClientRect().width < 620;
+				try {
+					if (!localStorage.getItem('gitstudio.graph.cols.widths')) {
+						localStorage.setItem(
+							'gitstudio.graph.cols.widths',
+							JSON.stringify(narrow ? { refs: 110, date: 60 } : { refs: 150, author: 112, date: 72 }),
+						);
+					}
+					if (!localStorage.getItem('gitstudio.graph.cols.hidden')) {
+						localStorage.setItem(
+							'gitstudio.graph.cols.hidden',
+							JSON.stringify(narrow ? ['changes', 'sha', 'author'] : ['changes']),
+						);
+					}
+				} catch {
+					/* storage unavailable — defaults still render, just tighter */
+				}
+				const { data } = await boot();
+				const el = document.createElement('gitstudio-graph') as any;
+				el.status = 'loading';
+				host.replaceChildren(el);
+				el.head = data.head;
+				el.rows = data.rows;
+				el.totalColumns = data.totalColumns;
+				el.hasMore = false;
+				el.status = 'ready';
+			} catch {
+				/* bundle unavailable — the skeleton stays, nothing breaks */
+			}
+		};
+
+		// Mount immediately — deterministic everywhere. The bundle is small
+		// enough (~90 KB gzipped, loaded async) that lazy-gating isn't worth
+		// the environments where IntersectionObserver is throttled.
+		hosts.forEach((h) => void mount(h));
+	}
+</script>
+
+<style>
+	.live-host {
+		height: 480px;
+		/* ── the --vscode-* seam, loaded with the site's brand ─────────────── */
+		--vscode-foreground: #c9c7d6;
+		--vscode-descriptionForeground: #8f8da2;
+		--vscode-font-family: var(--font-sans);
+		--vscode-font-size: 13px;
+		--vscode-editor-font-family: var(--font-mono);
+		--vscode-editor-font-size: 12px;
+		--vscode-editor-background: #0e0e19;
+		--vscode-sideBar-background: #0e0e19;
+		--vscode-focusBorder: #a98cff;
+		--vscode-textLink-foreground: #c3aeff;
+		--vscode-list-hoverBackground: rgba(255, 255, 255, 0.045);
+		--vscode-list-activeSelectionBackground: rgba(169, 140, 255, 0.16);
+		--vscode-list-activeSelectionForeground: #f2f1f8;
+		--vscode-scrollbarSlider-background: rgba(143, 141, 162, 0.28);
+		--vscode-scrollbarSlider-hoverBackground: rgba(143, 141, 162, 0.45);
+		--vscode-scrollbarSlider-activeBackground: rgba(143, 141, 162, 0.6);
+		--vscode-charts-green: #4cc38a;
+		--vscode-charts-red: #f76e78;
+		--vscode-charts-yellow: #e3b341;
+		--gs-brand: #a98cff;
+		--gs-brand-fg: #16101f;
+		--gs-amber: #e3b341;
+	}
+	.live-host :global(gitstudio-graph) {
+		height: 100%;
+		width: 100%;
+	}
+
+	/* boot skeleton */
+	.boot {
+		height: 100%;
+		padding: 1rem 1.1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.35rem;
+		overflow: hidden;
+	}
+	.sk-row {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+	}
+	.sk-node {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--violet-dim);
+		opacity: 0.45;
+		flex: none;
+	}
+	.sk-line {
+		height: 9px;
+		border-radius: 5px;
+		background: linear-gradient(90deg, var(--bg-3), var(--bg-4), var(--bg-3));
+		background-size: 200% 100%;
+		animation: shimmer 1.6s linear infinite;
+	}
+	@keyframes shimmer {
+		to {
+			background-position: -200% 0;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.sk-line {
+			animation: none;
+		}
+	}
+	.nojs {
+		padding: 1rem;
+		color: var(--muted);
+		font-size: 0.85rem;
+	}
+	@media (max-width: 720px) {
+		.live-host {
+			height: 420px;
+		}
+	}
+</style>

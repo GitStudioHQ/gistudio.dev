@@ -5,7 +5,7 @@ import { EXT, MERGE, APP, GITHUB_REPO_URL, GITHUB_RELEASES_URL, DOCS_AI_URL } fr
 
 const title = 'Download GitStudio — extension, Merge Studio & desktop app';
 const description =
-	'Install the GitStudio extension for VS Code and Cursor, get Merge Studio from the VS Code Marketplace or Open VSX, and grab the GitStudio Desktop beta for macOS, Windows, and Linux.';
+	'Install the GitStudio extension for VS Code and Cursor from the Marketplace or Open VSX, get Merge Studio, and download GitStudio Desktop for macOS, Windows, and Linux.';
 ---
 
 <Site title={title} description={description} og="/og/download.png">
@@ -26,38 +26,40 @@ const description =
 		<div class="container dl">
 			<div class="dl-info" data-reveal>
 				<div class="statusline">
-					<span class="badge">VS Code · Cursor</span>
+					<span class="badge live">● Live on both registries</span>
 					<span class="chip">v{EXT.version}</span>
-					<span class="chip">{EXT.vsixSizeMb} MB</span>
+					<span class="chip">VS Code · Cursor</span>
 					<span class="chip">{EXT.license}</span>
 				</div>
 				<h2>GitStudio <span class="sub">the extension</span></h2>
 				<p class="lede">
 					The full suite — graph, blame, history, staging, merge, rebase, worktrees, pull
-					requests — as a single VSIX, the same build CI publishes. Marketplace listings are
-					rolling out; direct install works today and takes two minutes.
+					requests. One-click install from the marketplace your editor already uses, or
+					search <strong>“GitStudio”</strong> in the Extensions view.
 				</p>
-				<ol class="steps">
-					<li>Download the VSIX</li>
-					<li>Run the install command — or use <strong>Extensions → ··· → Install from VSIX</strong> in the editor</li>
-					<li>Open a repo and click the GitStudio icon in the activity bar</li>
-				</ol>
-				<p class="req">Requires VS Code {EXT.minVsCode}+ (or Cursor, VSCodium, Windsurf, code-server) and git on your PATH.</p>
+				<p class="req">
+					Requires VS Code {EXT.minVsCode}+ (or Cursor, VSCodium, Windsurf, code-server) and
+					git on your PATH. Stock VS Code installs from the Microsoft Marketplace; the others
+					pull the same build from Open VSX.
+				</p>
 			</div>
 			<div class="dl-act" data-reveal style="--reveal-delay:.08s">
-				<a class="btn btn-primary btn-lg dl-btn" href={EXT.vsixPath} download>
-					<svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M7.25 1.75a.75.75 0 0 1 1.5 0v6.69l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 1 1 1.06-1.06l2.22 2.22V1.75ZM2.5 12.25a.75.75 0 0 1 .75.75v.5c0 .138.112.25.25.25h9a.25.25 0 0 0 .25-.25v-.5a.75.75 0 0 1 1.5 0v.5A1.75 1.75 0 0 1 12.5 15.25h-9a1.75 1.75 0 0 1-1.75-1.75v-.5a.75.75 0 0 1 .75-.75Z"/></svg>
-					Download {EXT.vsixFile}
-				</a>
-				<InstallCmd cmd={`code --install-extension ${EXT.vsixFile}`} />
-				<InstallCmd cmd={`cursor --install-extension ${EXT.vsixFile}`} />
+				<a class="btn btn-primary btn-lg" href={EXT.marketplaceUrl} target="_blank" rel="noopener">VS Code Marketplace</a>
+				<a class="btn btn-ghost btn-lg" href={EXT.openVsxUrl} target="_blank" rel="noopener">Open VSX Registry</a>
+				<InstallCmd cmd={`code --install-extension ${EXT.id}`} />
+				<InstallCmd cmd={`cursor --install-extension ${EXT.id}`} />
 				<details class="verify">
-					<summary>Verify the download (SHA-256)</summary>
+					<summary>Prefer a direct artifact? ({EXT.vsixFile} · {EXT.vsixSizeMb} MB)</summary>
+					<a class="btn btn-ghost vsix-btn" href={EXT.vsixPath} download>
+						<svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M7.25 1.75a.75.75 0 0 1 1.5 0v6.69l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 1 1 1.06-1.06l2.22 2.22V1.75ZM2.5 12.25a.75.75 0 0 1 .75.75v.5c0 .138.112.25.25.25h9a.25.25 0 0 0 .25-.25v-.5a.75.75 0 0 1 1.5 0v.5A1.75 1.75 0 0 1 12.5 15.25h-9a1.75 1.75 0 0 1-1.75-1.75v-.5a.75.75 0 0 1 .75-.75Z"/></svg>
+						Download the VSIX
+					</a>
 					<InstallCmd cmd={`shasum -a 256 ${EXT.vsixFile}`} />
 					<p class="sha">Expected: <code>{EXT.vsixSha256}</code></p>
 					<p class="fine">
-						Or don't trust us at all — the <a href={GITHUB_REPO_URL} target="_blank" rel="noopener">source is public</a>;
-						build the VSIX yourself with <code>npm run package</code> + <code>vsce package</code>.
+						Same build CI published to the registries. Or don't trust us at all —
+						the <a href={GITHUB_REPO_URL} target="_blank" rel="noopener">source is public</a>;
+						build it yourself with <code>npm run package</code> + <code>vsce package</code>.
 					</p>
 				</details>
 			</div>
@@ -97,35 +99,33 @@ const description =
 		<div class="container dl">
 			<div class="dl-info" data-reveal>
 				<div class="statusline">
-					<span class="badge beta">Beta</span>
-					<span class="chip">v{APP.version}</span>
+					<span class="badge live">● v{APP.version} out now</span>
+					<span class="chip">Auto-updates</span>
 					<span class="chip">{APP.license}</span>
 				</div>
 				<h2>GitStudio Desktop <span class="sub">the app</span></h2>
 				<p class="lede">
-					Native builds for every desk. Installers are cut
-					to <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases</a> as <code>app-v*</code> tags
-					land — and until your platform's build is up, the source
-					builds in one command.
+					Native builds for every desk, straight from
+					the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Release</a> — install once
+					and auto-update keeps you current as <code>app-v*</code> releases ship.
 				</p>
-				<ul class="plat">
-					{APP.platforms.map((p) => (
-						<li><strong>{p.os}</strong> <span>{p.arch}</span> <code>{p.format}</code></li>
-					))}
-				</ul>
 				<p class="req">
-					Beta builds are currently unsigned — macOS will ask you to confirm the developer
-					(<code>xattr -cr /Applications/GitStudio.app</code> clears the quarantine flag after
-					you drag it in).
+					If macOS flags the download as from an unidentified developer,
+					<code>xattr -cr /Applications/GitStudio.app</code> clears the quarantine flag after
+					you drag it in.
 				</p>
 			</div>
 			<div class="dl-act" data-reveal style="--reveal-delay:.08s">
-				<a class="btn btn-primary btn-lg" href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">Check GitHub Releases</a>
+				{APP.downloads.map((d) => (
+					<a class="btn btn-ghost os-btn" href={d.url}>
+						<span class="os">{d.os}</span>
+						<span class="arch">{d.arch}</span>
+						<code>{d.format}</code>
+					</a>
+				))}
 				<p class="cmds-h">Or build from source (Node 22+):</p>
 				<InstallCmd cmd="git clone https://github.com/GitStudioHQ/gitstudio.git" />
-				<InstallCmd cmd="cd gitstudio && npm install" />
-				<InstallCmd cmd="npm run dist --workspace apps/desktop" />
-				<p class="fine">The installer for your OS lands in <code>apps/desktop/release/</code>.</p>
+				<InstallCmd cmd="cd gitstudio && npm install && npm run dist --workspace apps/desktop" />
 			</div>
 		</div>
 	</section>
@@ -266,6 +266,29 @@ const description =
 	}
 	.plat code {
 		margin-left: auto;
+	}
+	.os-btn {
+		justify-content: flex-start;
+		gap: 0.7rem;
+	}
+	.os-btn .os {
+		font-weight: 640;
+		min-width: 4.6rem;
+		text-align: left;
+	}
+	.os-btn .arch {
+		color: var(--muted);
+		font-weight: 450;
+		flex: 1;
+		text-align: left;
+	}
+	.os-btn code {
+		font-size: 0.72rem;
+	}
+	.vsix-btn {
+		justify-content: center;
+		gap: 0.5rem;
+		width: 100%;
 	}
 	.cmds-h {
 		font-family: var(--font-mono);
