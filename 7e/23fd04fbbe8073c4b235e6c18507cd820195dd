@@ -1,0 +1,28 @@
+src/pages/index.astro
+  s_44fb38c224c892::t_4d507f28f51501 10-17,91,105,119,162-163,177-183,209,212-222,224-225,227-228,254-258,550-567,668-670,672,675,775,794
+src/components/Shot.astro
+  s_44fb38c224c892::t_dd8a0208dee84e 1-66
+src/pages/desktop.astro
+  s_44fb38c224c892::t_442b4af5f62451 3-8,58-63,82-100,122-126,149-153,220-222,275-281
+src/pages/extension.astro
+  s_44fb38c224c892::t_442b4af5f62451 3-7,185-212,408-416,541
+src/pages/merge-studio.astro
+  s_44fb38c224c892::t_442b4af5f62451 3-6,107-112,149-153,158-177,275-276
+  s_44fb38c224c892::t_f7346aef8614b0 277
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "7e23fd04fbbe8073c4b235e6c18507cd820195dd",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
