@@ -1,0 +1,35 @@
+src/components/ListingCard.astro
+  s_44fb38c224c892::t_0dbdfad0f9c071 110-113
+  s_44fb38c224c892::t_92cab425fbce49 1-109,114-168
+src/pages/index.astro
+  s_44fb38c224c892::t_6e323f23b98d84 3-7,89,102,115,201,205,209,213,217,221,556-570,640-648
+src/components/Icon.astro
+  s_44fb38c224c892::t_ab556049015ca5 76
+  s_44fb38c224c892::t_c3c177343f9b1f 1-75,77-190
+src/pages/extension.astro
+  s_44fb38c224c892::t_02b4ce2f55e78e 3-5,18,30,42,53,65,76,128-139,162-166,232,236,240,289-292,320-331,444-452
+src/pages/merge-studio.astro
+  s_44fb38c224c892::t_6e323f23b98d84 3-5,16,21,26,31,36,41,86-98,116,211-223
+src/styles/global.css
+  s_44fb38c224c892::t_841f022261430f 702-716
+src/pages/download.astro
+  s_44fb38c224c892::t_683448ee87bc15 3-7,39,83,111,175-190
+src/components/MockDesktop.astro
+  s_44fb38c224c892::t_683448ee87bc15 5,18-23,69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "daa35179e7e629c63147d4e0e9c49d45fb633a54",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
