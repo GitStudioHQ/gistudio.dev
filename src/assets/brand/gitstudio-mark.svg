@@ -12,18 +12,7 @@
 <stop offset="0%" stop-color="#3C3A58"/>
 <stop offset="100%" stop-color="#282640"/>
 </linearGradient>
-<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0%" stop-color="#1B1B27"/>
-<stop offset="100%" stop-color="#0C0C16"/>
-</linearGradient>
-<radialGradient id="bgglow" cx="0.30" cy="0.20" r="0.95">
-<stop offset="0%" stop-color="#403A66" stop-opacity="0.5"/>
-<stop offset="60%" stop-color="#2A2D3A" stop-opacity="0"/>
-</radialGradient>
 </defs>
-<rect width="512" height="512" rx="116" fill="url(#bg)"/>
-<rect width="512" height="512" rx="116" fill="url(#bgglow)"/>
-<rect x="2" y="2" width="508" height="508" rx="114" fill="none" stroke="#fff" stroke-opacity="0.06" stroke-width="3"/>
 <mask id="cubeHoles" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">
 <rect width="512" height="512" fill="#fff"/>
 <circle cx="124.4" cy="174.0" r="9.2" fill="#000"/>

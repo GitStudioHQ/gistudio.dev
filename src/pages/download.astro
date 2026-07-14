@@ -1,0 +1,286 @@
+---
+import Site from '../layouts/Site.astro';
+import InstallCmd from '../components/InstallCmd.astro';
+import { EXT, MERGE, APP, GITHUB_REPO_URL, GITHUB_RELEASES_URL, DOCS_AI_URL } from '../consts';
+
+const title = 'Download GitStudio — extension, Merge Studio & desktop app';
+const description =
+	'Install the GitStudio extension for VS Code and Cursor, get Merge Studio from the VS Code Marketplace or Open VSX, and grab the GitStudio Desktop beta for macOS, Windows, and Linux.';
+---
+
+<Site title={title} description={description}>
+	<section class="hero">
+		<div class="container">
+			<p class="eyebrow" data-reveal>Downloads</p>
+			<h1 data-reveal>Get <em class="fx">GitStudio.</em></h1>
+			<p class="lede" data-reveal>
+				Everything below is free and open source. Every download links to a real artifact —
+				no email gates, no installers that phone home, and checksums for anything you download
+				directly.
+			</p>
+		</div>
+	</section>
+
+	<!-- EXTENSION -->
+	<section class="section" id="extension">
+		<div class="container dl">
+			<div class="dl-info" data-reveal>
+				<div class="statusline">
+					<span class="badge">VS Code · Cursor</span>
+					<span class="chip">v{EXT.version}</span>
+					<span class="chip">{EXT.vsixSizeMb} MB</span>
+					<span class="chip">{EXT.license}</span>
+				</div>
+				<h2>GitStudio <span class="sub">the extension</span></h2>
+				<p class="lede">
+					The full suite — graph, blame, history, staging, merge, rebase, worktrees, pull
+					requests — as a single VSIX, the same build CI publishes. Marketplace listings are
+					rolling out; direct install works today and takes two minutes.
+				</p>
+				<ol class="steps">
+					<li>Download the VSIX</li>
+					<li>Run the install command — or use <strong>Extensions → ··· → Install from VSIX</strong> in the editor</li>
+					<li>Open a repo and click the GitStudio icon in the activity bar</li>
+				</ol>
+				<p class="req">Requires VS Code {EXT.minVsCode}+ (or Cursor, VSCodium, Windsurf, code-server) and git on your PATH.</p>
+			</div>
+			<div class="dl-act" data-reveal style="--reveal-delay:.08s">
+				<a class="btn btn-primary btn-lg dl-btn" href={EXT.vsixPath} download>
+					<svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M7.25 1.75a.75.75 0 0 1 1.5 0v6.69l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 1 1 1.06-1.06l2.22 2.22V1.75ZM2.5 12.25a.75.75 0 0 1 .75.75v.5c0 .138.112.25.25.25h9a.25.25 0 0 0 .25-.25v-.5a.75.75 0 0 1 1.5 0v.5A1.75 1.75 0 0 1 12.5 15.25h-9a1.75 1.75 0 0 1-1.75-1.75v-.5a.75.75 0 0 1 .75-.75Z"/></svg>
+					Download {EXT.vsixFile}
+				</a>
+				<InstallCmd cmd={`code --install-extension ${EXT.vsixFile}`} />
+				<InstallCmd cmd={`cursor --install-extension ${EXT.vsixFile}`} />
+				<details class="verify">
+					<summary>Verify the download (SHA-256)</summary>
+					<InstallCmd cmd={`shasum -a 256 ${EXT.vsixFile}`} />
+					<p class="sha">Expected: <code>{EXT.vsixSha256}</code></p>
+					<p class="fine">
+						Or don't trust us at all — the <a href={GITHUB_REPO_URL} target="_blank" rel="noopener">source is public</a>;
+						build the VSIX yourself with <code>npm run package</code> + <code>vsce package</code>.
+					</p>
+				</details>
+			</div>
+		</div>
+	</section>
+
+	<!-- MERGE STUDIO -->
+	<section class="section" id="merge-studio">
+		<div class="container dl">
+			<div class="dl-info" data-reveal>
+				<div class="statusline">
+					<span class="badge live">● Live on both registries</span>
+					<span class="chip">v{MERGE.version}</span>
+					<span class="chip">{MERGE.license}</span>
+				</div>
+				<h2>Merge Studio <span class="sub">the merge editor</span></h2>
+				<p class="lede">
+					The focused three-pane conflict resolver. One-click install from the marketplace
+					your editor already uses — or search <strong>“Merge Studio”</strong> in the
+					Extensions view.
+				</p>
+				<p class="req">
+					Stock VS Code installs from the Microsoft Marketplace. Cursor, VSCodium, Windsurf,
+					and code-server install from Open VSX — same extension, same version.
+				</p>
+			</div>
+			<div class="dl-act" data-reveal style="--reveal-delay:.08s">
+				<a class="btn btn-primary btn-lg" href={MERGE.marketplaceUrl} target="_blank" rel="noopener">VS Code Marketplace</a>
+				<a class="btn btn-ghost btn-lg" href={MERGE.openVsxUrl} target="_blank" rel="noopener">Open VSX Registry</a>
+				<InstallCmd cmd={`code --install-extension ${MERGE.id}`} />
+			</div>
+		</div>
+	</section>
+
+	<!-- DESKTOP -->
+	<section class="section" id="desktop">
+		<div class="container dl">
+			<div class="dl-info" data-reveal>
+				<div class="statusline">
+					<span class="badge beta">Beta</span>
+					<span class="chip">v{APP.version}</span>
+					<span class="chip">{APP.license}</span>
+				</div>
+				<h2>GitStudio Desktop <span class="sub">the app</span></h2>
+				<p class="lede">
+					Native builds for every desk. Installers are cut
+					to <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases</a> as <code>app-v*</code> tags
+					land — and until your platform's build is up, the source
+					builds in one command.
+				</p>
+				<ul class="plat">
+					{APP.platforms.map((p) => (
+						<li><strong>{p.os}</strong> <span>{p.arch}</span> <code>{p.format}</code></li>
+					))}
+				</ul>
+				<p class="req">
+					Beta builds are currently unsigned — macOS will ask you to confirm the developer
+					(<code>xattr -cr /Applications/GitStudio.app</code> clears the quarantine flag after
+					you drag it in).
+				</p>
+			</div>
+			<div class="dl-act" data-reveal style="--reveal-delay:.08s">
+				<a class="btn btn-primary btn-lg" href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">Check GitHub Releases</a>
+				<p class="cmds-h">Or build from source (Node 22+):</p>
+				<InstallCmd cmd="git clone https://github.com/GitStudioHQ/gitstudio.git" />
+				<InstallCmd cmd="cd gitstudio && npm install" />
+				<InstallCmd cmd="npm run dist --workspace apps/desktop" />
+				<p class="fine">The installer for your OS lands in <code>apps/desktop/release/</code>.</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- MCP -->
+	<section class="section" id="mcp">
+		<div class="container center">
+			<p class="eyebrow center" data-reveal>Bonus</p>
+			<h2 data-reveal>The MCP server comes <em class="fx">included.</em></h2>
+			<p class="lede" data-reveal>
+				Both the desktop app and the repo ship <code>gitstudio-mcp</code> — a stdio MCP server
+				that exposes your repository's Git to Claude Desktop, Cursor, VS Code, and Windsurf.
+				Read-only by default; writes are opt-in. Setup lives in
+				the <a href={DOCS_AI_URL} target="_blank" rel="noopener">AI &amp; agents docs on GitHub</a>.
+			</p>
+		</div>
+	</section>
+</Site>
+
+<style>
+	.hero {
+		padding-top: clamp(56px, 8vw, 96px);
+		padding-bottom: clamp(8px, 2vw, 24px);
+		background: radial-gradient(45% 50% at 50% 0%, rgba(169, 140, 255, 0.11), transparent 70%);
+	}
+	.statusline {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.55rem;
+		margin-bottom: 1.2rem;
+	}
+	.dl > * {
+		min-width: 0;
+	}
+	.dl {
+		display: grid;
+		grid-template-columns: 1.15fr 0.85fr;
+		gap: clamp(2rem, 5vw, 4.5rem);
+		align-items: start;
+	}
+	.dl h2 .sub {
+		display: block;
+		font-size: 0.95rem;
+		font-weight: 500;
+		letter-spacing: 0;
+		color: var(--muted);
+		margin-top: 0.3rem;
+	}
+	.steps {
+		margin: 0 0 1rem;
+		padding-left: 1.3rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.55rem;
+		color: var(--text);
+	}
+	.steps li::marker {
+		color: var(--violet);
+		font-weight: 600;
+	}
+	.req {
+		color: var(--faint);
+		font-size: 0.9rem;
+		max-width: 56ch;
+	}
+	.dl-act {
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+		position: sticky;
+		top: 90px;
+	}
+	.dl-btn {
+		justify-content: center;
+	}
+	.verify {
+		border: 1px solid var(--hairline);
+		border-radius: var(--r-md);
+		background: var(--bg-2);
+		padding: 0 1rem;
+		margin-top: 0.3rem;
+	}
+	.verify summary {
+		cursor: pointer;
+		list-style: none;
+		padding: 0.85rem 0;
+		color: var(--text);
+		font-weight: 550;
+		font-size: 0.92rem;
+	}
+	.verify summary::-webkit-details-marker {
+		display: none;
+	}
+	.verify summary::before {
+		content: '⌄ ';
+		color: var(--violet);
+	}
+	.verify[open] summary::before {
+		content: '⌃ ';
+	}
+	.verify > *:not(summary) {
+		margin-bottom: 0.9rem;
+	}
+	.sha {
+		font-size: 0.8rem;
+		color: var(--muted);
+		overflow-wrap: anywhere;
+	}
+	.sha code {
+		font-size: 0.72rem;
+	}
+	.fine {
+		font-size: 0.85rem;
+		color: var(--faint);
+	}
+	.plat {
+		list-style: none;
+		margin: 1.2rem 0;
+		padding: 0;
+	}
+	.plat li {
+		display: flex;
+		align-items: baseline;
+		gap: 0.8rem;
+		padding: 0.65rem 0.2rem;
+		border-bottom: 1px solid var(--hairline);
+		font-size: var(--fs-1);
+	}
+	.plat li:first-child {
+		border-top: 1px solid var(--hairline);
+	}
+	.plat strong {
+		min-width: 5.4rem;
+	}
+	.plat span {
+		color: var(--muted);
+	}
+	.plat code {
+		margin-left: auto;
+	}
+	.cmds-h {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--faint);
+		margin: 0.6rem 0 0;
+	}
+	@media (max-width: 960px) {
+		.dl {
+			grid-template-columns: 1fr;
+		}
+		.dl-act {
+			position: static;
+		}
+	}
+</style>

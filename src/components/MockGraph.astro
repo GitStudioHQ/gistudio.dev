@@ -1,0 +1,227 @@
+---
+// Stylized commit-graph view: lanes + rows on the left, commit details on the
+// right. Every message is real history from the GitStudio repo.
+import WindowFrame from './WindowFrame.astro';
+
+const rows = [
+	{ lane: 'main', msg: 'Enhance graph rendering and styling', age: '2d', refs: ['HEAD', 'main'] },
+	{ lane: 'main', msg: 'revert(desktop): raw terminal + default colors', age: '5d', refs: [] },
+	{ lane: 'branch', msg: 'feat(desktop): terminal command menu + agent mode', age: '6d', refs: ['feat/terminal'] },
+	{ lane: 'branch', msg: 'feat(desktop): terminal autocomplete (history, PATH)', age: '6d', refs: [] },
+	{ lane: 'merge', msg: 'feat(ai): AI Assistant launcher in the header', age: '7d', refs: [] },
+	{ lane: 'main', msg: 'feat(ux): keep-alive views, live-Markdown streaming', age: '7d', refs: [] },
+	{ lane: 'main', msg: 'feat(ai): persistent Assistant chats', age: '8d', refs: ['v0.1.22'] },
+	{ lane: 'main', msg: 'perf(ai): skip MCP servers in Assistant calls', age: '8d', refs: [] },
+];
+const yFor = (i: number) => 16 + i * 31;
+---
+
+<WindowFrame title="Commit Graph — gitstudio" class="mock-graph">
+	<div class="body">
+		<div class="list">
+			<svg class="lanes" width="44" height={rows.length * 31 + 2} aria-hidden="true">
+				<path d={`M15,0 V${rows.length * 31}`} stroke="#A98CFF" stroke-width="2.5" fill="none" />
+				<path d={`M15,${yFor(1)} C29,${yFor(1)} 31,${yFor(1) + 14} 31,${yFor(2) - 6} V${yFor(3) + 8} C31,${yFor(4) - 12} 29,${yFor(4)} 15,${yFor(4)}`} stroke="#C36BF0" stroke-width="2.5" fill="none" />
+				{rows.map((r, i) => (
+					<circle
+						cx={r.lane === 'branch' ? 31 : 15}
+						cy={yFor(i)}
+						r={r.lane === 'merge' ? 5.5 : 4.5}
+						fill={r.lane === 'branch' ? '#C36BF0' : '#A98CFF'}
+					/>
+				))}
+				<circle cx="15" cy={yFor(0)} r="2" fill="#0e0e19" />
+			</svg>
+			<ul>
+				{rows.map((r) => (
+					<li>
+						<span class="msg">{r.msg}</span>
+						{r.refs.map((ref) => (
+							<span class:list={['ref', { head: ref === 'HEAD', tag: ref.startsWith('v') }]}>{ref}</span>
+						))}
+						<span class="age">{r.age}</span>
+					</li>
+				))}
+			</ul>
+		</div>
+		<div class="details">
+			<p class="subject">Enhance graph rendering and styling</p>
+			<p class="meta"><span class="avatar" aria-hidden="true">A</span> Anton A. · 2 days ago · <span class="sha">bf8d6b7</span></p>
+			<div class="files">
+				<div class="file"><span class="name">webview-ui/src/graph/graph.ts</span><span class="plus">+214</span><span class="minus">−80</span></div>
+				<div class="file"><span class="name">webview-ui/styles/graph.css</span><span class="plus">+96</span><span class="minus">−12</span></div>
+				<div class="file"><span class="name">engine/src/graphLayout.ts</span><span class="plus">+48</span><span class="minus">−9</span></div>
+			</div>
+			<div class="acts">
+				<span class="act primary">Checkout</span>
+				<span class="act">Cherry-pick</span>
+				<span class="act">Branch ▾</span>
+			</div>
+		</div>
+	</div>
+</WindowFrame>
+
+<style>
+	.body {
+		display: grid;
+		grid-template-columns: 1.55fr 1fr;
+	}
+	.list {
+		display: flex;
+		padding: 0.55rem 0 0.55rem 0.55rem;
+		border-right: 1px solid var(--hairline);
+		min-width: 0;
+	}
+	.lanes {
+		flex: none;
+	}
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		flex: 1;
+		min-width: 0;
+	}
+	li {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		height: 31px;
+		padding-right: 0.7rem;
+		min-width: 0;
+	}
+	li:first-child {
+		background: linear-gradient(90deg, rgba(169, 140, 255, 0.1), transparent 85%);
+		border-radius: 6px;
+	}
+	.msg {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: var(--text);
+	}
+	li:first-child .msg {
+		color: var(--ink);
+	}
+	.ref {
+		flex: none;
+		font-size: 0.62rem;
+		line-height: 1;
+		padding: 0.18rem 0.4rem;
+		border-radius: 5px;
+		border: 1px solid var(--violet-line);
+		color: var(--violet-hi);
+		background: var(--violet-wash);
+	}
+	.ref.head {
+		background: var(--violet);
+		color: #16101f;
+		font-weight: 600;
+		border-color: var(--violet);
+	}
+	.ref.tag {
+		border-color: rgba(227, 179, 65, 0.35);
+		color: var(--warn);
+		background: rgba(227, 179, 65, 0.08);
+	}
+	.age {
+		flex: none;
+		margin-left: auto;
+		color: var(--faint);
+		font-size: 0.66rem;
+	}
+
+	.details {
+		padding: 0.9rem 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.65rem;
+		background: rgba(255, 255, 255, 0.012);
+	}
+	.subject {
+		margin: 0;
+		color: var(--ink);
+		font-weight: 600;
+		font-size: 0.78rem;
+		line-height: 1.4;
+	}
+	.meta {
+		margin: 0;
+		color: var(--muted);
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.68rem;
+	}
+	.avatar {
+		width: 15px;
+		height: 15px;
+		border-radius: 50%;
+		background: var(--grad);
+		color: #16101f;
+		font-size: 0.55rem;
+		font-weight: 700;
+		display: grid;
+		place-items: center;
+	}
+	.sha {
+		color: var(--violet-hi);
+	}
+	.files {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		border-top: 1px solid var(--hairline);
+		padding-top: 0.65rem;
+	}
+	.file {
+		display: flex;
+		gap: 0.5rem;
+		align-items: baseline;
+		min-width: 0;
+	}
+	.file .name {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: var(--text);
+		font-size: 0.68rem;
+	}
+	.plus {
+		color: var(--add);
+		margin-left: auto;
+		font-size: 0.66rem;
+	}
+	.minus {
+		color: var(--del);
+		font-size: 0.66rem;
+	}
+	.acts {
+		display: flex;
+		gap: 0.4rem;
+		margin-top: auto;
+		flex-wrap: wrap;
+	}
+	.act {
+		font-size: 0.66rem;
+		padding: 0.32rem 0.6rem;
+		border-radius: 6px;
+		border: 1px solid var(--hairline-strong);
+		color: var(--text);
+	}
+	.act.primary {
+		background: var(--violet);
+		border-color: var(--violet);
+		color: #16101f;
+		font-weight: 600;
+	}
+
+	@media (max-width: 620px) {
+		.body {
+			grid-template-columns: 1fr;
+		}
+		.details {
+			display: none;
+		}
+	}
+</style>

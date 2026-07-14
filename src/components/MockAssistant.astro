@@ -1,0 +1,160 @@
+---
+// Stylized Assistant panel: an agent that reads real repo state and asks
+// before it writes. Tool calls visible, permission level in the header.
+import WindowFrame from './WindowFrame.astro';
+---
+
+<WindowFrame title="Assistant — your key, your model" class="mock-assist">
+	<div class="head">
+		<span class="model"><span class="dot" aria-hidden="true"></span> Claude · your key</span>
+		<span class="perm">
+			<span>read-only</span><span class="on">commits</span><span>everything</span>
+		</span>
+	</div>
+	<div class="chat">
+		<p class="user">draft release notes since v0.1.22</p>
+		<div class="tools">
+			<span class="tool">git log v0.1.22..HEAD --stat <b>✓</b></span>
+			<span class="tool">git diff v0.1.22 --shortstat <b>✓</b></span>
+		</div>
+		<div class="reply">
+			<p><strong>0.1.23</strong> — the instant release.</p>
+			<p>• Views paint from local git — no more waiting on vscode.git<br />• Sidebar Commits view with true topology + avatars<br />• Live push/pull with per-branch ↑↓ badges</p>
+		</div>
+		<div class="gate">
+			<span class="q">Assistant wants to run <code>git tag v0.1.23</code></span>
+			<span class="btns"><span class="allow">Allow</span><span class="deny">Deny</span></span>
+		</div>
+	</div>
+</WindowFrame>
+
+<style>
+	.head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.8rem;
+		padding: 0.55rem 0.9rem;
+		border-bottom: 1px solid var(--hairline);
+		font-size: 0.66rem;
+	}
+	.model {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		color: var(--text);
+	}
+	.model .dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--add);
+	}
+	.perm {
+		display: flex;
+		border: 1px solid var(--hairline);
+		border-radius: 7px;
+		overflow: hidden;
+	}
+	.perm span {
+		padding: 0.28rem 0.55rem;
+		color: var(--faint);
+	}
+	.perm .on {
+		background: var(--violet-wash);
+		color: var(--violet-hi);
+		border-inline: 1px solid var(--hairline);
+	}
+	.chat {
+		padding: 0.9rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.65rem;
+	}
+	.user {
+		margin: 0;
+		align-self: flex-end;
+		max-width: 80%;
+		background: var(--violet-wash);
+		border: 1px solid var(--violet-line);
+		color: var(--ink);
+		padding: 0.5rem 0.75rem;
+		border-radius: 10px 10px 3px 10px;
+		font-size: 0.72rem;
+	}
+	.tools {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+	.tool {
+		font-size: 0.66rem;
+		color: var(--muted);
+		background: var(--bg-0);
+		border: 1px solid var(--hairline);
+		border-radius: 7px;
+		padding: 0.4rem 0.6rem;
+		width: fit-content;
+		max-width: 100%;
+	}
+	.tool b {
+		color: var(--add);
+		margin-left: 0.3rem;
+	}
+	.reply {
+		background: var(--bg-2);
+		border: 1px solid var(--hairline);
+		border-radius: 10px 10px 10px 3px;
+		padding: 0.65rem 0.8rem;
+		font-size: 0.72rem;
+		line-height: 1.6;
+		color: var(--text);
+		max-width: 92%;
+	}
+	.reply p {
+		margin: 0 0 0.4rem;
+	}
+	.reply p:last-child {
+		margin: 0;
+	}
+	.reply strong {
+		color: var(--ink);
+	}
+	.gate {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.7rem;
+		flex-wrap: wrap;
+		border: 1px dashed rgba(227, 179, 65, 0.4);
+		background: rgba(227, 179, 65, 0.05);
+		border-radius: 9px;
+		padding: 0.55rem 0.75rem;
+		font-size: 0.68rem;
+	}
+	.gate .q {
+		color: var(--text);
+	}
+	.gate code {
+		background: var(--bg-0);
+		border-color: var(--hairline);
+		font-size: 0.95em;
+	}
+	.btns {
+		display: flex;
+		gap: 0.4rem;
+	}
+	.allow {
+		background: var(--violet);
+		color: #16101f;
+		font-weight: 600;
+		padding: 0.28rem 0.7rem;
+		border-radius: 6px;
+	}
+	.deny {
+		border: 1px solid var(--hairline-strong);
+		color: var(--text);
+		padding: 0.28rem 0.7rem;
+		border-radius: 6px;
+	}
+</style>

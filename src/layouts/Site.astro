@@ -1,0 +1,76 @@
+---
+// The shared shell for every page: head, nav, footer, and the tiny runtime
+// (scroll reveals + copy-to-clipboard). Marketing pages and blog pages both
+// use this so the whole site is one coherent surface.
+import BaseHead from '../components/BaseHead.astro';
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	og?: string;
+	noindex?: boolean;
+	/** Optional JSON-LD structured data, rendered into the head. */
+	jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { title, description, og, noindex, jsonLd } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+	<head>
+		<script is:inline>document.documentElement.classList.remove('no-js');</script>
+		<BaseHead title={title} description={description} og={og} noindex={noindex} />
+		{jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+	</head>
+	<body>
+		<SiteNav />
+		<main id="main">
+			<slot />
+		</main>
+		<SiteFooter />
+
+		<script>
+			// Scroll reveals — skipped entirely for reduced-motion users.
+			const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+			if (reduced) {
+				targets.forEach((el) => el.classList.add('is-in'));
+			} else {
+				const io = new IntersectionObserver(
+					(entries) => {
+						for (const e of entries) {
+							if (e.isIntersecting) {
+								(e.target as HTMLElement).classList.add('is-in');
+								io.unobserve(e.target);
+							}
+						}
+					},
+					{ rootMargin: '0px 0px -8% 0px', threshold: 0.1 },
+				);
+				targets.forEach((el) => io.observe(el));
+			}
+
+			// Copy-to-clipboard for install commands.
+			document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+				btn.addEventListener('click', async () => {
+					const text = btn.getAttribute('data-copy') ?? '';
+					try {
+						await navigator.clipboard.writeText(text);
+						btn.classList.add('copied');
+						const prev = btn.getAttribute('aria-label') ?? 'Copy';
+						btn.setAttribute('aria-label', 'Copied');
+						setTimeout(() => {
+							btn.classList.remove('copied');
+							btn.setAttribute('aria-label', prev);
+						}, 1600);
+					} catch {
+						/* clipboard unavailable — leave the text selectable */
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,158 @@
+---
+// Stylized 3-pane merge: yours / result / theirs with accept ribbons.
+import WindowFrame from './WindowFrame.astro';
+---
+
+<WindowFrame title="Merge — engine/mergeHunks.ts" class="mock-merge">
+	<div class="panes">
+		<div class="pane">
+			<div class="pane-h">YOURS <span class="branch">feat/graph</span></div>
+			<pre class="code"><code>export function mergeHunks(a, b) &#123;
+<span class="hl-add">  const seen = new Set();</span>
+  const merged = [];
+  for (const h of a) &#123;
+    merged.push(h);
+  &#125;</code></pre>
+			<span class="ribbon r-yours" aria-hidden="true">›</span>
+		</div>
+		<div class="pane result">
+			<div class="pane-h">RESULT</div>
+			<pre class="code"><code>export function mergeHunks(a, b) &#123;
+<span class="hl-add">  const seen = new Set();</span>
+<span class="hl-in">  let cursor = 0;</span>
+  const merged = [];
+  for (const h of a) &#123;
+    merged.push(h);
+  &#125;</code></pre>
+		</div>
+		<div class="pane">
+			<div class="pane-h"><span class="branch">main</span> THEIRS</div>
+			<pre class="code"><code>export function mergeHunks(a, b) &#123;
+<span class="hl-their">  let cursor = 0;</span>
+  const merged = [];
+  for (const h of a) &#123;
+    merged.push(h);
+  &#125;</code></pre>
+			<span class="ribbon r-theirs" aria-hidden="true">‹</span>
+		</div>
+	</div>
+	<div class="statusbar">
+		<span class="ok">✓ 2 of 3 conflicts resolved</span>
+		<span class="hint">Accept Yours · Accept Theirs · Accept Both</span>
+	</div>
+</WindowFrame>
+
+<style>
+	.panes {
+		display: grid;
+		grid-template-columns: 1fr 1.12fr 1fr;
+	}
+	.pane {
+		position: relative;
+		border-right: 1px solid var(--hairline);
+		min-width: 0;
+	}
+	.pane:last-child {
+		border-right: none;
+	}
+	.pane.result {
+		background: rgba(169, 140, 255, 0.035);
+	}
+	.pane-h {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 0.8rem;
+		font-size: 0.62rem;
+		letter-spacing: 0.14em;
+		color: var(--faint);
+		border-bottom: 1px solid var(--hairline);
+	}
+	.branch {
+		letter-spacing: 0.02em;
+		text-transform: none;
+		font-size: 0.64rem;
+		padding: 0.12rem 0.42rem;
+		border-radius: 5px;
+		border: 1px solid var(--violet-line);
+		color: var(--violet-hi);
+		background: var(--violet-wash);
+	}
+	.code {
+		all: unset;
+		display: block;
+		font-family: var(--font-mono);
+		font-size: 0.68rem;
+		line-height: 1.75;
+		padding: 0.7rem 0.9rem 0.9rem;
+		color: var(--muted);
+		white-space: pre;
+		overflow-x: auto;
+	}
+	.hl-add {
+		display: inline-block;
+		width: 100%;
+		background: rgba(76, 195, 138, 0.13);
+		box-shadow: -0.9rem 0 0 rgba(76, 195, 138, 0.13), 0.9rem 0 0 rgba(76, 195, 138, 0.13);
+		color: var(--add);
+	}
+	.hl-their {
+		display: inline-block;
+		width: 100%;
+		background: rgba(169, 140, 255, 0.14);
+		box-shadow: -0.9rem 0 0 rgba(169, 140, 255, 0.14), 0.9rem 0 0 rgba(169, 140, 255, 0.14);
+		color: var(--violet-hi);
+	}
+	.hl-in {
+		display: inline-block;
+		width: 100%;
+		color: var(--ink);
+		background: rgba(169, 140, 255, 0.08);
+		box-shadow: -0.9rem 0 0 rgba(169, 140, 255, 0.08), 0.9rem 0 0 rgba(169, 140, 255, 0.08);
+	}
+	.ribbon {
+		position: absolute;
+		top: 52%;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		background: var(--violet);
+		color: #16101f;
+		font-weight: 700;
+		font-size: 0.75rem;
+		box-shadow: 0 0 0 3px rgba(169, 140, 255, 0.25);
+	}
+	.r-yours {
+		right: -10px;
+		z-index: 2;
+	}
+	.r-theirs {
+		left: -10px;
+		z-index: 2;
+	}
+	.statusbar {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.5rem 0.9rem;
+		border-top: 1px solid var(--hairline);
+		font-size: 0.64rem;
+		color: var(--faint);
+	}
+	.ok {
+		color: var(--add);
+	}
+	@media (max-width: 620px) {
+		.panes {
+			grid-template-columns: 1fr 1.12fr;
+		}
+		.pane:last-child {
+			display: none;
+		}
+		.hint {
+			display: none;
+		}
+	}
+</style>

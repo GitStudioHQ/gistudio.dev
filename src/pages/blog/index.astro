@@ -1,114 +1,99 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
+import Site from '../../layouts/Site.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+const title = 'The GitStudio blog — shipping developer tools in the open';
+const description =
+	'War stories and field guides from building GitStudio: publishing to the VS Code Marketplace and Open VSX, fighting content filters, and the messy reality of shipping developer tools.';
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
+<Site title={title} description={description}>
+	<section class="head">
+		<div class="container">
+			<p class="eyebrow" data-reveal>The blog</p>
+			<h1 data-reveal>Built in the <em class="fx">open.</em></h1>
+			<p class="lede" data-reveal>
+				Field guides and war stories from shipping GitStudio — the publishing pipelines, the
+				marketplace landmines, and everything Microsoft finds “suspicious”.
+			</p>
+		</div>
+	</section>
+	<section class="list-wrap">
+		<div class="container">
+			<ul class="posts">
+				{
+					posts.map((post, i) => (
+						<li data-reveal style={`--reveal-delay:${i * 0.06}s`}>
+							<a href={`/blog/${post.id}/`}>
+								<p class="date mono">
+									<FormattedDate date={post.data.pubDate} />
+								</p>
+								<h2>{post.data.title}</h2>
+								<p class="desc">{post.data.description}</p>
+								<span class="link-arrow">Read the post</span>
+							</a>
+						</li>
+					))
 				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+			</ul>
+		</div>
+	</section>
+</Site>
+
+<style>
+	.head {
+		padding-top: clamp(56px, 8vw, 96px);
+		padding-bottom: clamp(24px, 4vw, 48px);
+		background: radial-gradient(45% 60% at 30% 0%, rgba(169, 140, 255, 0.1), transparent 70%);
+	}
+	.list-wrap {
+		padding-bottom: clamp(72px, 10vw, 128px);
+	}
+	.posts {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		max-width: 860px;
+	}
+	.posts li {
+		border-bottom: 1px solid var(--hairline);
+	}
+	.posts li:first-child {
+		border-top: 1px solid var(--hairline);
+	}
+	.posts a {
+		display: block;
+		padding: 2.2rem 0.25rem;
+		color: inherit;
+		transition: background 0.15s ease;
+	}
+	.posts a:hover {
+		text-decoration: none;
+	}
+	.date {
+		font-size: 0.75rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--violet);
+		margin-bottom: 0.6rem;
+	}
+	.posts h2 {
+		font-size: clamp(1.35rem, 1.1rem + 1.2vw, 1.85rem);
+		margin-bottom: 0.5rem;
+		transition: color 0.15s ease;
+	}
+	.posts a:hover h2 {
+		color: var(--violet-hi);
+	}
+	.desc {
+		color: var(--muted);
+		max-width: 68ch;
+		line-height: 1.65;
+		margin-bottom: 1rem;
+	}
+</style>

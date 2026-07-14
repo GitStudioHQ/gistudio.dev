@@ -1,0 +1,67 @@
+---
+import Site from '../layouts/Site.astro';
+---
+
+<Site title="404 — ref not found · GitStudio" description="This page doesn't exist." noindex>
+	<section class="nf">
+		<div class="container center">
+			<p class="code mono" data-reveal>
+				<span class="err">fatal:</span> pathspec '<span class="path" id="nf-path">this-page</span>' did not match any file(s) known to git
+			</p>
+			<h1>404 — ref not <em class="fx">found.</em></h1>
+			<p class="lede">
+				Whatever branch this page was on, it's been rebased out of existence.
+				The Undo button can't help you here — but the homepage can.
+			</p>
+			<div class="cta-row">
+				<a class="btn btn-primary btn-lg" href="/">git checkout main</a>
+				<a class="btn btn-ghost btn-lg" href="/download">Go to downloads</a>
+			</div>
+		</div>
+	</section>
+</Site>
+
+<script>
+	// Show the actual missing path in the error line — a small honest touch.
+	const el = document.getElementById('nf-path');
+	if (el) el.textContent = location.pathname.replace(/^\/|\/$/g, '') || 'this-page';
+</script>
+
+<style>
+	.nf {
+		padding-block: clamp(96px, 16vw, 190px);
+		text-align: center;
+		background: radial-gradient(50% 60% at 50% 20%, rgba(169, 140, 255, 0.1), transparent 70%);
+	}
+	.code {
+		font-size: 0.85rem;
+		color: var(--muted);
+		background: var(--bg-0);
+		border: 1px solid var(--hairline);
+		border-radius: 10px;
+		display: inline-block;
+		padding: 0.7rem 1.1rem;
+		margin-bottom: 2rem;
+		overflow-wrap: anywhere;
+	}
+	.err {
+		color: var(--del);
+	}
+	.path {
+		color: var(--warn);
+	}
+	.lede {
+		margin-inline: auto;
+	}
+	.cta-row {
+		display: flex;
+		gap: 0.8rem;
+		justify-content: center;
+		flex-wrap: wrap;
+		margin-top: 2rem;
+	}
+	.cta-row .btn-primary {
+		font-family: var(--font-mono);
+		font-weight: 600;
+	}
+</style>

@@ -1,86 +1,108 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
+import Site from './Site.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate } = Astro.props;
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: title,
+	description,
+	datePublished: pubDate.toISOString(),
+	...(updatedDate && { dateModified: updatedDate.toISOString() }),
+	author: { '@type': 'Organization', name: 'GitStudio', url: 'https://gitstudio.dev/' },
+	url: new URL(Astro.url.pathname, Astro.site).toString(),
+};
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+<Site title={`${title} · GitStudio blog`} description={description} jsonLd={jsonLd}>
+	<article>
+		<header class="post-head">
+			<div class="container">
+				<p class="crumbs mono"><a href="/blog">← All posts</a></p>
+				<p class="date mono">
+					<FormattedDate date={pubDate} />
+					{
+						updatedDate && (
+							<span class="upd">
+								· updated <FormattedDate date={updatedDate} />
+							</span>
+						)
+					}
+				</p>
+				<h1>{title}</h1>
+				<p class="desc">{description}</p>
+			</div>
+		</header>
+		<div class="container">
+			<div class="prose">
+				<slot />
+			</div>
+			<footer class="post-foot">
+				<a class="link-arrow" href="/blog">More from the blog</a>
+				<a class="link-arrow" href="/download">Try GitStudio</a>
+			</footer>
+		</div>
+	</article>
+</Site>
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+<style>
+	.post-head {
+		padding-top: clamp(48px, 7vw, 80px);
+		padding-bottom: clamp(28px, 4vw, 48px);
+		border-bottom: 1px solid var(--hairline);
+		margin-bottom: clamp(32px, 5vw, 56px);
+		background: radial-gradient(45% 60% at 50% 0%, rgba(169, 140, 255, 0.08), transparent 70%);
+	}
+	.post-head .container {
+		max-width: 860px;
+	}
+	.crumbs {
+		font-size: 0.78rem;
+		margin-bottom: 2rem;
+	}
+	.crumbs a {
+		color: var(--muted);
+	}
+	.crumbs a:hover {
+		color: var(--violet-hi);
+		text-decoration: none;
+	}
+	.date {
+		font-size: 0.78rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--violet);
+		margin-bottom: 1rem;
+	}
+	.upd {
+		color: var(--faint);
+		text-transform: none;
+		letter-spacing: 0.02em;
+	}
+	h1 {
+		font-size: clamp(1.9rem, 1.3rem + 2.6vw, 3rem);
+		max-width: 24ch;
+	}
+	.desc {
+		color: var(--muted);
+		font-size: var(--fs-lede);
+		line-height: 1.65;
+		max-width: 62ch;
+		margin: 0;
+	}
+	.post-foot {
+		max-width: 720px;
+		margin: 3.5rem auto 0;
+		padding: 1.4rem 0 clamp(56px, 8vw, 96px);
+		border-top: 1px solid var(--hairline);
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+</style>

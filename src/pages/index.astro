@@ -1,49 +1,723 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Site from '../layouts/Site.astro';
+import GraphField from '../components/GraphField.astro';
+import MockGraph from '../components/MockGraph.astro';
+import MockMerge from '../components/MockMerge.astro';
+import MockRebase from '../components/MockRebase.astro';
+import MockAssistant from '../components/MockAssistant.astro';
+import { SITE_DESCRIPTION, GITHUB_REPO_URL, EXT, MERGE, APP, AI_PROVIDERS } from '../consts';
+
+const title = 'GitStudio — the free, open-source Git suite for VS Code, Cursor & desktop';
+
+const jsonLd = [
+	{
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		name: 'GitStudio',
+		url: 'https://gitstudio.dev/',
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'SoftwareApplication',
+		name: 'GitStudio',
+		description: SITE_DESCRIPTION,
+		url: 'https://gitstudio.dev/',
+		downloadUrl: 'https://gitstudio.dev/download',
+		applicationCategory: 'DeveloperApplication',
+		operatingSystem: 'VS Code, Cursor, macOS, Windows, Linux',
+		softwareVersion: EXT.version,
+		license: 'https://www.apache.org/licenses/LICENSE-2.0',
+		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+	},
+];
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
+<Site title={title} description={SITE_DESCRIPTION} jsonLd={jsonLd}>
+	<!-- ============ HERO ============ -->
+	<section class="hero">
+		<div class="container">
+			<p class="eyebrow center hero-eyebrow">Free · Open source · VS Code · Cursor · Desktop</p>
+			<h1>Git deserves a <em class="fx">studio.</em></h1>
+			<p class="lede center-lede">
+				GitStudio is the JetBrains-grade Git suite for VS Code, Cursor, and your desktop —
+				a live commit graph, three-pane merge, a rebase you can drag, an Undo for everything,
+				pull requests in your editor, and AI that runs on your
+				keys. <strong>Free on every repo, public or private.</strong>
 			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
+			<div class="cta-row">
+				<a class="btn btn-primary btn-lg" href="/download">Install the extension</a>
+				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">
+					<svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg>
+					Star on GitHub
+				</a>
+			</div>
+		</div>
+		<GraphField />
+		<div class="container">
+			<ul class="facts" aria-label="Project facts">
+				<li class="chip"><span class="dot" aria-hidden="true"></span>v{EXT.version}</li>
+				<li class="chip">Apache-2.0</li>
+				<li class="chip">No account</li>
+				<li class="chip">No paywall</li>
+				<li class="chip">No telemetry</li>
+				<li class="chip">AI off by default</li>
 			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
+		</div>
+	</section>
+
+	<!-- ============ THE SUITE ============ -->
+	<section class="section" id="suite">
+		<div class="container">
+			<p class="eyebrow" data-reveal>The suite</p>
+			<h2 data-reveal>One suite. Wherever you <em class="fx">work.</em></h2>
+			<p class="lede" data-reveal>
+				Three products, one engine underneath. The same pure, unit-tested core lays out every
+				graph and models every diff and merge — in your editor and on your desktop.
 			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
+
+			<div class="trio">
+				<a class="card product" href="/extension" data-reveal>
+					<div class="p-head">
+						<span class="badge">VS Code · Cursor</span>
+						<span class="ver">v{EXT.version}</span>
+					</div>
+					<h3>GitStudio <span class="p-sub">the extension</span></h3>
+					<p>
+						The whole Git workflow in your editor: graph, blame, history, staging, merge,
+						rebase, worktrees, and GitHub pull requests. {EXT.commands} commands, five views, one chord.
+					</p>
+					<span class="link-arrow">Explore the extension</span>
+				</a>
+
+				<a class="card product" href="/desktop" data-reveal style="--reveal-delay:.08s">
+					<div class="p-head">
+						<span class="badge beta">Beta</span>
+						<span class="ver">v{APP.version}</span>
+					</div>
+					<h3>GitStudio <span class="p-sub">the desktop app</span></h3>
+					<p>
+						The same engine as a native app for macOS, Windows, and Linux — plus a real
+						terminal, your whole GitHub, and an agent that asks before it writes.
+					</p>
+					<span class="link-arrow">Meet the desktop</span>
+				</a>
+
+				<a class="card product" href="/merge-studio" data-reveal style="--reveal-delay:.16s">
+					<div class="p-head">
+						<span class="badge live">● Live on both marketplaces</span>
+						<span class="ver">v{MERGE.version}</span>
+					</div>
+					<h3>Merge Studio <span class="p-sub">the original</span></h3>
+					<p>
+						The focused three-pane merge editor that started it all. Tiny, fast, and already
+						resolving conflicts in the wild. MIT licensed.
+					</p>
+					<span class="link-arrow">See Merge Studio</span>
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<!-- ============ FEATURE: GRAPH ============ -->
+	<section class="section">
+		<div class="container feature">
+			<div class="f-copy" data-reveal>
+				<p class="eyebrow">01 · Visualize</p>
+				<h2>History you can actually <em class="fx">read.</em></h2>
+				<p class="lede">
+					A real commit graph — virtualized, so it stays fast at tens of thousands of commits —
+					with colored lanes, ref chips, and keyboard navigation. Inline blame on the current
+					line, full-file annotations with a code-age heatmap, per-file and per-line history,
+					and a reflog time-machine for the day everything goes wrong.
+				</p>
+				<ul class="ticks">
+					<li>Sidebar-native Commits view — compact topology with author avatars riding the nodes</li>
+					<li>Blame that feels native: current line, status bar, heatmap annotations</li>
+					<li>Line history — watch a single line evolve across revisions</li>
+				</ul>
+			</div>
+			<div class="f-visual" data-reveal style="--reveal-delay:.1s"><MockGraph /></div>
+		</div>
+	</section>
+
+	<!-- ============ FEATURE: MERGE ============ -->
+	<section class="section">
+		<div class="container feature flip">
+			<div class="f-copy" data-reveal>
+				<p class="eyebrow">02 · Change</p>
+				<h2>Merges you <em class="fx">finish,</em> not survive.</h2>
+				<p class="lede">
+					A JetBrains-style three-pane conflict editor — yours, result, theirs — with one-click
+					accept ribbons, and conflicts that open themselves the moment they appear. Stage by
+					hunk or by line from any diff. Word-level side-by-side everywhere.
+				</p>
+				<ul class="ticks">
+					<li>Instant conflict detection — GitStudio watches <code>.git</code> operation state directly</li>
+					<li>Guided commit box: amend, sign-off, author override, Commit &amp; Push</li>
+					<li>Stage exactly the lines you mean — from any editor or diff</li>
+				</ul>
+			</div>
+			<div class="f-visual" data-reveal style="--reveal-delay:.1s"><MockMerge /></div>
+		</div>
+	</section>
+
+	<!-- ============ FEATURE: REBASE ============ -->
+	<section class="section">
+		<div class="container feature">
+			<div class="f-copy" data-reveal>
+				<p class="eyebrow">03 · Rewrite</p>
+				<h2>Rebase without the <em class="fx">fear.</em></h2>
+				<p class="lede">
+					Reorder commits by dragging them. Pick, reword, edit, squash, fixup, drop — visually.
+					And underneath it all, a universal Undo: GitStudio snapshots the reflog before every
+					destructive operation and reverses it with one command. Pushed history falls back to
+					a safe revert.
+				</p>
+				<ul class="ticks">
+					<li>Undo never hijacks <span class="kbd">Ctrl</span>+<span class="kbd">Z</span> — it's its own deliberate command</li>
+					<li>Force-push defaults to <code>--force-with-lease</code></li>
+					<li>Reflog time-machine when you need to go further back</li>
+				</ul>
+			</div>
+			<div class="f-visual" data-reveal style="--reveal-delay:.1s"><MockRebase /></div>
+		</div>
+	</section>
+
+	<!-- ============ BENTO: THE REST ============ -->
+	<section class="section">
+		<div class="container">
+			<p class="eyebrow" data-reveal>04 · Manage &amp; collaborate</p>
+			<h2 data-reveal>The rest of the workflow, <em class="fx">included.</em></h2>
+			<div class="bento">
+				<div class="card" data-reveal>
+					<h3>Five views, every operation</h3>
+					<p>Changes, Commits, Stashes, Worktrees, Pull Requests. Branches, remotes, and tags with full operations — checkout, merge, rebase, rename, push, prune — a right-click away.</p>
+				</div>
+				<div class="card" data-reveal style="--reveal-delay:.06s">
+					<h3>Pull requests, in-editor</h3>
+					<p>List, check out, review with inline comments, submit, merge, and create GitHub PRs — with the GitHub sign-in your editor already has.</p>
+				</div>
+				<div class="card" data-reveal style="--reveal-delay:.12s">
+					<h3>Branch compare</h3>
+					<p>A GitHub-style panel: ahead/behind, the commits between any two refs, and the changed files as native diffs.</p>
+				</div>
+				<div class="card" data-reveal>
+					<h3>Instant everything</h3>
+					<p>GitStudio discovers your repo itself and paints from local git — no waiting on vscode.git to wake up. Views stay warm; staging is optimistic and immediate.</p>
+				</div>
+				<div class="card" data-reveal style="--reveal-delay:.06s">
+					<h3>Live sync, visible</h3>
+					<p>Ahead/behind in the status bar and the Changes header as real push/pull buttons. Fetch updates every branch's ↑↓ badges in place.</p>
+				</div>
+				<div class="card" data-reveal style="--reveal-delay:.12s">
+					<h3>{EXT.commands} commands, one chord</h3>
+					<p><span class="kbd">Ctrl+Alt+G</span> then a letter — blame <span class="kbd">B</span>, history <span class="kbd">H</span>, diff <span class="kbd">D</span>, stage <span class="kbd">S</span>, undo <span class="kbd">Z</span>. Cmd on macOS. All remappable.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ============ AI ============ -->
+	<section class="section ai">
+		<div class="container feature flip">
+			<div class="f-copy" data-reveal>
+				<p class="eyebrow">05 · Assist — optional</p>
+				<h2>AI that answers to <em class="fx">you.</em></h2>
+				<p class="lede">
+					GitStudio is a two-way bridge. Connect any model you already pay for — or one running
+					on your own machine — and get commit messages, diff explanations, and an agent that
+					reads real status and history and <strong>asks before every write</strong>. Then flip
+					it around: one click exposes your repo to Claude Desktop, Cursor, or any MCP client.
+				</p>
+				<ul class="ticks">
+					<li>Your keys, stored in the OS keychain — never in a webview, never on our servers. We don't have servers.</li>
+					<li>A permission slider — read-only, commits, or everything. Every tool call visible.</li>
+					<li>MCP server built in: your repo's Git, available to your agents. Writes are a second opt-in.</li>
+					<li>Off by default. With nothing connected, the AI simply isn't there — and Git never waits on it.</li>
+				</ul>
+			</div>
+			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
+				<MockAssistant />
+			</div>
+		</div>
+		<div class="container">
+			<ul class="providers" aria-label="Supported AI providers" data-reveal>
+				{AI_PROVIDERS.map((p) => <li class="chip">{p}</li>)}
+			</ul>
+		</div>
+	</section>
+
+	<!-- ============ COMPARISON ============ -->
+	<section class="section">
+		<div class="container">
+			<p class="eyebrow" data-reveal>The honest table</p>
+			<h2 data-reveal>The features are the <em class="fx">pitch.</em></h2>
+			<p class="lede" data-reveal>
+				We like GitLens and GitKraken — GitStudio exists because the best parts of them, and of
+				JetBrains, shouldn't cost a subscription or a context switch.
 			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+			<div class="table-wrap" data-reveal>
+				<table class="cmp">
+					<thead>
+						<tr>
+							<th scope="col">Capability</th>
+							<th scope="col">GitStudio</th>
+							<th scope="col">GitLens</th>
+							<th scope="col">GitKraken Desktop</th>
+							<th scope="col">VS Code built-in</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">Commit graph on private repos</th>
+							<td class="col-gs"><span class="yes">✓ Free</span></td>
+							<td><span class="part">Pro</span></td>
+							<td><span class="part">Paid</span></td>
+							<td><span class="no">—</span></td>
+						</tr>
+						<tr>
+							<th scope="row">Three-pane merge editor</th>
+							<td class="col-gs"><span class="yes">✓</span><small>ribbons, auto-open, dashboard</small></td>
+							<td><span class="no">uses built-in</span></td>
+							<td><span class="yes">✓</span></td>
+							<td><span class="part">basic</span></td>
+						</tr>
+						<tr>
+							<th scope="row">Interactive rebase UI</th>
+							<td class="col-gs"><span class="yes">✓</span><small>drag to reorder</small></td>
+							<td><span class="yes">✓</span></td>
+							<td><span class="yes">✓</span></td>
+							<td><span class="no">—</span></td>
+						</tr>
+						<tr>
+							<th scope="row">Universal undo for Git operations</th>
+							<td class="col-gs"><span class="yes">✓</span><small>reflog-powered</small></td>
+							<td><span class="no">—</span></td>
+							<td><span class="yes">✓</span></td>
+							<td><span class="no">—</span></td>
+						</tr>
+						<tr>
+							<th scope="row">GitHub PR review in the editor</th>
+							<td class="col-gs"><span class="yes">✓ built in</span></td>
+							<td><span class="part">companion ext</span></td>
+							<td><span class="yes">✓ in-app</span></td>
+							<td><span class="part">companion ext</span></td>
+						</tr>
+						<tr>
+							<th scope="row">AI on your own keys</th>
+							<td class="col-gs"><span class="yes">✓</span><small>10+ providers</small></td>
+							<td><span class="part">Pro / cloud</span></td>
+							<td><span class="part">account + cloud</span></td>
+							<td><span class="part">Copilot sub</span></td>
+						</tr>
+						<tr>
+							<th scope="row">Local-model AI (Ollama, LM Studio)</th>
+							<td class="col-gs"><span class="yes">✓ desktop</span></td>
+							<td><span class="no">—</span></td>
+							<td><span class="no">—</span></td>
+							<td><span class="no">—</span></td>
+						</tr>
+						<tr>
+							<th scope="row">Fully open source</th>
+							<td class="col-gs"><span class="yes">✓ Apache-2.0</span></td>
+							<td><span class="part">open-core</span></td>
+							<td><span class="no">closed</span></td>
+							<td><span class="yes">✓ MIT</span></td>
+						</tr>
+						<tr>
+							<th scope="row">Account required</th>
+							<td class="col-gs"><span class="yes">Never</span></td>
+							<td><span class="part">for Pro</span></td>
+							<td><span class="part">yes</span></td>
+							<td><span class="yes">No</span></td>
+						</tr>
+						<tr>
+							<th scope="row">Price for the full feature set</th>
+							<td class="col-gs"><span class="yes">$0</span></td>
+							<td><span class="part">subscription</span></td>
+							<td><span class="part">subscription</span></td>
+							<td><span class="yes">$0</span><small>small feature set</small></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<p class="fine" data-reveal>
+				Reflects each product's publicly documented behavior as of July 2026 — plans change, so
+				check their pricing pages. Spot an error? <a href={`${GITHUB_REPO_URL}/issues`} target="_blank" rel="noopener">File an issue</a> and we'll fix it.
+			</p>
+		</div>
+	</section>
+
+	<!-- ============ OPEN SOURCE ============ -->
+	<section class="section oss">
+		<div class="container center">
+			<p class="eyebrow center" data-reveal>Open source</p>
+			<h2 data-reveal>Free as in <em class="fx">actually.</em></h2>
+			<p class="lede" data-reveal>
+				No pro tier. No trial clock. No "unlock the graph" upsell. GitStudio is Apache-2.0,
+				built in the open as an npm monorepo around a pure, unit-tested engine.
+				If it's useful, star it. If it's broken, file it. If it's close, PR it.
+			</p>
+			<div class="cta-row" data-reveal>
+				<a class="btn btn-primary" href={GITHUB_REPO_URL} target="_blank" rel="noopener">Read the source</a>
+				<a class="btn btn-ghost" href="/blog">How it's built — the blog</a>
+			</div>
+		</div>
+	</section>
+
+	<!-- ============ FAQ ============ -->
+	<section class="section">
+		<div class="container faq-wrap">
+			<div>
+				<p class="eyebrow" data-reveal>FAQ</p>
+				<h2 data-reveal>Fair <em class="fx">questions.</em></h2>
+			</div>
+			<div class="faqs" data-reveal>
+				<details>
+					<summary>Is it really all free — even the graph, even on private repos?</summary>
+					<p>
+						Yes. Every feature on this page works on public and private repos at no cost:
+						the graph, blame, history, merge, rebase, PR review, all of it. There's no
+						account, no trial, and telemetry is off by default. The code is Apache-2.0 on
+						GitHub, so you can hold us to that.
+					</p>
+				</details>
+				<details>
+					<summary>What does the AI cost?</summary>
+					<p>
+						Whatever your provider charges — the keys are yours, and requests go straight
+						from your machine to your provider. With Ollama or LM Studio on the desktop app,
+						nothing leaves your machine at all. No GitStudio account, no middleman, no markup.
+						And with nothing connected, the AI features simply stay hidden.
+					</p>
+				</details>
+				<details>
+					<summary>Does it work in Cursor?</summary>
+					<p>
+						Identically. GitStudio is built on stable VS Code APIs (1.74+), so it runs the
+						same in VS Code, Cursor, VSCodium, Windsurf, and anything else that speaks the
+						extension protocol. That's also why we publish to Open VSX, not just the
+						Microsoft Marketplace.
+					</p>
+				</details>
+				<details>
+					<summary>How is this different from GitLens?</summary>
+					<p>
+						GitLens is excellent at <em>information</em> — blame, lenses, history. GitStudio
+						also owns the <em>interaction</em>: a three-pane merge, drag-to-reorder rebase,
+						hunk and line staging, a universal Undo, and PR review — the workflow pieces
+						JetBrains users take for granted. And the parts GitLens gates behind Pro on
+						private repos are simply free here.
+					</p>
+				</details>
+				<details>
+					<summary>What's the state of the desktop app?</summary>
+					<p>
+						Honest answer: v{APP.version} beta. It shares the proven engine with the extension
+						and already does more than most Git clients — graph, diffs, merges, a real
+						terminal, GitHub PRs/issues/gists/notifications, and the Assistant. You can build
+						it from source today; signed installers land on GitHub Releases.
+					</p>
+				</details>
+				<details>
+					<summary>Why should I trust a VSIX downloaded from a website?</summary>
+					<p>
+						You shouldn't — you should verify it. Every download ships with a SHA-256 checksum,
+						and the entire source is public, so you can audit it or build the VSIX yourself
+						with two commands. That's more than you can do for most marketplace listings.
+					</p>
+				</details>
+			</div>
+		</div>
+	</section>
+
+	<!-- ============ FINAL CTA ============ -->
+	<section class="section final">
+		<div class="container center">
+			<h2 data-reveal>Your move, <em class="fx">git.</em></h2>
+			<p class="lede" data-reveal>
+				Two minutes from now your editor can have a commit graph, a real merge editor,
+				and an Undo button. That's the whole ask.
+			</p>
+			<div class="cta-row" data-reveal>
+				<a class="btn btn-primary btn-lg" href="/download">Get GitStudio</a>
+				<a class="btn btn-ghost btn-lg" href="/extension">Tour the features</a>
+			</div>
+		</div>
+	</section>
+</Site>
+
+<style>
+	/* HERO */
+	.hero {
+		padding-top: clamp(60px, 9vw, 110px);
+		text-align: center;
+		position: relative;
+		overflow: clip;
+	}
+	.hero::before {
+		content: '';
+		position: absolute;
+		inset: -20% -10% auto;
+		height: 75%;
+		background:
+			radial-gradient(46% 55% at 50% 8%, rgba(169, 140, 255, 0.14), transparent 70%),
+			radial-gradient(30% 40% at 76% 30%, rgba(195, 107, 240, 0.07), transparent 70%);
+		pointer-events: none;
+	}
+	.hero > * {
+		position: relative;
+	}
+	.hero-eyebrow {
+		justify-content: center;
+	}
+	.hero h1 {
+		max-width: 17ch;
+		margin-inline: auto;
+		animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+	}
+	.center-lede {
+		margin-inline: auto;
+		max-width: 58ch;
+		animation: rise 0.8s 0.12s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+	}
+	.cta-row {
+		display: flex;
+		gap: 0.8rem;
+		justify-content: center;
+		flex-wrap: wrap;
+		margin-top: 2.1rem;
+	}
+	.hero .cta-row {
+		animation: rise 0.8s 0.22s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+	}
+	@keyframes rise {
+		from {
+			opacity: 0;
+			transform: translateY(16px);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+	.facts {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.55rem;
+		justify-content: center;
+		padding: 0 0 clamp(56px, 8vw, 96px);
+		margin: 0;
+	}
+
+	/* SUITE */
+	.trio {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.1rem;
+		margin-top: 2.6rem;
+	}
+	.product {
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+		color: inherit;
+	}
+	.product:hover {
+		text-decoration: none;
+		transform: translateY(-3px);
+	}
+	.p-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.6rem;
+	}
+	.ver {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		color: var(--faint);
+	}
+	.p-sub {
+		display: block;
+		font-size: 0.82rem;
+		font-weight: 500;
+		letter-spacing: 0;
+		color: var(--muted);
+		margin-top: 0.15rem;
+	}
+	.product p {
+		flex: 1;
+	}
+
+	/* FEATURES */
+	.feature > * {
+		min-width: 0;
+	}
+	.feature {
+		display: grid;
+		grid-template-columns: 0.92fr 1.08fr;
+		gap: clamp(2rem, 5vw, 4.5rem);
+		align-items: center;
+	}
+	.feature.flip {
+		grid-template-columns: 1.08fr 0.92fr;
+	}
+	.feature.flip .f-copy {
+		order: 2;
+	}
+	.feature.flip .f-visual {
+		order: 1;
+	}
+	.f-copy .lede {
+		margin-bottom: 1.4rem;
+	}
+	.ticks {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+	}
+	.ticks li {
+		position: relative;
+		padding-left: 1.7rem;
+		color: var(--muted);
+		font-size: var(--fs-1);
+		line-height: 1.6;
+	}
+	.ticks li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.52em;
+		width: 13px;
+		height: 13px;
+		border-radius: 50%;
+		background: var(--violet-wash);
+		border: 1.5px solid var(--violet);
+		box-shadow: inset 0 0 0 2.5px var(--bg-1);
+	}
+
+	/* BENTO */
+	.bento {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.1rem;
+		margin-top: 2.6rem;
+	}
+
+	/* AI */
+	.ai .providers {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.55rem;
+		justify-content: center;
+		margin: 3.2rem 0 0;
+		padding: 0;
+	}
+
+	.fine {
+		font-size: 0.85rem;
+		color: var(--faint);
+		margin-top: 1.1rem;
+		max-width: 70ch;
+	}
+
+	/* OSS band */
+	.oss {
+		background:
+			radial-gradient(50% 70% at 50% 110%, rgba(169, 140, 255, 0.1), transparent 70%);
+	}
+
+	/* FAQ */
+	.faq-wrap {
+		display: grid;
+		grid-template-columns: 0.8fr 1.6fr;
+		gap: clamp(2rem, 5vw, 4rem);
+		align-items: start;
+	}
+	.faqs {
+		display: flex;
+		flex-direction: column;
+		border-top: 1px solid var(--hairline);
+	}
+	details {
+		border-bottom: 1px solid var(--hairline);
+	}
+	summary {
+		cursor: pointer;
+		list-style: none;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1.15rem 0.25rem;
+		color: var(--ink);
+		font-weight: 560;
+		font-size: 1.02rem;
+		transition: color 0.15s ease;
+	}
+	summary::-webkit-details-marker {
+		display: none;
+	}
+	summary::after {
+		content: '+';
+		font-family: var(--font-mono);
+		color: var(--violet);
+		font-size: 1.15rem;
+		flex: none;
+		transition: transform 0.2s ease;
+	}
+	details[open] summary::after {
+		transform: rotate(45deg);
+	}
+	summary:hover {
+		color: var(--violet-hi);
+	}
+	details p {
+		color: var(--muted);
+		padding: 0 0.25rem 1.25rem;
+		margin: 0;
+		max-width: 62ch;
+		line-height: 1.7;
+	}
+	details em {
+		color: var(--text);
+	}
+
+	/* FINAL */
+	.final {
+		background:
+			radial-gradient(55% 80% at 50% 0%, rgba(169, 140, 255, 0.09), transparent 70%);
+	}
+
+	@media (max-width: 960px) {
+		.trio,
+		.bento {
+			grid-template-columns: 1fr 1fr;
+		}
+		.feature,
+		.feature.flip {
+			grid-template-columns: 1fr;
+		}
+		.feature.flip .f-copy {
+			order: 1;
+		}
+		.feature.flip .f-visual {
+			order: 2;
+		}
+		.faq-wrap {
+			grid-template-columns: 1fr;
+		}
+	}
+	@media (max-width: 620px) {
+		.trio,
+		.bento {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

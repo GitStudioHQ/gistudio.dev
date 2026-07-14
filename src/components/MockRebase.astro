@@ -1,0 +1,129 @@
+---
+// Stylized interactive rebase: draggable rows, one mid-drag, plus the Undo net.
+import WindowFrame from './WindowFrame.astro';
+
+const rows = [
+	{ act: 'pick', msg: 'feat(desktop): terminal command menu', state: '' },
+	{ act: 'squash', msg: 'fix(desktop): harden terminal autocomplete', state: 'squash' },
+	{ act: 'pick', msg: 'feat(ai): AI Assistant launcher in the header', state: 'drag' },
+	{ act: 'reword', msg: 'feat(ux): keep-alive views, live streaming', state: '' },
+	{ act: 'drop', msg: 'wip: debug logging', state: 'drop' },
+];
+---
+
+<WindowFrame title="Interactive Rebase — 5 commits onto main" class="mock-rebase">
+	<ul class="rows">
+		{rows.map((r) => (
+			<li class:list={[r.state]}>
+				<span class="grip" aria-hidden="true">⋮⋮</span>
+				<span class:list={['act', r.act]}>{r.act}</span>
+				<span class="msg">{r.msg}</span>
+			</li>
+		))}
+	</ul>
+	<div class="foot">
+		<span class="start">Start Rebase</span>
+		<span class="undo">↺ Undo covers this — reflog snapshot taken</span>
+	</div>
+</WindowFrame>
+
+<style>
+	.rows {
+		list-style: none;
+		margin: 0;
+		padding: 0.7rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+	li {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.5rem 0.7rem;
+		background: var(--bg-2);
+		border: 1px solid var(--hairline);
+		border-radius: 8px;
+		min-width: 0;
+	}
+	li.drag {
+		border-color: var(--violet);
+		background: var(--bg-3);
+		box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.8), 0 0 0 3px rgba(169, 140, 255, 0.18);
+		transform: rotate(-0.6deg) translateX(6px);
+	}
+	li.drop {
+		opacity: 0.45;
+	}
+	li.drop .msg {
+		text-decoration: line-through;
+	}
+	.grip {
+		color: var(--faint);
+		letter-spacing: -2px;
+		cursor: grab;
+		flex: none;
+	}
+	.act {
+		flex: none;
+		width: 54px;
+		text-align: center;
+		font-size: 0.62rem;
+		font-weight: 600;
+		padding: 0.2rem 0;
+		border-radius: 5px;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
+	.act.pick {
+		color: var(--add);
+		background: rgba(76, 195, 138, 0.1);
+		border: 1px solid rgba(76, 195, 138, 0.25);
+	}
+	.act.squash {
+		color: var(--violet-hi);
+		background: var(--violet-wash);
+		border: 1px solid var(--violet-line);
+	}
+	.act.reword {
+		color: var(--warn);
+		background: rgba(227, 179, 65, 0.09);
+		border: 1px solid rgba(227, 179, 65, 0.25);
+	}
+	.act.drop {
+		color: var(--del);
+		background: rgba(247, 110, 120, 0.09);
+		border: 1px solid rgba(247, 110, 120, 0.25);
+	}
+	.msg {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: var(--text);
+	}
+	.foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.65rem 0.9rem;
+		border-top: 1px solid var(--hairline);
+	}
+	.start {
+		font-size: 0.68rem;
+		font-weight: 600;
+		color: #16101f;
+		background: var(--violet);
+		padding: 0.4rem 0.8rem;
+		border-radius: 7px;
+	}
+	.undo {
+		font-size: 0.66rem;
+		color: var(--muted);
+	}
+	@media (max-width: 480px) {
+		.undo {
+			display: none;
+		}
+	}
+</style>

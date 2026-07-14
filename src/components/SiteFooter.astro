@@ -1,0 +1,156 @@
+---
+import { GITHUB_REPO_URL, GITHUB_RELEASES_URL, DOCS_AI_URL, BRAND_KIT_URL, LICENSE_URL } from '../consts';
+import mark from '../assets/brand/gitstudio-mark.svg';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+	<div class="container grid">
+		<div class="brand-col">
+			<a class="brand" href="/" aria-label="GitStudio home">
+				<img src={mark.src} width="30" height="30" alt="" loading="lazy" />
+				<span class="wm">Git<span class="wm-s">Studio</span></span>
+			</a>
+			<p class="tag">Every Git tool, merged into one studio.<br />Free, open source, yours.</p>
+			<div class="chips">
+				<span class="chip">Apache-2.0</span>
+				<span class="chip">No account</span>
+				<span class="chip">No telemetry</span>
+			</div>
+		</div>
+
+		<nav class="col" aria-label="Products">
+			<h4>Products</h4>
+			<a href="/extension">GitStudio for VS Code</a>
+			<a href="/merge-studio">Merge Studio</a>
+			<a href="/desktop">GitStudio Desktop</a>
+			<a href="/download">Download</a>
+		</nav>
+
+		<nav class="col" aria-label="Resources">
+			<h4>Resources</h4>
+			<a href="/blog">Blog</a>
+			<a href={GITHUB_REPO_URL} target="_blank" rel="noopener">GitHub</a>
+			<a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">Releases</a>
+			<a href={DOCS_AI_URL} target="_blank" rel="noopener">AI &amp; agents docs</a>
+		</nav>
+
+		<nav class="col" aria-label="Project">
+			<h4>Project</h4>
+			<a href={LICENSE_URL} target="_blank" rel="noopener">License</a>
+			<a href={BRAND_KIT_URL} target="_blank" rel="noopener">Brand kit</a>
+			<a href={`${GITHUB_REPO_URL}/issues`} target="_blank" rel="noopener">Issues</a>
+			<a href="mailto:hello@gitstudio.dev">hello@gitstudio.dev</a>
+		</nav>
+	</div>
+
+	<div class="container bottom">
+		<p>© {year} GitStudio · Built in the open, one commit at a time.</p>
+		<p><a href="/blog/microsoft-said-my-name-was-suspicious">Read the war stories →</a></p>
+	</div>
+</footer>
+
+<style>
+	.footer {
+		border-top: 1px solid var(--hairline);
+		background:
+			radial-gradient(600px 280px at 85% 110%, rgba(169, 140, 255, 0.07), transparent 70%),
+			var(--bg-0);
+		padding-top: clamp(48px, 7vw, 80px);
+		margin-top: 0;
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: 1.6fr 1fr 1fr 1fr;
+		gap: 2.5rem;
+		padding-bottom: 3rem;
+	}
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+	.brand:hover {
+		text-decoration: none;
+	}
+	.wm {
+		font-weight: 640;
+		font-size: 1.2rem;
+		letter-spacing: -0.03em;
+		color: var(--ink);
+	}
+	.wm-s {
+		background: var(--grad);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+	.tag {
+		color: var(--muted);
+		font-size: var(--fs-1);
+		margin: 1rem 0 1.2rem;
+		line-height: 1.6;
+	}
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.col {
+		display: flex;
+		flex-direction: column;
+		gap: 0.65rem;
+	}
+	.col h4 {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--faint);
+		margin: 0 0 0.35rem;
+	}
+	.col a {
+		color: var(--muted);
+		font-size: var(--fs-1);
+		width: fit-content;
+	}
+	.col a:hover {
+		color: var(--ink);
+		text-decoration: none;
+	}
+	.bottom {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		flex-wrap: wrap;
+		border-top: 1px solid var(--hairline);
+		padding-block: 1.4rem;
+	}
+	.bottom p {
+		margin: 0;
+		font-size: 0.875rem;
+		color: var(--faint);
+	}
+	.bottom a {
+		color: var(--muted);
+	}
+	.bottom a:hover {
+		color: var(--violet-hi);
+	}
+	@media (max-width: 840px) {
+		.grid {
+			grid-template-columns: 1fr 1fr;
+		}
+		.brand-col {
+			grid-column: 1 / -1;
+		}
+	}
+	@media (max-width: 480px) {
+		.grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
