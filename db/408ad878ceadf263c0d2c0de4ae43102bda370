@@ -1,0 +1,66 @@
+src/pages/extension.astro
+  s_44fb38c224c892::t_9bc6a02b510b8e 128-129
+  s_44fb38c224c892::t_ff37983accc625 233-234,238
+  s_44fb38c224c892::t_d85139def51e2c 3
+  s_44fb38c224c892::t_6e3cbcf66e953f 271-277
+  s_44fb38c224c892::t_b6d5d6ea11308e 235-237
+  s_44fb38c224c892::t_e4a92d9d8da3c5 94,229-231,241-244,447
+public/downloads/SHA256SUMS.txt
+  s_44fb38c224c892::t_22ed96a91e89fe 1
+src/pages/index.astro
+  s_44fb38c224c892::t_ed5e478266f1bf 424
+  s_44fb38c224c892::t_21f736a032aabe 94
+  s_44fb38c224c892::t_6e3cbcf66e953f 563-569
+  s_44fb38c224c892::t_a530da7bd5eaae 422-423
+  s_44fb38c224c892::t_38b69f365b0823 425-426
+  s_44fb38c224c892::t_789680acb0feae 4,107,139-142,430,432-436
+src/pages/desktop.astro
+  s_44fb38c224c892::t_1368332b4c7c84 50,182-183,185-188,197-198,201,210
+  s_44fb38c224c892::t_2e140c6af29005 37,39
+src/components/MockAssistant.astro
+  s_44fb38c224c892::t_c1244767e972ad 21,23-24,27-28,31
+src/pages/download.astro
+  s_44fb38c224c892::t_624de3ea1eda7b 114-115
+  s_44fb38c224c892::t_fe150201fffdc1 8
+  s_44fb38c224c892::t_717f69f1431930 113
+  s_44fb38c224c892::t_fe2bbd09b6dea3 29,31,37-43,47-50,52-56,60-62,102-103,108-110,119-125,128,270-292
+src/components/GraphLive.astro
+  s_44fb38c224c892::t_977c1e80f4330c 60-80
+  s_44fb38c224c892::t_253bc2b1651961 1-40,52-59,81-94,99-183
+  s_44fb38c224c892::t_3586c236373402 41-51
+  s_44fb38c224c892::t_8627e87636056a 95-98
+src/consts.ts
+  s_44fb38c224c892::t_154ed594b95c35 19,22,24-29,43-45,47,50-56
+public/vendor/gitstudio-graph.css
+  s_44fb38c224c892::t_6f5e6be825e218 1
+public/vendor/gitstudio-graph.js
+  s_44fb38c224c892::t_01ff3c7c97cd9a 1-1174
+public/vendor/graph-data.json
+  s_44fb38c224c892::t_4ccbdf224282eb 1
+src/components/SiteNav.astro
+  s_8b33a63136feb2::t_04305cb80e5493 2,19,21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "db408ad878ceadf263c0d2c0de4ae43102bda370",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    },
+    "s_8b33a63136feb2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60caf71e-bda0-495e-8b1e-3609d1f7c2a3",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
