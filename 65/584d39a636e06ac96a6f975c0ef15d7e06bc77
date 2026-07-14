@@ -1,0 +1,32 @@
+src/pages/extension.astro
+  s_44fb38c224c892::t_74558eefd2a29a 102
+src/pages/blog/index.astro
+  s_44fb38c224c892::t_74558eefd2a29a 15
+src/layouts/BlogPost.astro
+  s_44fb38c224c892::t_74558eefd2a29a 22
+src/components/SiteNav.astro
+  s_44fb38c224c892::t_dbb015a3a38f45 259-263
+  s_44fb38c224c892::t_64a38be0137891 21
+src/pages/merge-studio.astro
+  s_44fb38c224c892::t_74558eefd2a29a 52
+src/pages/desktop.astro
+  s_44fb38c224c892::t_74558eefd2a29a 31
+src/pages/download.astro
+  s_44fb38c224c892::t_74558eefd2a29a 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "65584d39a636e06ac96a6f975c0ef15d7e06bc77",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
