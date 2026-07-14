@@ -699,6 +699,21 @@ html.no-js [data-reveal] {
 	text-decoration-color: var(--violet);
 }
 
+/* ---------- icon tile (feature-card glyph chip) ---------- */
+
+.icon-tile {
+	width: 40px;
+	height: 40px;
+	border-radius: 11px;
+	display: grid;
+	place-items: center;
+	flex: none;
+	color: var(--text);
+	background: color-mix(in srgb, var(--violet) 9%, var(--bg-2));
+	border: 1px solid var(--violet-line);
+	--icon-hole: color-mix(in srgb, var(--violet) 9%, var(--bg-2));
+}
+
 /* ---------- utilities ---------- */
 
 .sr-only {

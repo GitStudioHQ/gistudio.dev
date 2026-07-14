@@ -1,5 +1,10 @@
 ---
 import Site from '../layouts/Site.astro';
+import Icon from '../components/Icon.astro';
+import { Image } from 'astro:assets';
+import extIcon from '../assets/brand/ext-icon-192.png';
+import appIcon from '../assets/brand/gitstudio-icon-512.png';
+import mergeIcon from '../assets/brand/merge-icon-192.png';
 import GraphField from '../components/GraphField.astro';
 import GraphLive from '../components/GraphLive.astro';
 import MockMerge from '../components/MockMerge.astro';
@@ -81,7 +86,7 @@ const jsonLd = [
 						<span class="badge">VS Code · Cursor</span>
 						<span class="ver">v{EXT.version}</span>
 					</div>
-					<h3>GitStudio <span class="p-sub">the extension</span></h3>
+					<div class="p-id"><Image src={extIcon} alt="" width="88" height="88" class="p-icon" /><h3>GitStudio <span class="p-sub">the extension</span></h3></div>
 					<p>
 						The whole Git workflow in your editor: graph, blame, history, staging, merge,
 						rebase, worktrees, and GitHub pull requests. {EXT.commands} commands, five views, one chord.
@@ -94,7 +99,7 @@ const jsonLd = [
 						<span class="badge">macOS · Windows · Linux</span>
 						<span class="ver">v{APP.version}</span>
 					</div>
-					<h3>GitStudio <span class="p-sub">the desktop app</span></h3>
+					<div class="p-id"><Image src={appIcon} alt="" width="88" height="88" class="p-icon" /><h3>GitStudio <span class="p-sub">the desktop app</span></h3></div>
 					<p>
 						The same engine as a native app for macOS, Windows, and Linux — plus a real
 						terminal, your whole GitHub, and an agent that asks before it writes.
@@ -107,7 +112,7 @@ const jsonLd = [
 						<span class="badge live">● On both marketplaces</span>
 						<span class="ver">v{MERGE.version}</span>
 					</div>
-					<h3>Merge Studio <span class="p-sub">the original</span></h3>
+					<div class="p-id"><Image src={mergeIcon} alt="" width="88" height="88" class="p-icon" /><h3>Merge Studio <span class="p-sub">the original</span></h3></div>
 					<p>
 						The focused three-pane merge editor that started it all. Tiny, fast, and already
 						resolving conflicts in the wild. MIT licensed.
@@ -193,27 +198,27 @@ const jsonLd = [
 			<h2 data-reveal>The rest of the workflow, <em class="fx">included.</em></h2>
 			<div class="bento">
 				<div class="card" data-reveal>
-					<h3>Five views, every operation</h3>
+					<div class="ch"><span class="icon-tile"><Icon name="views" /></span><h3>Five views, every operation</h3></div>
 					<p>Changes, Commits, Stashes, Worktrees, Pull Requests. Branches, remotes, and tags with full operations — checkout, merge, rebase, rename, push, prune — a right-click away.</p>
 				</div>
 				<div class="card" data-reveal style="--reveal-delay:.06s">
-					<h3>Pull requests, in-editor</h3>
+					<div class="ch"><span class="icon-tile"><Icon name="pr" /></span><h3>Pull requests, in-editor</h3></div>
 					<p>List, check out, review with inline comments, submit, merge, and create GitHub PRs — with the GitHub sign-in your editor already has.</p>
 				</div>
 				<div class="card" data-reveal style="--reveal-delay:.12s">
-					<h3>Branch compare</h3>
+					<div class="ch"><span class="icon-tile"><Icon name="compare" /></span><h3>Branch compare</h3></div>
 					<p>A GitHub-style panel: ahead/behind, the commits between any two refs, and the changed files as native diffs.</p>
 				</div>
 				<div class="card" data-reveal>
-					<h3>Instant everything</h3>
+					<div class="ch"><span class="icon-tile"><Icon name="zap" /></span><h3>Instant everything</h3></div>
 					<p>GitStudio discovers your repo itself and paints from local git — no waiting on vscode.git to wake up. Views stay warm; staging is optimistic and immediate.</p>
 				</div>
 				<div class="card" data-reveal style="--reveal-delay:.06s">
-					<h3>Live sync, visible</h3>
+					<div class="ch"><span class="icon-tile"><Icon name="sync" /></span><h3>Live sync, visible</h3></div>
 					<p>Ahead/behind in the status bar and the Changes header as real push/pull buttons. Fetch updates every branch's ↑↓ badges in place.</p>
 				</div>
 				<div class="card" data-reveal style="--reveal-delay:.12s">
-					<h3>{EXT.commands} commands, one chord</h3>
+					<div class="ch"><span class="icon-tile"><Icon name="keyboard" /></span><h3>{EXT.commands} commands, one chord</h3></div>
 					<p><span class="kbd">Ctrl+Alt+G</span> then a letter — blame <span class="kbd">B</span>, history <span class="kbd">H</span>, diff <span class="kbd">D</span>, stage <span class="kbd">S</span>, undo <span class="kbd">Z</span>. Cmd on macOS. All remappable.</p>
 				</div>
 			</div>
@@ -548,6 +553,21 @@ const jsonLd = [
 		font-size: 0.72rem;
 		color: var(--faint);
 	}
+	.p-id {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.p-id h3 {
+		margin: 0;
+	}
+	:global(.p-icon) {
+		width: 44px;
+		height: 44px;
+		border-radius: 11px;
+		flex: none;
+		box-shadow: 0 0 0 1px rgba(226, 223, 245, 0.1), 0 8px 20px -10px rgba(0, 0, 0, 0.8);
+	}
 	.p-sub {
 		display: block;
 		font-size: 0.82rem;
@@ -617,6 +637,15 @@ const jsonLd = [
 		box-shadow: inset 0 0 0 2.5px var(--bg-1);
 	}
 
+	.ch {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		margin-bottom: 0.7rem;
+	}
+	.ch h3 {
+		margin: 0;
+	}
 	/* BENTO */
 	.bento {
 		display: grid;

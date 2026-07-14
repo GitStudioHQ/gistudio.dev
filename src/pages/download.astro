@@ -1,5 +1,10 @@
 ---
 import Site from '../layouts/Site.astro';
+import Icon from '../components/Icon.astro';
+import { Image } from 'astro:assets';
+import extIcon from '../assets/brand/ext-icon-192.png';
+import appIcon from '../assets/brand/gitstudio-icon-512.png';
+import mergeIcon from '../assets/brand/merge-icon-192.png';
 import InstallCmd from '../components/InstallCmd.astro';
 import { EXT, MERGE, APP, GITHUB_REPO_URL, GITHUB_RELEASES_URL, DOCS_AI_URL } from '../consts';
 
@@ -31,7 +36,7 @@ const description =
 					<span class="chip">VS Code · Cursor</span>
 					<span class="chip">{EXT.license}</span>
 				</div>
-				<h2>GitStudio <span class="sub">the extension</span></h2>
+				<div class="h-id"><Image src={extIcon} alt="" width="96" height="96" class="p-icon" /><h2>GitStudio <span class="sub">the extension</span></h2></div>
 				<p class="lede">
 					The full suite — graph, blame, history, staging, merge, rebase, worktrees, pull
 					requests. One-click install from the marketplace your editor already uses, or
@@ -75,7 +80,7 @@ const description =
 					<span class="chip">v{MERGE.version}</span>
 					<span class="chip">{MERGE.license}</span>
 				</div>
-				<h2>Merge Studio <span class="sub">the merge editor</span></h2>
+				<div class="h-id"><Image src={mergeIcon} alt="" width="96" height="96" class="p-icon" /><h2>Merge Studio <span class="sub">the merge editor</span></h2></div>
 				<p class="lede">
 					The focused three-pane conflict resolver. One-click install from the marketplace
 					your editor already uses — or search <strong>“Merge Studio”</strong> in the
@@ -103,7 +108,7 @@ const description =
 					<span class="chip">Auto-updates</span>
 					<span class="chip">{APP.license}</span>
 				</div>
-				<h2>GitStudio Desktop <span class="sub">the app</span></h2>
+				<div class="h-id"><Image src={appIcon} alt="" width="96" height="96" class="p-icon" /><h2>GitStudio Desktop <span class="sub">the app</span></h2></div>
 				<p class="lede">
 					Native builds for every desk, straight from
 					the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Release</a> — install once
@@ -166,6 +171,22 @@ const description =
 		grid-template-columns: 1.15fr 0.85fr;
 		gap: clamp(2rem, 5vw, 4.5rem);
 		align-items: start;
+	}
+	.h-id {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 0.6rem;
+	}
+	.h-id h2 {
+		margin: 0;
+	}
+	:global(.p-icon) {
+		width: 52px;
+		height: 52px;
+		border-radius: 12px;
+		flex: none;
+		box-shadow: 0 0 0 1px rgba(226, 223, 245, 0.1), 0 10px 24px -12px rgba(0, 0, 0, 0.8);
 	}
 	.dl h2 .sub {
 		display: block;

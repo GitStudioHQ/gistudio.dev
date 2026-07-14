@@ -1,5 +1,8 @@
 ---
 import Site from '../layouts/Site.astro';
+import Icon from '../components/Icon.astro';
+import ListingCard from '../components/ListingCard.astro';
+import extIcon from '../assets/brand/ext-icon-192.png';
 import GraphLive from '../components/GraphLive.astro';
 import MockBlame from '../components/MockBlame.astro';
 import InstallCmd from '../components/InstallCmd.astro';
@@ -12,6 +15,7 @@ const description =
 const pillars = [
 	{
 		n: '01',
+		icon: 'graph',
 		name: 'Visualize',
 		desc: 'Understand any repo at a glance.',
 		items: [
@@ -23,6 +27,7 @@ const pillars = [
 	},
 	{
 		n: '02',
+		icon: 'stage',
 		name: 'Change',
 		desc: 'Stage and commit with precision.',
 		items: [
@@ -34,6 +39,7 @@ const pillars = [
 	},
 	{
 		n: '03',
+		icon: 'rebase',
 		name: 'Rewrite',
 		desc: 'History surgery, with a net.',
 		items: [
@@ -44,6 +50,7 @@ const pillars = [
 	},
 	{
 		n: '04',
+		icon: 'branch',
 		name: 'Manage',
 		desc: 'Everything with a ref, in reach.',
 		items: [
@@ -55,6 +62,7 @@ const pillars = [
 	},
 	{
 		n: '05',
+		icon: 'pr',
 		name: 'Collaborate',
 		desc: 'GitHub PRs without the browser.',
 		items: [
@@ -65,6 +73,7 @@ const pillars = [
 	},
 	{
 		n: '06',
+		icon: 'sparkle',
 		name: 'Assist',
 		desc: 'Optional AI. Your keys.',
 		items: [
@@ -116,6 +125,18 @@ const jsonLd = {
 				<a class="btn btn-primary btn-lg" href="/download#extension">Install now</a>
 				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">View source</a>
 			</div>
+			<div class="listing-wrap" data-reveal style="--reveal-delay:.06s">
+				<ListingCard
+					icon={extIcon}
+					name="GitStudio"
+					tagline="The whole Git workflow, in one extension"
+					meta={[`v${EXT.version}`, 'Apache-2.0', `${EXT.commands} commands`, 'VS Code 1.74+']}
+					primaryHref={EXT.marketplaceUrl!}
+					primaryLabel="Install from Marketplace"
+					secondaryHref={EXT.openVsxUrl!}
+					secondaryLabel="Open VSX"
+				/>
+			</div>
 			<div class="editors" data-reveal>
 				<span class="chip">VS Code</span>
 				<span class="chip">Cursor</span>
@@ -138,9 +159,12 @@ const jsonLd = {
 				{pillars.map((p, i) => (
 					<div class="card pillar" data-reveal style={`--reveal-delay:${(i % 2) * 0.07}s`}>
 						<div class="ph">
+							<span class="icon-tile"><Icon name={p.icon as any} /></span>
+							<div class="pht">
+								<h3>{p.name}</h3>
+								<span class="pd">{p.desc}</span>
+							</div>
 							<span class="pn">{p.n}</span>
-							<h3>{p.name}</h3>
-							<span class="pd">{p.desc}</span>
 						</div>
 						<ul>
 							{p.items.map((it) => (
@@ -205,15 +229,15 @@ const jsonLd = {
 			<h2 data-reveal>Instant is a <em class="fx">feature.</em></h2>
 			<div class="perf">
 				<div class="card" data-reveal>
-					<h3>No waiting on vscode.git</h3>
+					<div class="ch"><span class="icon-tile"><Icon name="zap" /></span><h3>No waiting on vscode.git</h3></div>
 					<p>GitStudio discovers your repo itself — symlink-safe <code>rev-parse</code> — and reads history, stashes, and changes through its own git service. Views paint immediately.</p>
 				</div>
 				<div class="card" data-reveal style="--reveal-delay:.07s">
-					<h3>Warm views, optimistic staging</h3>
+					<div class="ch"><span class="icon-tile"><Icon name="views" /></span><h3>Warm views, optimistic staging</h3></div>
 					<p>Sidebar webviews retain context, so switching back is instant. Files move the moment you click; git reconciles in the background.</p>
 				</div>
 				<div class="card" data-reveal style="--reveal-delay:.14s">
-					<h3>Streams, not stalls</h3>
+					<div class="ch"><span class="icon-tile"><Icon name="history" /></span><h3>Streams, not stalls</h3></div>
 					<p>The graph loads a small first page and streams as you scroll. Re-renders only happen when something actually changed.</p>
 				</div>
 			</div>
@@ -262,6 +286,10 @@ const jsonLd = {
 		flex-wrap: wrap;
 		margin-top: 2rem;
 	}
+	.listing-wrap {
+		margin-top: 2rem;
+		max-width: 720px;
+	}
 	.editors {
 		display: flex;
 		flex-wrap: wrap;
@@ -289,10 +317,18 @@ const jsonLd = {
 	}
 	.pillar .ph {
 		display: flex;
-		align-items: baseline;
-		gap: 0.7rem;
-		flex-wrap: wrap;
-		margin-bottom: 0.9rem;
+		align-items: center;
+		gap: 0.85rem;
+		margin-bottom: 1rem;
+	}
+	.pht {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+		min-width: 0;
+	}
+	.pn {
+		margin-left: auto;
 	}
 	.pillar h3 {
 		margin: 0;
@@ -405,6 +441,15 @@ const jsonLd = {
 		font-size: var(--fs-1);
 	}
 
+	.ch {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		margin-bottom: 0.7rem;
+	}
+	.ch h3 {
+		margin: 0;
+	}
 	.perf {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);

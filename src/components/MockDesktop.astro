@@ -2,6 +2,7 @@
 // Stylized desktop app: icon rail, GitHub PR view, terminal dock with command
 // blocks — the "whole client" in one frame.
 import WindowFrame from './WindowFrame.astro';
+import Icon from './Icon.astro';
 
 const prs = [
 	{ n: 47, title: 'feat(desktop): terminal command menu + agent mode', state: 'merged', checks: '✓ 12' },
@@ -14,12 +15,12 @@ const prs = [
 <WindowFrame title="GitStudio — gitstudio (main)" class="mock-desktop">
 	<div class="shell">
 		<div class="rail" aria-hidden="true">
-			<span class="ric"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="4" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="11" cy="8" r="2"/><path d="M5 6v4M9.2 8.9 6.6 10.9M9.2 7.1 6.6 5.1"/></svg></span>
-			<span class="ric on"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="4" cy="3.5" r="1.8"/><circle cx="4" cy="12.5" r="1.8"/><circle cx="12" cy="8" r="1.8"/><path d="M4 5.3v5.4M10.3 8H7.5C6 8 5.6 7 5.6 5.8"/></svg></span>
-			<span class="ric"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5M8 11h.01"/></svg></span>
-			<span class="ric"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3h10v8H8l-3 3v-3H3z"/></svg></span>
-			<span class="ric"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 2a4 4 0 0 1 4 4c0 3 1.5 4 1.5 4h-11S4 9 4 6a4 4 0 0 1 4-4zM6.5 13a1.5 1.5 0 0 0 3 0"/></svg></span>
-			<span class="ric term"><svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 5l3 3-3 3M8 11h5"/></svg></span>
+			<span class="ric"><Icon name="graph" size={15} /></span>
+			<span class="ric on"><Icon name="pr" size={15} /></span>
+			<span class="ric"><Icon name="issue" size={15} /></span>
+			<span class="ric"><Icon name="agent" size={15} /></span>
+			<span class="ric"><Icon name="bell" size={15} /></span>
+			<span class="ric term"><Icon name="terminal" size={15} /></span>
 		</div>
 		<div class="main">
 			<div class="topbar">
@@ -65,6 +66,7 @@ const prs = [
 		background: rgba(255, 255, 255, 0.012);
 	}
 	.ric {
+		--icon-hole: #0e0e19;
 		width: 28px;
 		height: 28px;
 		border-radius: 7px;

@@ -1,5 +1,8 @@
 ---
 import Site from '../layouts/Site.astro';
+import Icon from '../components/Icon.astro';
+import ListingCard from '../components/ListingCard.astro';
+import mergeIcon from '../assets/brand/merge-icon-192.png';
 import MockMerge from '../components/MockMerge.astro';
 import MockConflicts from '../components/MockConflicts.astro';
 import { MERGE } from '../consts';
@@ -10,26 +13,32 @@ const description =
 
 const feats = [
 	{
+		icon: 'merge',
 		h: 'Three panes, zero guessing',
 		p: 'Yours, result, theirs — side by side with color ribbons and one-click accept arrows connecting them. You always see where a change came from and where it lands.',
 	},
 	{
+		icon: 'views',
 		h: 'A conflicts dashboard',
 		p: 'Every conflicted file tracked automatically, with per-file resolution actions. No hunting through the file tree while a merge is half-done.',
 	},
 	{
+		icon: 'undo',
 		h: 'Undo that remembers names',
 		p: 'A named undo/redo history for the whole resolution session. Step back through decisions, not keystrokes.',
 	},
 	{
+		icon: 'compare',
 		h: 'A precise diff',
 		p: 'Side-by-side comparison with intra-line highlighting, change navigation, and a large-file fallback that keeps huge merges workable.',
 	},
 	{
+		icon: 'worktree',
 		h: 'JetBrains hand-off',
 		p: 'One click opens the same conflict in an installed JetBrains IDE — IntelliJ, WebStorm, PyCharm, GoLand, Rider, CLion, PhpStorm, RubyMine, DataGrip — if you want a second opinion.',
 	},
 	{
+		icon: 'zap',
 		h: 'Tiny and focused',
 		p: 'Merge Studio does one job. It starts fast, stays out of your way, and works in VS Code, Cursor, VSCodium, and Windsurf. MIT licensed.',
 	},
@@ -74,6 +83,19 @@ const jsonLd = {
 					Open VSX — for Cursor &amp; friends
 				</a>
 			</div>
+			<div class="listing-wrap" data-reveal style="--reveal-delay:.06s">
+				<ListingCard
+					icon={mergeIcon}
+					name="Merge Studio"
+					tagline="Three-way merge & conflict resolver"
+					meta={[`v${MERGE.version}`, 'MIT', 'VS Code · Cursor · VSCodium · Windsurf']}
+					primaryHref={MERGE.marketplaceUrl}
+					primaryLabel="Install from Marketplace"
+					secondaryHref={MERGE.openVsxUrl}
+					secondaryLabel="Open VSX"
+					stars={5}
+				/>
+			</div>
 			<p class="hint" data-reveal>
 				Or search <strong>“Merge Studio”</strong> in your editor's Extensions view. On Cursor,
 				VSCodium, and Windsurf the Extensions view installs from Open VSX automatically.
@@ -91,7 +113,7 @@ const jsonLd = {
 			<div class="grid">
 				{feats.map((f, i) => (
 					<div class="card" data-reveal style={`--reveal-delay:${(i % 3) * 0.07}s`}>
-						<h3>{f.h}</h3>
+						<div class="ch"><span class="icon-tile"><Icon name={f.icon as any} /></span><h3>{f.h}</h3></div>
 						<p>{f.p}</p>
 					</div>
 				))}
@@ -185,6 +207,19 @@ const jsonLd = {
 	}
 	.cta-row.centered {
 		justify-content: center;
+	}
+	.listing-wrap {
+		margin-top: 2rem;
+		max-width: 720px;
+	}
+	.ch {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		margin-bottom: 0.7rem;
+	}
+	.ch h3 {
+		margin: 0;
 	}
 	.hint {
 		color: var(--faint);
