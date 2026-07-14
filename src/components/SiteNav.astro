@@ -18,7 +18,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
 	<div class="container">
 		<a href={MERGE.marketplaceUrl} target="_blank" rel="noopener">
 			<span class="pulse" aria-hidden="true"></span>
-			Merge Studio is live on the VS Code Marketplace and Open VSX <span class="arr">→</span>
+			Merge Studio is live on the VS Code Marketplace<span class="hide-sm"> and Open VSX</span> <span class="arr">→</span>
 		</a>
 	</div>
 </div>
@@ -254,6 +254,11 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
 		}
 		.nav {
 			height: 58px;
+		}
+	}
+	@media (max-width: 560px) {
+		.hide-sm {
+			display: none;
 		}
 	}
 </style>
