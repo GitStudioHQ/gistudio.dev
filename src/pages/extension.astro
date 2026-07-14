@@ -1,5 +1,10 @@
 ---
 import Site from '../layouts/Site.astro';
+import Shot from '../components/Shot.astro';
+import graphPanel from '../assets/shots/graph-panel.png';
+import changesView from '../assets/shots/changes-view.png';
+import commitsRail from '../assets/shots/commits-rail.png';
+import branchDialog from '../assets/shots/branch-dialog.png';
 import Icon from '../components/Icon.astro';
 import ListingCard from '../components/ListingCard.astro';
 import extIcon from '../assets/brand/ext-icon-192.png';
@@ -173,6 +178,34 @@ const jsonLd = {
 						</ul>
 					</div>
 				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<p class="eyebrow" data-reveal>Straight from the product</p>
+			<h2 data-reveal>As it actually <em class="fx">looks.</em></h2>
+			<p class="lede" data-reveal>
+				No renders, no reconstructions — these are captures of GitStudio {EXT.version} at work.
+			</p>
+			<div class="tour-big" data-reveal>
+				<Shot
+					src={graphPanel}
+					alt="The full Commit Graph panel: colored branch lanes, ref chips, author avatars riding the commit nodes, changes bars, and commit details"
+					caption="The full Commit Graph panel — lanes, chips, avatars on nodes, per-commit changes."
+				/>
+			</div>
+			<div class="tour">
+				<div data-reveal>
+					<Shot src={changesView} crop="680/1000" alt="The Changes view: staged and unstaged groups, the guided commit box, and live Push/Pull buttons" caption="Changes — guided commit box, instant staging" />
+				</div>
+				<div data-reveal style="--reveal-delay:.08s">
+					<Shot src={commitsRail} crop="660/1000" alt="The Commits sidebar view: compact two-line rows, topology rail, mini author avatars, scoped search" caption="Commits — the sidebar-native rail" />
+				</div>
+				<div data-reveal style="--reveal-delay:.16s">
+					<Shot src={branchDialog} crop="680/1000" alt="The branch dialog: per-branch ahead/behind badges, in-place fetch, pull without checkout" caption="Branches — ↑↓ badges, fetch in place" />
+				</div>
 			</div>
 		</div>
 	</section>
@@ -372,6 +405,15 @@ const jsonLd = {
 	.keysec > * {
 		min-width: 0;
 	}
+	.tour-big {
+		margin-top: 2.4rem;
+	}
+	.tour {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.3rem;
+		margin-top: 1.3rem;
+	}
 	.feature {
 		display: grid;
 		grid-template-columns: 0.95fr 1.05fr;
@@ -496,6 +538,7 @@ const jsonLd = {
 		.pillars,
 		.keysec,
 		.feature,
+		.tour,
 		.install {
 			grid-template-columns: 1fr;
 		}

@@ -1,10 +1,12 @@
 ---
 import Site from '../layouts/Site.astro';
+import Shot from '../components/Shot.astro';
+import mergeEditor from '../assets/shots/merge-editor.png';
+import diffView from '../assets/shots/diff-view.png';
+import conflictsDialog from '../assets/shots/conflicts-dialog.png';
 import Icon from '../components/Icon.astro';
 import ListingCard from '../components/ListingCard.astro';
 import mergeIcon from '../assets/brand/merge-icon-192.png';
-import MockMerge from '../components/MockMerge.astro';
-import MockConflicts from '../components/MockConflicts.astro';
 import { MERGE } from '../consts';
 
 const title = 'Merge Studio — 3-way merge & conflict resolver for VS Code & Cursor';
@@ -102,7 +104,12 @@ const jsonLd = {
 			</p>
 		</div>
 		<div class="container heromock" data-reveal>
-			<MockMerge />
+			<Shot
+				src={mergeEditor}
+				alt="Merge Studio's real three-pane editor: yours, result and theirs panes in Monaco with conflict ribbons, per-hunk accept controls, and the apply toolbar"
+				caption="The real editor, mid-merge — 4 changes, 3 conflicts, every ribbon live."
+				priority
+			/>
 		</div>
 	</section>
 
@@ -139,8 +146,32 @@ const jsonLd = {
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
-				<MockConflicts />
+				<Shot
+					src={conflictsDialog}
+					alt="Merge Studio's conflicts dialog listing every conflicted file with per-file resolve actions"
+					caption="The real conflicts dialog — every file tracked, nothing lives in your head."
+				/>
 			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<div class="f-copy narrow" data-reveal>
+				<p class="eyebrow">The diff</p>
+				<h2>Word-precise, side by <em class="fx">side.</em></h2>
+				<p class="lede">
+					Intra-line highlighting shows exactly which words changed, change navigation steps
+					you through the file, and very large files fall back to a mode that stays fast.
+				</p>
+			</div>
+		</div>
+		<div class="container" data-reveal style="--reveal-delay:.1s">
+			<Shot
+				src={diffView}
+				alt="Merge Studio's side-by-side diff with intra-line word highlighting"
+				caption="The real side-by-side diff — intra-line precision."
+			/>
 		</div>
 	</section>
 
@@ -240,6 +271,9 @@ const jsonLd = {
 		grid-template-columns: repeat(3, 1fr);
 		gap: 1.1rem;
 		margin-top: 2.4rem;
+	}
+	.f-copy.narrow {
+		max-width: 760px;
 	}
 	.feature {
 		display: grid;

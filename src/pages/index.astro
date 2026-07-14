@@ -7,9 +7,15 @@ import appIcon from '../assets/brand/gitstudio-icon-512.png';
 import mergeIcon from '../assets/brand/merge-icon-192.png';
 import GraphField from '../components/GraphField.astro';
 import GraphLive from '../components/GraphLive.astro';
-import MockMerge from '../components/MockMerge.astro';
+import Shot from '../components/Shot.astro';
+import graphPanel from '../assets/shots/graph-panel.png';
+import appCommits from '../assets/shots/app-commits.png';
+import appAssistant from '../assets/shots/app-assistant.png';
+import mergeEditor from '../assets/shots/merge-editor.png';
+import changesView from '../assets/shots/changes-view.png';
+import commitsRail from '../assets/shots/commits-rail.png';
+import branchDialog from '../assets/shots/branch-dialog.png';
 import MockRebase from '../components/MockRebase.astro';
-import MockAssistant from '../components/MockAssistant.astro';
 import { SITE_DESCRIPTION, GITHUB_REPO_URL, EXT, MERGE, APP, AI_PROVIDERS } from '../consts';
 
 const title = 'GitStudio — the free, open-source Git suite for VS Code, Cursor & desktop';
@@ -82,6 +88,7 @@ const jsonLd = [
 
 			<div class="trio">
 				<a class="card product" href="/extension" data-reveal>
+					<div class="p-shot"><Image src={graphPanel} alt="The GitStudio extension: the full commit graph panel" widths={[560, 900]} sizes="(max-width: 960px) 94vw, 360px" /></div>
 					<div class="p-head">
 						<span class="badge">VS Code · Cursor</span>
 						<span class="ver">v{EXT.version}</span>
@@ -95,6 +102,7 @@ const jsonLd = [
 				</a>
 
 				<a class="card product" href="/desktop" data-reveal style="--reveal-delay:.08s">
+					<div class="p-shot"><Image src={appCommits} alt="GitStudio Desktop: the Commits view" widths={[560, 900]} sizes="(max-width: 960px) 94vw, 360px" /></div>
 					<div class="p-head">
 						<span class="badge">macOS · Windows · Linux</span>
 						<span class="ver">v{APP.version}</span>
@@ -108,6 +116,7 @@ const jsonLd = [
 				</a>
 
 				<a class="card product" href="/merge-studio" data-reveal style="--reveal-delay:.16s">
+					<div class="p-shot"><Image src={mergeEditor} alt="Merge Studio: the three-pane merge editor" widths={[560, 900]} sizes="(max-width: 960px) 94vw, 360px" /></div>
 					<div class="p-head">
 						<span class="badge live">● On both marketplaces</span>
 						<span class="ver">v{MERGE.version}</span>
@@ -150,8 +159,8 @@ const jsonLd = [
 
 	<!-- ============ FEATURE: MERGE ============ -->
 	<section class="section">
-		<div class="container feature flip">
-			<div class="f-copy" data-reveal>
+		<div class="container">
+			<div class="f-copy narrow" data-reveal>
 				<p class="eyebrow">02 · Change</p>
 				<h2>Merges you <em class="fx">finish,</em> not survive.</h2>
 				<p class="lede">
@@ -165,7 +174,13 @@ const jsonLd = [
 					<li>Stage exactly the lines you mean — from any editor or diff</li>
 				</ul>
 			</div>
-			<div class="f-visual" data-reveal style="--reveal-delay:.1s"><MockMerge /></div>
+		</div>
+		<div class="container" data-reveal style="--reveal-delay:.1s">
+			<Shot
+				src={mergeEditor}
+				alt="The real Merge Studio editor: three Monaco panes — yours, result, theirs — with conflict ribbons and per-hunk accept controls"
+				caption="Not a mockup. The shipping merge editor, mid-conflict — 4 changes, 3 conflicts, ribbons live."
+			/>
 		</div>
 	</section>
 
@@ -191,35 +206,26 @@ const jsonLd = [
 		</div>
 	</section>
 
-	<!-- ============ BENTO: THE REST ============ -->
+	<!-- ============ THE SIDEBAR, FOR REAL ============ -->
 	<section class="section">
 		<div class="container">
-			<p class="eyebrow" data-reveal>04 · Manage &amp; collaborate</p>
-			<h2 data-reveal>The rest of the workflow, <em class="fx">included.</em></h2>
-			<div class="bento">
-				<div class="card" data-reveal>
-					<div class="ch"><span class="icon-tile"><Icon name="views" /></span><h3>Five views, every operation</h3></div>
-					<p>Changes, Commits, Stashes, Worktrees, Pull Requests. Branches, remotes, and tags with full operations — checkout, merge, rebase, rename, push, prune — a right-click away.</p>
+			<p class="eyebrow" data-reveal>04 · The sidebar suite</p>
+			<h2 data-reveal>Five views. Zero <em class="fx">round-trips.</em></h2>
+			<p class="lede" data-reveal>
+				Changes, Commits, Stashes, Worktrees, Pull Requests — the whole working set lives in
+				the sidebar, a chord away. {EXT.commands} commands under <span class="kbd">Ctrl+Alt+G</span>,
+				force-push behind <code>--force-with-lease</code>, and an Undo for everything.
+				These are the real panels.
+			</p>
+			<div class="gallery">
+				<div data-reveal>
+					<Shot src={changesView} crop="680/1000" alt="The Changes view: staged and unstaged groups, the guided commit box, live Push and Pull buttons" caption="Changes — instant staging, guided commits" />
 				</div>
-				<div class="card" data-reveal style="--reveal-delay:.06s">
-					<div class="ch"><span class="icon-tile"><Icon name="pr" /></span><h3>Pull requests, in-editor</h3></div>
-					<p>List, check out, review with inline comments, submit, merge, and create GitHub PRs — with the GitHub sign-in your editor already has.</p>
+				<div data-reveal style="--reveal-delay:.08s">
+					<Shot src={commitsRail} crop="660/1000" alt="The Commits sidebar view: true branch topology with mini author avatars riding the commit nodes" caption="Commits — topology at sidebar width" />
 				</div>
-				<div class="card" data-reveal style="--reveal-delay:.12s">
-					<div class="ch"><span class="icon-tile"><Icon name="compare" /></span><h3>Branch compare</h3></div>
-					<p>A GitHub-style panel: ahead/behind, the commits between any two refs, and the changed files as native diffs.</p>
-				</div>
-				<div class="card" data-reveal>
-					<div class="ch"><span class="icon-tile"><Icon name="zap" /></span><h3>Instant everything</h3></div>
-					<p>GitStudio discovers your repo itself and paints from local git — no waiting on vscode.git to wake up. Views stay warm; staging is optimistic and immediate.</p>
-				</div>
-				<div class="card" data-reveal style="--reveal-delay:.06s">
-					<div class="ch"><span class="icon-tile"><Icon name="sync" /></span><h3>Live sync, visible</h3></div>
-					<p>Ahead/behind in the status bar and the Changes header as real push/pull buttons. Fetch updates every branch's ↑↓ badges in place.</p>
-				</div>
-				<div class="card" data-reveal style="--reveal-delay:.12s">
-					<div class="ch"><span class="icon-tile"><Icon name="keyboard" /></span><h3>{EXT.commands} commands, one chord</h3></div>
-					<p><span class="kbd">Ctrl+Alt+G</span> then a letter — blame <span class="kbd">B</span>, history <span class="kbd">H</span>, diff <span class="kbd">D</span>, stage <span class="kbd">S</span>, undo <span class="kbd">Z</span>. Cmd on macOS. All remappable.</p>
+				<div data-reveal style="--reveal-delay:.16s">
+					<Shot src={branchDialog} crop="680/1000" alt="The branch menu: per-branch ahead/behind badges, in-place fetch, pull without checkout" caption="Branches — ↑↓ badges, pull without checkout" />
 				</div>
 			</div>
 		</div>
@@ -245,7 +251,11 @@ const jsonLd = [
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
-				<MockAssistant />
+				<Shot
+					src={appAssistant}
+					alt="The Assistant in GitStudio Desktop running Claude Code locally in read-only mode, summarizing working-tree changes and comparing branches"
+					caption="The Assistant in the desktop app — a real session, read-only mode, local Claude Code."
+				/>
 			</div>
 		</div>
 		<div class="container">
@@ -537,6 +547,24 @@ const jsonLd = [
 		flex-direction: column;
 		gap: 0.7rem;
 		color: inherit;
+		padding: 0 0 1.5rem;
+		overflow: hidden;
+	}
+	.p-shot {
+		margin: 0 0 0.4rem;
+		border-bottom: 1px solid var(--hairline);
+		aspect-ratio: 16/9;
+		overflow: hidden;
+	}
+	.p-shot :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: top left;
+		display: block;
+	}
+	.product > *:not(.p-shot) {
+		margin-inline: 1.4rem;
 	}
 	.product:hover {
 		text-decoration: none;
@@ -637,20 +665,14 @@ const jsonLd = [
 		box-shadow: inset 0 0 0 2.5px var(--bg-1);
 	}
 
-	.ch {
-		display: flex;
-		align-items: center;
-		gap: 0.7rem;
-		margin-bottom: 0.7rem;
+	.f-copy.narrow {
+		max-width: 760px;
+		margin-bottom: 2.4rem;
 	}
-	.ch h3 {
-		margin: 0;
-	}
-	/* BENTO */
-	.bento {
+	.gallery {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		gap: 1.1rem;
+		gap: 1.3rem;
 		margin-top: 2.6rem;
 	}
 
@@ -750,7 +772,7 @@ const jsonLd = [
 
 	@media (max-width: 960px) {
 		.trio,
-		.bento {
+		.gallery {
 			grid-template-columns: 1fr 1fr;
 		}
 		.feature,
@@ -769,7 +791,7 @@ const jsonLd = [
 	}
 	@media (max-width: 620px) {
 		.trio,
-		.bento {
+		.gallery {
 			grid-template-columns: 1fr;
 		}
 	}

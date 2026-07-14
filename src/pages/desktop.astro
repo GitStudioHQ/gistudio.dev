@@ -1,8 +1,11 @@
 ---
 import Site from '../layouts/Site.astro';
-import MockDesktop from '../components/MockDesktop.astro';
-import MockAssistant from '../components/MockAssistant.astro';
-import MockTerminal from '../components/MockTerminal.astro';
+import Shot from '../components/Shot.astro';
+import appCommits from '../assets/shots/app-commits.png';
+import appPrs from '../assets/shots/app-prs.png';
+import appTerminal from '../assets/shots/app-terminal.png';
+import appAssistant from '../assets/shots/app-assistant.png';
+import appWelcome from '../assets/shots/app-welcome.png';
 import MockModels from '../components/MockModels.astro';
 import InstallCmd from '../components/InstallCmd.astro';
 import { APP, AI_PROVIDERS, GITHUB_RELEASES_URL, DOCS_AI_URL } from '../consts';
@@ -52,7 +55,12 @@ const jsonLd = {
 			</div>
 		</div>
 		<div class="container heromock" data-reveal>
-			<MockDesktop />
+			<Shot
+				src={appCommits}
+				alt="GitStudio Desktop 1.0 on the gitstudio repository: the Commits view with the full multicolor graph, author avatars on nodes, branch and tag chips, and the terminal dock"
+				caption="GitStudio 1.0 on its own repository — a real capture, not a render."
+				priority
+			/>
 		</div>
 	</section>
 
@@ -71,16 +79,25 @@ const jsonLd = {
 
 	<section class="section">
 		<div class="container">
-			<p class="eyebrow" data-reveal>The GitHub client</p>
-			<h2 data-reveal>Close the tabs. It's all <em class="fx">here.</em></h2>
-			<p class="lede" data-reveal>
-				Review pull requests, triage issues, answer notifications, manage releases, browse
-				org repos, keep gists — every GitHub surface as a first-class native view, tied to
-				the repo in front of you.
-			</p>
-			<ul class="gh-grid" data-reveal>
-				{github.map((g) => <li class="chip">{g}</li>)}
-			</ul>
+			<div class="f-copy narrow" data-reveal>
+				<p class="eyebrow">The GitHub client</p>
+				<h2>Close the tabs. It's all <em class="fx">here.</em></h2>
+				<p class="lede">
+					Review pull requests, triage issues, answer notifications, manage releases, browse
+					org repos, keep gists — every GitHub surface as a first-class native view, tied to
+					the repo in front of you.
+				</p>
+				<ul class="gh-grid" data-reveal>
+					{github.map((g) => <li class="chip">{g}</li>)}
+				</ul>
+			</div>
+		</div>
+		<div class="container" data-reveal style="--reveal-delay:.1s">
+			<Shot
+				src={appPrs}
+				alt="A real pull request open in GitStudio Desktop: Checkout, Approve, Review, AI and Merge actions, Conversation/Commits/Pipelines/Files tabs, and the rendered description"
+				caption="A real PR, reviewed and merged without a browser — Checkout · Approve · Review · AI · Merge."
+			/>
 		</div>
 	</section>
 
@@ -102,7 +119,11 @@ const jsonLd = {
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
-				<MockTerminal />
+				<Shot
+					src={appTerminal}
+					alt="The terminal dock open inside GitStudio Desktop under the commit graph, with the tab strip and terminal list"
+					caption="The real dock — Commit details · Output · Terminal, under whichever view you're in."
+				/>
 			</div>
 		</div>
 	</section>
@@ -125,7 +146,11 @@ const jsonLd = {
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
-				<MockAssistant />
+				<Shot
+					src={appAssistant}
+					alt="The Assistant view in GitStudio Desktop: Claude Code local, read-only permission, summarizing the working tree and comparing branches"
+					caption="A real Assistant session — local model, read-only mode, every answer grounded in the repo."
+				/>
 			</div>
 		</div>
 	</section>
@@ -192,6 +217,9 @@ const jsonLd = {
 						<li><strong>{p.os}</strong> <span>{p.arch}</span> <code>{p.format}</code></li>
 					))}
 				</ul>
+				<div class="welcome-shot" data-reveal>
+					<Shot src={appWelcome} alt="The GitStudio Desktop welcome screen: Open Repository, Clone, and recent repositories" caption="First launch." />
+				</div>
 			</div>
 			<div class="cmds" data-reveal style="--reveal-delay:.08s">
 				<a class="btn btn-primary" href="/download#desktop">Download v{APP.version}</a>
@@ -243,6 +271,13 @@ const jsonLd = {
 		margin-top: 3.2rem;
 		padding-bottom: clamp(48px, 7vw, 80px);
 		max-width: 940px;
+	}
+	.f-copy.narrow {
+		max-width: 760px;
+	}
+	.welcome-shot {
+		margin-top: 1.6rem;
+		max-width: 560px;
 	}
 	.gh-grid {
 		list-style: none;
