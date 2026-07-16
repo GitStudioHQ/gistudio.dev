@@ -1,0 +1,70 @@
+---
+// "Available in your editor" — the compatibility row shared by the homepage
+// extensions spot and the dedicated extension pages. Original monochrome
+// glyphs (no third-party logos redistributed), text-labelled for clarity and
+// SEO. VS Code installs from the Marketplace; the rest from Open VSX.
+interface Props {
+	/** Restrict to a subset, in order. Defaults to all five. */
+	only?: Array<'vscode' | 'cursor' | 'vscodium' | 'windsurf' | 'code-server'>;
+	size?: 'sm' | 'md';
+	class?: string;
+}
+
+const EDITORS = {
+	vscode: { label: 'VS Code', glyph: 'M17 3.5 L10.5 9.5 L6.5 6.5 L3.5 8 V16 L6.5 17.5 L10.5 14.5 L17 20.5 L20.5 18.5 V5.5 Z M17 8 V16 L11.5 12 Z' },
+	cursor: { label: 'Cursor', glyph: 'M12 3 L20.5 8 V16 L12 21 L3.5 16 V8 Z M12 3 V21 M12 12 L20.5 8 M12 12 L3.5 8' },
+	vscodium: { label: 'VSCodium', glyph: 'M12 3 L20.5 8 V16 L12 21 L3.5 16 V8 Z M8.5 9 L12 15 L15.5 9' },
+	windsurf: { label: 'Windsurf', glyph: 'M6 20 C9 15 9 8 8 4 L17 11 L11 12 L15 16 Z' },
+	'code-server': { label: 'code-server', glyph: 'M8 8 L4.5 12 L8 16 M16 8 L19.5 12 L16 16 M13.5 6 L10.5 18' },
+} as const;
+
+const { only, size = 'md', class: className } = Astro.props;
+const keys = only ?? (Object.keys(EDITORS) as Array<keyof typeof EDITORS>);
+---
+
+<ul class:list={['editors', size, className]} aria-label="Compatible editors">
+	{keys.map((k) => (
+		<li>
+			<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+				<path d={EDITORS[k].glyph} />
+			</svg>
+			<span>{EDITORS[k].label}</span>
+		</li>
+	))}
+</ul>
+
+<style>
+	.editors {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.editors li {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.42rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--text);
+		background: var(--bg-2);
+		border: 1px solid var(--hairline);
+		border-radius: 999px;
+		padding: 0.36rem 0.72rem 0.36rem 0.6rem;
+		white-space: nowrap;
+	}
+	.editors li svg {
+		color: var(--violet-hi);
+		flex: none;
+	}
+	.editors.sm li {
+		font-size: 0.7rem;
+		padding: 0.28rem 0.6rem 0.28rem 0.5rem;
+	}
+	.editors.sm li svg {
+		width: 13px;
+		height: 13px;
+	}
+</style>

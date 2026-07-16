@@ -7,7 +7,15 @@ import { defineConfig, fontProviders } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://gitstudio.dev',
-	integrations: [mdx(), sitemap()],
+	integrations: [
+		mdx(),
+		sitemap({
+			// Only indexable canonicals belong in the sitemap. 404 is noindex; the
+			// old /desktop, /extension, /merge-studio slugs are 308 redirects
+			// (their page files are deleted) so they never emit an entry.
+			filter: (page) => !page.includes('/404'),
+		}),
+	],
 	fonts: [
 		{
 			provider: fontProviders.google(),

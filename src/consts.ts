@@ -18,6 +18,9 @@ export const LICENSE_URL = 'https://www.apache.org/licenses/LICENSE-2.0';
 
 /** GitStudio — the flagship VS Code / Cursor extension. v1.0.0, live everywhere. */
 export const EXT = {
+	name: 'GitStudio',
+	product: 'the GitStudio extension',
+	route: '/gitstudio-extension',
 	id: 'gitstudio.gitstudio',
 	version: '1.0.0',
 	license: 'Apache-2.0',
@@ -33,11 +36,15 @@ export const EXT = {
 
 /** Merge Studio — live on both registries. */
 export const MERGE = {
+	name: 'Merge Studio',
+	product: 'the Merge Studio extension',
+	route: '/merge-studio-extension',
 	id: 'gitstudio.merge-studio',
 	version: '0.3.4',
 	license: 'MIT',
 	marketplaceUrl: 'https://marketplace.visualstudio.com/items?itemName=gitstudio.merge-studio',
 	openVsxUrl: 'https://open-vsx.org/extension/gitstudio/merge-studio',
+	marketplaceStars: 5.0,
 };
 
 const APP_DL = 'https://github.com/GitStudioHQ/gitstudio/releases/download/app-v1.0.0';
@@ -75,3 +82,31 @@ export const AI_PROVIDERS = [
 	'Ollama',
 	'LM Studio',
 ];
+
+/**
+ * The editors the extensions run in, and how each one installs. VS Code pulls
+ * from the Microsoft Marketplace; every other VS Code-compatible editor pulls
+ * the identical build from Open VSX. Slug-independent — pages read from here so
+ * install steps stay correct in one place.
+ */
+export const EDITORS = [
+	{ key: 'vscode', label: 'VS Code', registry: 'Marketplace', cli: 'code', flagship: true },
+	{ key: 'cursor', label: 'Cursor', registry: 'Open VSX', cli: 'cursor', flagship: true },
+	{ key: 'vscodium', label: 'VSCodium', registry: 'Open VSX', cli: 'codium', flagship: false },
+	{ key: 'windsurf', label: 'Windsurf', registry: 'Open VSX', cli: 'windsurf', flagship: false },
+	{ key: 'code-server', label: 'code-server', registry: 'Open VSX', cli: 'code-server', flagship: false },
+] as const;
+
+export type EditorKey = (typeof EDITORS)[number]['key'];
+
+/** The install command for an extension id in a given editor. */
+export const installCmd = (cli: string, id: string) => `${cli} --install-extension ${id}`;
+
+/** Registry URL for an editor + extension (Marketplace for VS Code, else Open VSX). */
+export const registryUrl = (
+	editorKey: EditorKey,
+	ext: { marketplaceUrl: string; openVsxUrl: string },
+) => (editorKey === 'vscode' ? ext.marketplaceUrl : ext.openVsxUrl);
+
+/** Live Open VSX install counts (verified 2026-07-16) — social proof. */
+export const OPENVSX_INSTALLS = { gitstudio: 156, mergeStudio: 852 };

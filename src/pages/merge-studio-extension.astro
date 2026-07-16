@@ -6,69 +6,73 @@ import diffView from '../assets/shots/diff-view.png';
 import conflictsDialog from '../assets/shots/conflicts-dialog.png';
 import Icon from '../components/Icon.astro';
 import ListingCard from '../components/ListingCard.astro';
+import EditorChips from '../components/EditorChips.astro';
+import InstallMatrix from '../components/InstallMatrix.astro';
 import mergeIcon from '../assets/brand/merge-icon-192.png';
-import { MERGE } from '../consts';
+import { EXT, MERGE, OPENVSX_INSTALLS } from '../consts';
 
-const title = 'Merge Studio — 3-way merge & conflict resolver for VS Code & Cursor';
+const title = 'Merge Studio — 3-way merge & conflict editor for VS Code & Cursor';
 const description =
-	'A beautiful three-pane merge conflict editor for VS Code and Cursor: color ribbons, one-click accepts, a conflicts dashboard, undo history, and precise side-by-side diffs. Live on the VS Code Marketplace and Open VSX.';
+	'Merge Studio is a free, open-source three-pane merge & conflict editor for VS Code, Cursor, VSCodium, Windsurf, and code-server: color ribbons, one-click accepts, a conflicts dashboard, a named undo history, and precise side-by-side diffs. Live on the VS Code Marketplace and Open VSX.';
 
 const feats = [
-	{
-		icon: 'merge',
-		h: 'Three panes, zero guessing',
-		p: 'Yours, result, theirs — side by side with color ribbons and one-click accept arrows connecting them. You always see where a change came from and where it lands.',
-	},
-	{
-		icon: 'views',
-		h: 'A conflicts dashboard',
-		p: 'Every conflicted file tracked automatically, with per-file resolution actions. No hunting through the file tree while a merge is half-done.',
-	},
-	{
-		icon: 'undo',
-		h: 'Undo that remembers names',
-		p: 'A named undo/redo history for the whole resolution session. Step back through decisions, not keystrokes.',
-	},
-	{
-		icon: 'compare',
-		h: 'A precise diff',
-		p: 'Side-by-side comparison with intra-line highlighting, change navigation, and a large-file fallback that keeps huge merges workable.',
-	},
-	{
-		icon: 'worktree',
-		h: 'JetBrains hand-off',
-		p: 'One click opens the same conflict in an installed JetBrains IDE — IntelliJ, WebStorm, PyCharm, GoLand, Rider, CLion, PhpStorm, RubyMine, DataGrip — if you want a second opinion.',
-	},
-	{
-		icon: 'zap',
-		h: 'Tiny and focused',
-		p: 'Merge Studio does one job. It starts fast, stays out of your way, and works in VS Code, Cursor, VSCodium, and Windsurf. MIT licensed.',
-	},
+	{ icon: 'merge', h: 'Three panes, zero guessing', p: 'Yours, result, theirs — side by side with color ribbons and one-click accept arrows connecting them. You always see where a change came from and where it lands.' },
+	{ icon: 'views', h: 'A conflicts dashboard', p: 'Every conflicted file tracked automatically, with per-file resolution actions. No hunting through the file tree while a merge is half-done.' },
+	{ icon: 'undo', h: 'Undo that remembers names', p: 'A named undo/redo history for the whole resolution session. Step back through decisions, not keystrokes.' },
+	{ icon: 'compare', h: 'A precise diff', p: 'Side-by-side comparison with intra-line highlighting, change navigation, and a large-file fallback that keeps huge merges workable.' },
+	{ icon: 'worktree', h: 'JetBrains hand-off', p: 'One click opens the same conflict in an installed JetBrains IDE — IntelliJ, WebStorm, PyCharm, GoLand, Rider, CLion, PhpStorm, RubyMine, DataGrip — for a second opinion.' },
+	{ icon: 'zap', h: 'Tiny and focused', p: 'Merge Studio does one job. It starts fast, stays out of your way, and works in VS Code, Cursor, VSCodium, Windsurf, and code-server. MIT licensed.' },
 ];
 
-const jsonLd = {
-	'@context': 'https://schema.org',
-	'@type': 'SoftwareApplication',
-	name: 'Merge Studio',
-	description,
-	url: 'https://gitstudio.dev/merge-studio',
-	installUrl: MERGE.marketplaceUrl,
-	applicationCategory: 'DeveloperApplication',
-	operatingSystem: 'VS Code, Cursor, VSCodium, Windsurf',
-	softwareVersion: MERGE.version,
-	license: 'https://opensource.org/licenses/MIT',
-	offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-};
+const jsonLd = [
+	{
+		'@context': 'https://schema.org',
+		'@type': 'SoftwareApplication',
+		name: 'Merge Studio',
+		description,
+		url: 'https://gitstudio.dev/merge-studio-extension',
+		installUrl: MERGE.marketplaceUrl,
+		sameAs: [MERGE.marketplaceUrl, MERGE.openVsxUrl],
+		applicationCategory: 'DeveloperApplication',
+		operatingSystem: 'VS Code, Cursor, VSCodium, Windsurf, code-server',
+		softwareVersion: MERGE.version,
+		license: 'https://opensource.org/licenses/MIT',
+		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'BreadcrumbList',
+		itemListElement: [
+			{ '@type': 'ListItem', position: 1, name: 'GitStudio Desktop', item: 'https://gitstudio.dev/' },
+			{ '@type': 'ListItem', position: 2, name: 'Extensions', item: 'https://gitstudio.dev/extensions' },
+			{ '@type': 'ListItem', position: 3, name: 'Merge Studio', item: 'https://gitstudio.dev/merge-studio-extension' },
+		],
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		mainEntity: [
+			{ '@type': 'Question', name: 'Which editors does Merge Studio support?', acceptedAnswer: { '@type': 'Answer', text: 'VS Code, Cursor, VSCodium, Windsurf, and code-server. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.' } },
+			{ '@type': 'Question', name: 'Do I need Merge Studio if I have the GitStudio extension?', acceptedAnswer: { '@type': 'Answer', text: 'No — the GitStudio extension already includes the same three-pane merge editor. Merge Studio is the standalone option for people who want only conflict resolution.' } },
+			{ '@type': 'Question', name: 'Is Merge Studio free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Merge Studio is MIT-licensed, open source, and free on public and private repos, with no account.' } },
+		],
+	},
+];
 ---
 
-<Site title={title} description={description} jsonLd={jsonLd} og="/og/merge-studio.png">
+<Site title={title} description={description} jsonLd={jsonLd} og="/og/merge-studio-extension.png">
 	<section class="hero">
 		<div class="container">
+			<nav class="crumbs mono" aria-label="Breadcrumb">
+				<a href="/">GitStudio</a> <span aria-hidden="true">/</span>
+				<a href="/extensions">Extensions</a> <span aria-hidden="true">/</span>
+				<span>Merge Studio</span>
+			</nav>
 			<div class="statusline" data-reveal>
 				<span class="badge live">● Live</span>
 				<span class="chip">v{MERGE.version}</span>
-				<span class="chip">★ 5.0 on the Marketplace</span>
-				<span class="chip">✓ Verified publisher on Open VSX</span>
+				<span class="chip">★ {MERGE.marketplaceStars.toFixed(1)} on the Marketplace</span>
+				<span class="chip">{OPENVSX_INSTALLS.mergeStudio}+ Open VSX installs</span>
 				<span class="chip">MIT</span>
 			</div>
 			<h1 data-reveal>Resolve conflicts with <em class="fx">confidence.</em></h1>
@@ -78,18 +82,14 @@ const jsonLd = {
 				merge becomes a sequence of small, reversible decisions.
 			</p>
 			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary btn-lg" href={MERGE.marketplaceUrl} target="_blank" rel="noopener">
-					Install from VS Code Marketplace
-				</a>
-				<a class="btn btn-ghost btn-lg" href={MERGE.openVsxUrl} target="_blank" rel="noopener">
-					Open VSX — for Cursor &amp; friends
-				</a>
+				<a class="btn btn-primary btn-lg" href="#install">Install now</a>
+				<a class="btn btn-ghost btn-lg" href={MERGE.openVsxUrl} target="_blank" rel="noopener">Open VSX — Cursor &amp; friends</a>
 			</div>
 			<div class="listing-wrap" data-reveal style="--reveal-delay:.06s">
 				<ListingCard
 					icon={mergeIcon}
 					name="Merge Studio"
-					tagline="Three-way merge & conflict resolver"
+					tagline="Three-way merge & conflict editor"
 					meta={[`v${MERGE.version}`, 'MIT', 'VS Code · Cursor · VSCodium · Windsurf']}
 					primaryHref={MERGE.marketplaceUrl}
 					primaryLabel="Install from Marketplace"
@@ -98,10 +98,7 @@ const jsonLd = {
 					stars={5}
 				/>
 			</div>
-			<p class="hint" data-reveal>
-				Or search <strong>“Merge Studio”</strong> in your editor's Extensions view. On Cursor,
-				VSCodium, and Windsurf the Extensions view installs from Open VSX automatically.
-			</p>
+			<EditorChips class="hero-editors" data-reveal />
 		</div>
 		<div class="container heromock" data-reveal>
 			<Shot
@@ -175,6 +172,19 @@ const jsonLd = {
 		</div>
 	</section>
 
+	<!-- INSTALL — per editor -->
+	<section class="section" id="install">
+		<div class="container">
+			<p class="eyebrow" data-reveal>Install</p>
+			<h2 data-reveal>Pick your <em class="fx">editor.</em></h2>
+			<p class="lede" data-reveal>
+				Search <strong>“Merge Studio”</strong> in your editor's Extensions view, or grab the
+				command below. It's tiny — a few hundred KB — and MIT licensed.
+			</p>
+			<InstallMatrix ext={MERGE} />
+		</div>
+	</section>
+
 	<section class="section">
 		<div class="container origin">
 			<div data-reveal>
@@ -183,8 +193,10 @@ const jsonLd = {
 				<p class="lede">
 					Merge Studio came first — a single, obsessive answer to the worst five minutes of any
 					workday. Its pure, unit-tested merge engine grew
-					into <code>@gitstudio/engine</code>, the core that now powers the whole suite. The two
-					stay separate on purpose: <strong>they share an engine, not a listing.</strong>
+					into <code>@gitstudio/engine</code>, the core that now powers the whole suite: the same
+					three-pane editor ships in the <a href="/gitstudio-extension">GitStudio extension</a> and
+					in <a href="/">GitStudio Desktop</a>. The products stay separate on purpose —
+					<strong>they share an engine, not a listing.</strong>
 				</p>
 			</div>
 			<div class="card which" data-reveal style="--reveal-delay:.08s">
@@ -195,8 +207,8 @@ const jsonLd = {
 				</p>
 				<p>
 					<strong>Want the whole workflow</strong> — graph, blame, staging, rebase, PRs, and
-					the same three-pane merge? <a href="/extension">GitStudio</a>. You don't need both;
-					GitStudio includes the merge editor.
+					the same three-pane merge? <a href="/gitstudio-extension">The GitStudio extension</a>.
+					You don't need both; GitStudio includes the merge editor.
 				</p>
 			</div>
 		</div>
@@ -215,10 +227,21 @@ const jsonLd = {
 
 <style>
 	.hero {
-		padding-top: clamp(56px, 8vw, 96px);
+		padding-top: clamp(48px, 7vw, 88px);
 		background:
 			radial-gradient(45% 50% at 70% 0%, rgba(195, 107, 240, 0.1), transparent 70%),
 			radial-gradient(35% 45% at 20% 10%, rgba(169, 140, 255, 0.08), transparent 70%);
+	}
+	.crumbs {
+		font-size: 0.75rem;
+		color: var(--faint);
+		margin-bottom: 1.4rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.crumbs a {
+		color: var(--muted);
 	}
 	.statusline {
 		display: flex;
@@ -243,6 +266,9 @@ const jsonLd = {
 		margin-top: 2rem;
 		max-width: 720px;
 	}
+	.hero-editors {
+		margin-top: 1.6rem;
+	}
 	.ch {
 		display: flex;
 		align-items: center;
@@ -251,15 +277,6 @@ const jsonLd = {
 	}
 	.ch h3 {
 		margin: 0;
-	}
-	.hint {
-		color: var(--faint);
-		font-size: 0.9rem;
-		margin-top: 1.1rem;
-		max-width: 58ch;
-	}
-	.hint strong {
-		color: var(--muted);
 	}
 	.heromock {
 		margin-top: 3.2rem;

@@ -1,0 +1,91 @@
+---
+// Per-editor install, as anchored on-page sections (#vs-code, #cursor, …) so
+// one strong URL captures every editor query without minting doorway pages.
+// VS Code pulls from the Microsoft Marketplace; every other editor pulls the
+// identical build from Open VSX. Data comes from consts (single source).
+import InstallCmd from './InstallCmd.astro';
+import { EDITORS, installCmd, registryUrl } from '../consts';
+
+interface Props {
+	ext: { id: string; name: string; marketplaceUrl: string; openVsxUrl: string };
+}
+const { ext } = Astro.props;
+---
+
+<div class="matrix">
+	{EDITORS.map((e) => (
+		<div class="ed" id={e.key}>
+			<div class="ed-head">
+				<h3>{ext.name} in {e.label}</h3>
+				<span class="reg">{e.registry}</span>
+			</div>
+			<p class="ed-note">
+				{e.key === 'vscode'
+					? 'Search “' + ext.name + '” in the Extensions view, or run:'
+					: e.key === 'code-server'
+						? 'Install from the Extensions view (code-server reads Open VSX), or from a shell:'
+						: e.label + ' installs from Open VSX. Search “' + ext.name + '” in Extensions, or run:'}
+			</p>
+			<InstallCmd cmd={installCmd(e.cli, ext.id)} />
+			<a class="ed-link" href={registryUrl(e.key, ext)} target="_blank" rel="noopener">
+				Open the {e.registry} listing →
+			</a>
+		</div>
+	))}
+</div>
+
+<style>
+	.matrix {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+		margin-top: 2rem;
+	}
+	.ed {
+		border: 1px solid var(--hairline);
+		border-radius: var(--r-lg);
+		background: var(--bg-2);
+		padding: 1.2rem 1.25rem;
+		scroll-margin-top: 90px;
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+	}
+	.ed-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+	.ed-head h3 {
+		margin: 0;
+		font-size: 1.02rem;
+		letter-spacing: -0.01em;
+	}
+	.reg {
+		flex: none;
+		font-family: var(--font-mono);
+		font-size: 0.66rem;
+		color: var(--violet-hi);
+		background: var(--violet-wash);
+		border: 1px solid var(--violet-line);
+		border-radius: 6px;
+		padding: 0.2rem 0.5rem;
+	}
+	.ed-note {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.86rem;
+		line-height: 1.55;
+	}
+	.ed-link {
+		font-size: 0.82rem;
+		color: var(--violet-hi);
+		width: fit-content;
+	}
+	@media (max-width: 720px) {
+		.matrix {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

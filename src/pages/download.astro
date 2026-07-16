@@ -3,145 +3,166 @@ import Site from '../layouts/Site.astro';
 import Icon from '../components/Icon.astro';
 import { Image } from 'astro:assets';
 import extIcon from '../assets/brand/ext-icon-192.png';
-import appIcon from '../assets/brand/gitstudio-icon-512.png';
 import mergeIcon from '../assets/brand/merge-icon-192.png';
 import InstallCmd from '../components/InstallCmd.astro';
 import { EXT, MERGE, APP, GITHUB_REPO_URL, GITHUB_RELEASES_URL, DOCS_AI_URL } from '../consts';
 
-const title = 'Download GitStudio — extension, Merge Studio & desktop app';
+const title = 'Download GitStudio Desktop — macOS, Windows & Linux';
 const description =
-	'Install the GitStudio extension for VS Code and Cursor from the Marketplace or Open VSX, get Merge Studio, and download GitStudio Desktop for macOS, Windows, and Linux.';
+	'Download GitStudio Desktop v1.0.0 — the free, open-source Git & GitHub client for macOS (Apple Silicon & Intel), Windows, and Linux (.AppImage & .deb), with auto-update built in. Also available as a VS Code & Cursor extension.';
+
+// Group the flat installer list from consts by OS for the per-OS sections.
+const byOs = {
+	macOS: APP.downloads.filter((d) => d.os === 'macOS'),
+	Windows: APP.downloads.filter((d) => d.os === 'Windows'),
+	Linux: APP.downloads.filter((d) => d.os === 'Linux'),
+};
+const oses = [
+	{ id: 'macos', name: 'macOS', dls: byOs.macOS, note: 'Unsigned beta builds may trip Gatekeeper — after dragging the app in, run <code>xattr -cr /Applications/GitStudio.app</code> once to clear the quarantine flag.' },
+	{ id: 'windows', name: 'Windows', dls: byOs.Windows, note: 'If SmartScreen appears, choose <strong>More info → Run anyway</strong>. The NSIS installer lets you pick the install directory.' },
+	{ id: 'linux', name: 'Linux', dls: byOs.Linux, note: 'The <code>.AppImage</code> is universal — <code>chmod +x</code> and run. On Debian/Ubuntu, <code>sudo apt install ./GitStudio-*.deb</code>.' },
+];
+
+const jsonLd = [
+	{
+		'@context': 'https://schema.org',
+		'@type': 'SoftwareApplication',
+		name: 'GitStudio Desktop',
+		description,
+		url: 'https://gitstudio.dev/download',
+		downloadUrl: GITHUB_RELEASES_URL,
+		applicationCategory: 'DeveloperApplication',
+		operatingSystem: 'macOS, Windows, Linux',
+		softwareVersion: APP.version,
+		license: 'https://www.apache.org/licenses/LICENSE-2.0',
+		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'BreadcrumbList',
+		itemListElement: [
+			{ '@type': 'ListItem', position: 1, name: 'GitStudio Desktop', item: 'https://gitstudio.dev/' },
+			{ '@type': 'ListItem', position: 2, name: 'Download', item: 'https://gitstudio.dev/download' },
+		],
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		mainEntity: [
+			{ '@type': 'Question', name: 'How do I get past Gatekeeper on macOS?', acceptedAnswer: { '@type': 'Answer', text: 'Drag GitStudio into Applications, then run xattr -cr /Applications/GitStudio.app once to clear the quarantine flag.' } },
+			{ '@type': 'Question', name: 'What about the Windows SmartScreen prompt?', acceptedAnswer: { '@type': 'Answer', text: 'Choose More info, then Run anyway. The NSIS installer lets you choose the install directory.' } },
+			{ '@type': 'Question', name: 'AppImage or .deb on Linux?', acceptedAnswer: { '@type': 'Answer', text: 'The .AppImage is universal — chmod +x and run it. On Debian or Ubuntu, install the .deb with sudo apt install ./GitStudio-*.deb.' } },
+		],
+	},
+];
 ---
 
-<Site title={title} description={description} og="/og/download.png">
+<Site title={title} description={description} og="/og/download.png" jsonLd={jsonLd}>
 	<section class="hero">
-		<div class="container">
-			<p class="eyebrow" data-reveal>Downloads</p>
-			<h1 data-reveal>Get <em class="fx">GitStudio.</em></h1>
-			<p class="lede" data-reveal>
-				Everything below is free and open source. Every download links to a real artifact —
-				no email gates, no installers that phone home, and checksums for anything you download
-				directly.
+		<div class="container center">
+			<p class="eyebrow center" data-reveal>Download · v{APP.version}</p>
+			<h1 data-reveal>Get GitStudio <em class="fx">Desktop.</em></h1>
+			<p class="lede center" data-reveal>
+				The free, open-source Git &amp; GitHub client for macOS, Windows, and Linux — with
+				auto-update built in. Signed installers, checksums, and the whole source on GitHub.
 			</p>
 		</div>
 	</section>
 
-	<!-- EXTENSION -->
-	<section class="section" id="extension">
-		<div class="container dl">
-			<div class="dl-info" data-reveal>
-				<div class="statusline">
-					<span class="badge live">● Live on both registries</span>
-					<span class="chip">v{EXT.version}</span>
-					<span class="chip">VS Code · Cursor</span>
-					<span class="chip">{EXT.license}</span>
+	<!-- PER-OS DOWNLOADS -->
+	<section class="section">
+		<div class="container os-grid">
+			{oses.map((os) => (
+				<div class="os-col" id={os.id} data-reveal>
+					<div class="os-head">
+						<span class="icon-tile"><Icon name="package" /></span>
+						<h2>{os.name}</h2>
+					</div>
+					<div class="os-dls">
+						{os.dls.map((d) => (
+							<a class="dl-btn" href={d.url}>
+								<span class="dl-arch">{d.arch}</span>
+								<code>{d.format}</code>
+							</a>
+						))}
+					</div>
+					<p class="os-note" set:html={os.note} />
 				</div>
-				<div class="h-id"><Image src={extIcon} alt="" width="96" height="96" class="p-icon" /><h2>GitStudio <span class="sub">the extension</span></h2></div>
-				<p class="lede">
-					The full suite — graph, blame, history, staging, merge, rebase, worktrees, pull
-					requests. One-click install from the marketplace your editor already uses, or
-					search <strong>“GitStudio”</strong> in the Extensions view.
-				</p>
-				<p class="req">
-					Requires VS Code {EXT.minVsCode}+ (or Cursor, VSCodium, Windsurf, code-server) and
-					git on your PATH. Stock VS Code installs from the Microsoft Marketplace; the others
-					pull the same build from Open VSX.
-				</p>
-			</div>
-			<div class="dl-act" data-reveal style="--reveal-delay:.08s">
-				<a class="btn btn-primary btn-lg" href={EXT.marketplaceUrl} target="_blank" rel="noopener">VS Code Marketplace</a>
-				<a class="btn btn-ghost btn-lg" href={EXT.openVsxUrl} target="_blank" rel="noopener">Open VSX Registry</a>
-				<InstallCmd cmd={`code --install-extension ${EXT.id}`} />
-				<InstallCmd cmd={`cursor --install-extension ${EXT.id}`} />
-				<details class="verify">
-					<summary>Prefer a direct artifact? ({EXT.vsixFile} · {EXT.vsixSizeMb} MB)</summary>
-					<a class="btn btn-ghost vsix-btn" href={EXT.vsixPath} download>
-						<svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M7.25 1.75a.75.75 0 0 1 1.5 0v6.69l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 1 1 1.06-1.06l2.22 2.22V1.75ZM2.5 12.25a.75.75 0 0 1 .75.75v.5c0 .138.112.25.25.25h9a.25.25 0 0 0 .25-.25v-.5a.75.75 0 0 1 1.5 0v.5A1.75 1.75 0 0 1 12.5 15.25h-9a1.75 1.75 0 0 1-1.75-1.75v-.5a.75.75 0 0 1 .75-.75Z"/></svg>
-						Download the VSIX
-					</a>
-					<InstallCmd cmd={`shasum -a 256 ${EXT.vsixFile}`} />
-					<p class="sha">Expected: <code>{EXT.vsixSha256}</code></p>
-					<p class="fine">
-						Same build CI published to the registries. Or don't trust us at all —
-						the <a href={GITHUB_REPO_URL} target="_blank" rel="noopener">source is public</a>;
-						build it yourself with <code>npm run package</code> + <code>vsce package</code>.
-					</p>
-				</details>
-			</div>
+			))}
 		</div>
-	</section>
-
-	<!-- MERGE STUDIO -->
-	<section class="section" id="merge-studio">
-		<div class="container dl">
-			<div class="dl-info" data-reveal>
-				<div class="statusline">
-					<span class="badge live">● Live on both registries</span>
-					<span class="chip">v{MERGE.version}</span>
-					<span class="chip">{MERGE.license}</span>
-				</div>
-				<div class="h-id"><Image src={mergeIcon} alt="" width="96" height="96" class="p-icon" /><h2>Merge Studio <span class="sub">the merge editor</span></h2></div>
-				<p class="lede">
-					The focused three-pane conflict resolver. One-click install from the marketplace
-					your editor already uses — or search <strong>“Merge Studio”</strong> in the
-					Extensions view.
-				</p>
-				<p class="req">
-					Stock VS Code installs from the Microsoft Marketplace. Cursor, VSCodium, Windsurf,
-					and code-server install from Open VSX — same extension, same version.
-				</p>
-			</div>
-			<div class="dl-act" data-reveal style="--reveal-delay:.08s">
-				<a class="btn btn-primary btn-lg" href={MERGE.marketplaceUrl} target="_blank" rel="noopener">VS Code Marketplace</a>
-				<a class="btn btn-ghost btn-lg" href={MERGE.openVsxUrl} target="_blank" rel="noopener">Open VSX Registry</a>
-				<InstallCmd cmd={`code --install-extension ${MERGE.id}`} />
-			</div>
-		</div>
-	</section>
-
-	<!-- DESKTOP -->
-	<section class="section" id="desktop">
-		<div class="container dl">
-			<div class="dl-info" data-reveal>
-				<div class="statusline">
-					<span class="badge live">● v{APP.version} out now</span>
-					<span class="chip">Auto-updates</span>
-					<span class="chip">{APP.license}</span>
-				</div>
-				<div class="h-id"><Image src={appIcon} alt="" width="96" height="96" class="p-icon" /><h2>GitStudio Desktop <span class="sub">the app</span></h2></div>
-				<p class="lede">
-					Native builds for every desk, straight from
-					the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Release</a> — install once
-					and auto-update keeps you current as <code>app-v*</code> releases ship.
-				</p>
-				<p class="req">
-					If macOS flags the download as from an unidentified developer,
-					<code>xattr -cr /Applications/GitStudio.app</code> clears the quarantine flag after
-					you drag it in.
-				</p>
-			</div>
-			<div class="dl-act" data-reveal style="--reveal-delay:.08s">
-				{APP.downloads.map((d) => (
-					<a class="btn btn-ghost os-btn" href={d.url}>
-						<span class="os">{d.os}</span>
-						<span class="arch">{d.arch}</span>
-						<code>{d.format}</code>
-					</a>
-				))}
-				<p class="cmds-h">Or build from source (Node 22+):</p>
+		<div class="container center">
+			<p class="release-note" data-reveal>
+				v{APP.version} · Apache-2.0 · auto-updates · all installers on
+				the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Release</a>.
+			</p>
+			<details class="verify" data-reveal>
+				<summary>Build from source instead (Node 22+)</summary>
 				<InstallCmd cmd="git clone https://github.com/GitStudioHQ/gitstudio.git" />
 				<InstallCmd cmd="cd gitstudio && npm install && npm run dist --workspace apps/desktop" />
+				<p class="fine">The installer for your OS lands in <code>apps/desktop/release/</code>. The whole thing is open source, so you can audit it or build it yourself.</p>
+			</details>
+		</div>
+	</section>
+
+	<!-- EXTENSIONS POINTER (compact) -->
+	<section class="section ext-band" id="extension">
+		<div class="container">
+			<p class="eyebrow" data-reveal>Prefer to stay in your editor?</p>
+			<h2 data-reveal>Get the <em class="fx">extension</em> instead.</h2>
+			<p class="lede" data-reveal>
+				The same engine, on the VS Code Marketplace and Open VSX — for VS Code, Cursor, VSCodium,
+				Windsurf, and code-server.
+			</p>
+			<div class="ext-cards">
+				<div class="card ext-card" data-reveal>
+					<div class="ex-head">
+						<Image src={extIcon} alt="" width="96" height="96" class="p-icon" />
+						<div>
+							<h3>GitStudio for VS Code &amp; Cursor</h3>
+							<p class="ex-meta">The whole Git workflow · v{EXT.version} · {EXT.license}</p>
+						</div>
+					</div>
+					<InstallCmd cmd={`code --install-extension ${EXT.id}`} />
+					<div class="ex-links">
+						<a class="btn btn-primary btn-sm" href={EXT.route}>Read more &amp; install →</a>
+						<a href={EXT.marketplaceUrl} target="_blank" rel="noopener">Marketplace</a>
+						<a href={EXT.openVsxUrl} target="_blank" rel="noopener">Open VSX</a>
+					</div>
+					<details class="vsix">
+						<summary>Prefer the raw VSIX? ({EXT.vsixSizeMb} MB)</summary>
+						<a class="btn btn-ghost btn-sm vsix-btn" href={EXT.vsixPath} download>Download {EXT.vsixFile}</a>
+						<InstallCmd cmd={`shasum -a 256 ${EXT.vsixFile}`} />
+						<p class="sha">Expected: <code>{EXT.vsixSha256}</code></p>
+					</details>
+				</div>
+
+				<div class="card ext-card" data-reveal style="--reveal-delay:.08s">
+					<div class="ex-head">
+						<Image src={mergeIcon} alt="" width="96" height="96" class="p-icon" />
+						<div>
+							<h3>Merge Studio</h3>
+							<p class="ex-meta">The focused merge editor · v{MERGE.version} · {MERGE.license}</p>
+						</div>
+					</div>
+					<InstallCmd cmd={`code --install-extension ${MERGE.id}`} />
+					<div class="ex-links">
+						<a class="btn btn-primary btn-sm" href={MERGE.route}>Read more &amp; install →</a>
+						<a href={MERGE.marketplaceUrl} target="_blank" rel="noopener">Marketplace</a>
+						<a href={MERGE.openVsxUrl} target="_blank" rel="noopener">Open VSX</a>
+					</div>
+				</div>
 			</div>
+			<p class="ext-foot" data-reveal><a href="/extensions">Compare the two extensions →</a></p>
 		</div>
 	</section>
 
 	<!-- MCP -->
-	<section class="section" id="mcp">
+	<section class="section">
 		<div class="container center">
 			<p class="eyebrow center" data-reveal>Bonus</p>
 			<h2 data-reveal>The MCP server comes <em class="fx">included.</em></h2>
-			<p class="lede" data-reveal>
-				Both the desktop app and the repo ship <code>gitstudio-mcp</code> — a stdio MCP server
+			<p class="lede center" data-reveal>
+				The desktop app and the repo both ship <code>gitstudio-mcp</code> — a stdio MCP server
 				that exposes your repository's Git to Claude Desktop, Cursor, VS Code, and Windsurf.
 				Read-only by default; writes are opt-in. Setup lives in
 				the <a href={DOCS_AI_URL} target="_blank" rel="noopener">AI &amp; agents docs on GitHub</a>.
@@ -154,81 +175,88 @@ const description =
 	.hero {
 		padding-top: clamp(56px, 8vw, 96px);
 		padding-bottom: clamp(8px, 2vw, 24px);
-		background: radial-gradient(45% 50% at 50% 0%, rgba(169, 140, 255, 0.11), transparent 70%);
+		background: radial-gradient(45% 55% at 50% 0%, rgba(169, 140, 255, 0.12), transparent 70%);
 	}
-	.statusline {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.55rem;
-		margin-bottom: 1.2rem;
+	.hero .lede {
+		margin-inline: auto;
+		max-width: 60ch;
 	}
-	.dl > * {
-		min-width: 0;
-	}
-	.dl {
+
+	.os-grid {
 		display: grid;
-		grid-template-columns: 1.15fr 0.85fr;
-		gap: clamp(2rem, 5vw, 4.5rem);
-		align-items: start;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.2rem;
 	}
-	.h-id {
+	.os-col {
+		border: 1px solid var(--hairline);
+		border-radius: var(--r-lg);
+		background: var(--bg-2);
+		padding: 1.5rem 1.4rem;
+		scroll-margin-top: 90px;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+	.os-head {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
-		margin-bottom: 0.6rem;
+		gap: 0.7rem;
+		--icon-hole: var(--bg-2);
 	}
-	.h-id h2 {
+	.os-head :global(.gs-icon) {
+		color: var(--violet-hi);
+	}
+	.os-head h2 {
 		margin: 0;
+		font-size: 1.3rem;
 	}
-	:global(.p-icon) {
-		width: 52px;
-		height: 52px;
-		border-radius: 12px;
-		flex: none;
-		box-shadow: 0 0 0 1px rgba(226, 223, 245, 0.1), 0 10px 24px -12px rgba(0, 0, 0, 0.8);
-	}
-	.dl h2 .sub {
-		display: block;
-		font-size: 0.95rem;
-		font-weight: 500;
-		letter-spacing: 0;
-		color: var(--muted);
-		margin-top: 0.3rem;
-	}
-	.steps {
-		margin: 0 0 1rem;
-		padding-left: 1.3rem;
+	.os-dls {
 		display: flex;
 		flex-direction: column;
 		gap: 0.55rem;
-		color: var(--text);
-	}
-	.steps li::marker {
-		color: var(--violet);
-		font-weight: 600;
-	}
-	.req {
-		color: var(--faint);
-		font-size: 0.9rem;
-		max-width: 56ch;
-	}
-	.dl-act {
-		display: flex;
-		flex-direction: column;
-		gap: 0.7rem;
-		position: sticky;
-		top: 90px;
 	}
 	.dl-btn {
-		justify-content: center;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.7rem;
+		padding: 0.7rem 0.9rem;
+		border: 1px solid var(--hairline-strong);
+		border-radius: 10px;
+		background: rgba(255, 255, 255, 0.02);
+		color: var(--ink);
+		font-weight: 560;
+		font-size: 0.9rem;
+		transition: border-color 0.15s ease, background 0.15s ease;
+	}
+	.dl-btn:hover {
+		text-decoration: none;
+		border-color: var(--violet-line);
+		background: var(--violet-wash);
+	}
+	.dl-btn code {
+		font-size: 0.72rem;
+		color: var(--muted);
+	}
+	.os-note {
+		margin: 0;
+		font-size: 0.82rem;
+		color: var(--faint);
+		line-height: 1.55;
+	}
+	.release-note {
+		margin: 2.2rem 0 0;
+		font-size: 0.9rem;
+		color: var(--muted);
 	}
 	.verify {
+		margin: 1.4rem auto 0;
+		max-width: 640px;
+		text-align: left;
 		border: 1px solid var(--hairline);
 		border-radius: var(--r-md);
 		background: var(--bg-2);
 		padding: 0 1rem;
-		margin-top: 0.3rem;
 	}
 	.verify summary {
 		cursor: pointer;
@@ -251,80 +279,104 @@ const description =
 	.verify > *:not(summary) {
 		margin-bottom: 0.9rem;
 	}
-	.sha {
-		font-size: 0.8rem;
-		color: var(--muted);
-		overflow-wrap: anywhere;
-	}
-	.sha code {
-		font-size: 0.72rem;
-	}
 	.fine {
 		font-size: 0.85rem;
 		color: var(--faint);
 	}
-	.plat {
-		list-style: none;
-		margin: 1.2rem 0;
-		padding: 0;
-	}
-	.plat li {
-		display: flex;
-		align-items: baseline;
-		gap: 0.8rem;
-		padding: 0.65rem 0.2rem;
-		border-bottom: 1px solid var(--hairline);
-		font-size: var(--fs-1);
-	}
-	.plat li:first-child {
+
+	/* EXTENSIONS BAND */
+	.ext-band {
 		border-top: 1px solid var(--hairline);
+		background: linear-gradient(180deg, rgba(169, 140, 255, 0.03), transparent 40%);
 	}
-	.plat strong {
-		min-width: 5.4rem;
+	.ext-cards {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.2rem;
+		margin-top: 2.2rem;
 	}
-	.plat span {
+	.ext-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+	}
+	.ex-head {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+	}
+	:global(.p-icon) {
+		width: 48px;
+		height: 48px;
+		border-radius: 12px;
+		flex: none;
+		box-shadow: 0 0 0 1px rgba(226, 223, 245, 0.1), 0 10px 24px -12px rgba(0, 0, 0, 0.8);
+	}
+	.ex-head h3 {
+		margin: 0;
+		font-size: 1.05rem;
+	}
+	.ex-meta {
+		margin: 0.15rem 0 0;
+		font-size: 0.78rem;
 		color: var(--muted);
 	}
-	.plat code {
-		margin-left: auto;
+	.ex-links {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+		flex-wrap: wrap;
 	}
-	.os-btn {
-		justify-content: flex-start;
-		gap: 0.7rem;
-	}
-	.os-btn .os {
-		font-weight: 640;
-		min-width: 4.6rem;
-		text-align: left;
-	}
-	.os-btn .arch {
+	.ex-links a:not(.btn) {
+		font-size: 0.8rem;
 		color: var(--muted);
-		font-weight: 450;
-		flex: 1;
-		text-align: left;
 	}
-	.os-btn code {
-		font-size: 0.72rem;
+	.ex-links a:not(.btn):hover {
+		color: var(--violet-hi);
+	}
+	.vsix {
+		border-top: 1px solid var(--hairline);
+		padding-top: 0.7rem;
+	}
+	.vsix summary {
+		cursor: pointer;
+		list-style: none;
+		color: var(--muted);
+		font-size: 0.82rem;
+	}
+	.vsix summary::-webkit-details-marker {
+		display: none;
+	}
+	.vsix > *:not(summary) {
+		margin-top: 0.7rem;
 	}
 	.vsix-btn {
-		justify-content: center;
-		gap: 0.5rem;
 		width: 100%;
+		justify-content: center;
 	}
-	.cmds-h {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--faint);
-		margin: 0.6rem 0 0;
+	.sha {
+		font-size: 0.76rem;
+		color: var(--muted);
+		overflow-wrap: anywhere;
+		margin: 0;
 	}
-	@media (max-width: 960px) {
-		.dl {
+	.sha code {
+		font-size: 0.68rem;
+	}
+	.ext-foot {
+		margin: 1.8rem 0 0;
+		font-size: var(--fs-1);
+	}
+	.center .lede {
+		margin-inline: auto;
+	}
+
+	@media (max-width: 860px) {
+		.os-grid {
 			grid-template-columns: 1fr;
 		}
-		.dl-act {
-			position: static;
+		.ext-cards {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>
