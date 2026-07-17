@@ -9,7 +9,7 @@ import { EXT, MERGE, APP, GITHUB_REPO_URL, GITHUB_RELEASES_URL, DOCS_AI_URL } fr
 
 const title = 'Download GitStudio Desktop — macOS, Windows & Linux';
 const description =
-	'Download GitStudio Desktop v1.0.0 — the free, open-source Git & GitHub client for macOS (Apple Silicon & Intel), Windows, and Linux (.AppImage & .deb), with auto-update built in. Also available as a VS Code & Cursor extension.';
+	'Download GitStudio Desktop v1.0.0 — the free, open-source Git & GitHub client for macOS (Apple Silicon & Intel .dmg), Windows (x64 & ARM64 .exe), and Linux (.deb, .rpm, .AppImage, .tar.gz), with auto-update built in. Also available as a VS Code & Cursor extension.';
 
 // Group the flat installer list from consts by OS for the per-OS sections.
 const byOs = {
@@ -22,15 +22,16 @@ const byOs = {
 const dl = {
 	macArm: byOs.macOS.find((d) => d.arch === 'Apple Silicon')?.url,
 	macIntel: byOs.macOS.find((d) => d.arch === 'Intel')?.url,
-	win: byOs.Windows[0]?.url,
+	winX64: byOs.Windows.find((d) => d.arch === 'x64')?.url,
+	winArm: byOs.Windows.find((d) => d.arch === 'ARM64')?.url,
 	linApp: byOs.Linux.find((d) => d.format === '.AppImage')?.url,
 	linDeb: byOs.Linux.find((d) => d.format === '.deb')?.url,
 };
 
 const oses = [
-	{ id: 'macos', name: 'macOS', icon: 'apple' as const, min: 'Apple Silicon & Intel', dls: byOs.macOS, note: 'Unsigned builds may trip Gatekeeper — after dragging the app in, clear the quarantine flag once:', gatekeeper: 'xattr -cr /Applications/GitStudio.app' },
-	{ id: 'windows', name: 'Windows', icon: 'windows' as const, min: '64-bit · Windows 10 & 11', dls: byOs.Windows, note: 'If SmartScreen appears, choose <strong>More info → Run anyway</strong>. The NSIS installer lets you pick the install directory.', gatekeeper: null },
-	{ id: 'linux', name: 'Linux', icon: 'linux' as const, min: 'x86-64', dls: byOs.Linux, note: 'The <code>.AppImage</code> is universal — <code>chmod +x</code> and run. On Debian/Ubuntu: <code>sudo apt install ./GitStudio-*.deb</code>.', gatekeeper: null },
+	{ id: 'macos', name: 'macOS', icon: 'apple' as const, min: 'Apple Silicon & Intel · macOS 11+', cmd: APP.install.macos, dls: byOs.macOS, note: 'Unsigned builds may trip Gatekeeper — after dragging the app in, clear the quarantine flag once:', gatekeeper: 'xattr -cr /Applications/GitStudio.app' },
+	{ id: 'windows', name: 'Windows', icon: 'windows' as const, min: '64-bit · Windows 10 & 11', cmd: APP.install.windows, dls: byOs.Windows, note: 'If SmartScreen appears, choose <strong>More info → Run anyway</strong>. The NSIS installer lets you pick the install directory.', gatekeeper: null },
+	{ id: 'linux', name: 'Linux', icon: 'linux' as const, min: 'x86-64 · arm64 coming', cmd: APP.install.linux, dls: byOs.Linux, note: 'The <code>.AppImage</code> is universal — <code>chmod +x</code> and run. On Debian/Ubuntu: <code>sudo apt install ./GitStudio-*.deb</code>; on Fedora/RHEL: <code>sudo dnf install ./GitStudio-*.rpm</code>.', gatekeeper: null },
 ];
 
 const jsonLd = [
@@ -115,6 +116,8 @@ const jsonLd = [
 								<span class="os-min mono">{os.min}</span>
 							</div>
 						</div>
+						<InstallCmd cmd={os.cmd} />
+						<p class="or mono" aria-hidden="true"><span>or download</span></p>
 						<div class="os-dls">
 							{os.dls.map((d) => (
 								<a class="dl-btn" href={d.url}>
@@ -241,8 +244,17 @@ const jsonLd = [
 		mainEl.textContent = 'Download for ' + (os === 'macos' ? 'macOS' : os === 'windows' ? 'Windows' : 'Linux');
 
 		if (os === 'windows') {
-			set(dl.win, 'x64 · .exe');
-			altEl.innerHTML = '<a href="#all">See macOS &amp; Linux builds ↓</a>';
+			let wdone = false;
+			const applyWin = (arch) => {
+				if (wdone) return;
+				wdone = true;
+				if (arch === 'arm') { set(dl.winArm, 'ARM64 · .exe'); altEl.innerHTML = 'On an x64 PC? <a href="' + dl.winX64 + '">Get the x64 build</a>'; }
+				else { set(dl.winX64, 'x64 · .exe'); altEl.innerHTML = 'Windows on ARM? <a href="' + dl.winArm + '">Get the ARM64 build</a>'; }
+			};
+			if (uad && uad.getHighEntropyValues) {
+				uad.getHighEntropyValues(['architecture']).then((h) => applyWin(h.architecture === 'arm' ? 'arm' : 'x64')).catch(() => {});
+			}
+			setTimeout(() => applyWin('x64'), 300);
 			return;
 		}
 		if (os === 'linux') {
@@ -402,6 +414,23 @@ const jsonLd = [
 		font-size: 0.72rem;
 		color: var(--faint);
 	}
+	.or {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		margin: 0.1rem 0;
+		font-size: 0.66rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--faint);
+	}
+	.or::before,
+	.or::after {
+		content: '';
+		flex: 1;
+		height: 1px;
+		background: var(--hairline);
+	}
 	.os-dls {
 		display: flex;
 		flex-direction: column;
@@ -436,8 +465,11 @@ const jsonLd = [
 		color: var(--faint);
 		line-height: 1.55;
 	}
-	.os-col :global(.cmd) {
-		margin-top: -0.3rem;
+	.os-col {
+		gap: 0.85rem;
+	}
+	.os-col :global(.ic) {
+		width: 100%;
 	}
 	.release-note {
 		margin: 2.2rem 0 0;
