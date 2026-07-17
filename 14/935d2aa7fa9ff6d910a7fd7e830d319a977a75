@@ -1,0 +1,27 @@
+src/components/ExtensionsFeature.astro
+  s_44fb38c224c892::t_55aeb7a8534539 1-355
+  s_44fb38c224c892::t_046699408501c9 356
+src/components/ExtensionsLineup.astro
+  s_44fb38c224c892::t_52c9bf3f2bb82c 1-270
+src/pages/index.astro
+  s_44fb38c224c892::t_0378d577c24ec8 6
+  s_44fb38c224c892::t_ce1c9331ba3d1f 76-77
+src/components/EditorExtensions.astro
+  s_44fb38c224c892::t_a91a9e6e4765cf 1-255
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "14935d2aa7fa9ff6d910a7fd7e830d319a977a75",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
