@@ -4,7 +4,7 @@
 
 export const SITE_TITLE = 'GitStudio';
 export const SITE_DESCRIPTION =
-	'GitStudio is a free, open-source, JetBrains-grade Git suite for VS Code, Cursor, and the desktop — commit graph, three-pane merge, interactive rebase with a universal Undo, in-editor pull requests, and bring-your-own-key AI.';
+	'GitStudio is a free, open-source, native Git and GitHub client for macOS, Windows, and Linux, with editor extensions for VS Code and Cursor: a commit graph, a three-pane merge editor, interactive rebase, a universal undo, the full GitHub client, and AI on your own keys.';
 
 export const GITHUB_ORG_URL = 'https://github.com/GitStudioHQ';
 export const GITHUB_REPO_URL = 'https://github.com/GitStudioHQ/gitstudio';

@@ -1,89 +1,60 @@
 ---
 import Site from '../layouts/Site.astro';
 import Icon from '../components/Icon.astro';
-import { Image } from 'astro:assets';
-import extIcon from '../assets/brand/ext-icon-192.png';
-import mergeIcon from '../assets/brand/merge-icon-192.png';
 import GraphLive from '../components/GraphLive.astro';
 import Shot from '../components/Shot.astro';
-import EditorChips from '../components/EditorChips.astro';
+import ExtensionsStrip from '../components/ExtensionsStrip.astro';
 import appCommits from '../assets/shots/app-commits.png';
 import appPrs from '../assets/shots/app-prs.png';
 import appTerminal from '../assets/shots/app-terminal.png';
 import appAssistant from '../assets/shots/app-assistant.png';
 import mergeEditor from '../assets/shots/merge-editor.png';
-import { GITHUB_ORG_URL, GITHUB_REPO_URL, GITHUB_RELEASES_URL, EXT, MERGE, APP, AI_PROVIDERS } from '../consts';
+import { GITHUB_ORG_URL, GITHUB_REPO_URL, GITHUB_RELEASES_URL, APP, AI_PROVIDERS } from '../consts';
 
-const title = 'GitStudio — the open-source Git desktop for macOS, Windows & Linux';
+const title = 'GitStudio — a native Git and GitHub client for macOS, Windows, Linux';
 const description =
-	'GitStudio Desktop is a free, open-source, JetBrains-grade Git & GitHub client for macOS, Windows, and Linux — a live commit graph, three-pane merge, interactive rebase with a universal Undo, the whole of GitHub, a real terminal, and bring-your-own-key AI. Also available as a VS Code & Cursor extension.';
+	'GitStudio is a free, open-source, native Git and GitHub client for macOS, Windows, and Linux: a commit graph, a three-pane merge editor, interactive rebase, the full GitHub client, a real terminal, and AI that runs on your own keys.';
 
-// Structured data: Organization + WebSite + the Desktop SoftwareApplication.
-// Grounded strictly in consts — no fabricated ratings.
 const jsonLd = [
+	{ '@context': 'https://schema.org', '@type': 'Organization', name: 'GitStudio', url: 'https://gitstudio.dev/', logo: 'https://gitstudio.dev/favicon-32.png', sameAs: [GITHUB_ORG_URL, 'https://marketplace.visualstudio.com/publishers/gitstudio', 'https://open-vsx.org/namespace/gitstudio'] },
+	{ '@context': 'https://schema.org', '@type': 'WebSite', name: 'GitStudio', url: 'https://gitstudio.dev/' },
 	{
-		'@context': 'https://schema.org',
-		'@type': 'Organization',
-		name: 'GitStudio',
-		url: 'https://gitstudio.dev/',
-		logo: 'https://gitstudio.dev/favicon-32.png',
-		sameAs: [
-			GITHUB_ORG_URL,
-			'https://marketplace.visualstudio.com/publishers/gitstudio',
-			'https://open-vsx.org/namespace/gitstudio',
-		],
-	},
-	{
-		'@context': 'https://schema.org',
-		'@type': 'WebSite',
-		name: 'GitStudio',
-		url: 'https://gitstudio.dev/',
-	},
-	{
-		'@context': 'https://schema.org',
-		'@type': 'SoftwareApplication',
-		name: 'GitStudio Desktop',
-		description,
-		url: 'https://gitstudio.dev/',
-		applicationCategory: 'DeveloperApplication',
-		operatingSystem: 'macOS, Windows, Linux',
-		softwareVersion: APP.version,
-		license: 'https://www.apache.org/licenses/LICENSE-2.0',
-		downloadUrl: 'https://gitstudio.dev/download',
+		'@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'GitStudio Desktop', description,
+		url: 'https://gitstudio.dev/', applicationCategory: 'DeveloperApplication', operatingSystem: 'macOS, Windows, Linux',
+		softwareVersion: APP.version, license: 'https://www.apache.org/licenses/LICENSE-2.0', downloadUrl: 'https://gitstudio.dev/download',
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 	},
 ];
 
 const workflow = [
-	{ icon: 'rebase', h: 'Interactive rebase', p: 'Reorder commits by dragging them — pick · reword · edit · squash · fixup · drop, visually.' },
-	{ icon: 'undo', h: 'Universal Undo', p: 'A reflog snapshot before every destructive op; one command reverses it. It never touches Ctrl+Z.' },
-	{ icon: 'blame', h: 'Blame + code-age heatmap', p: 'Authorship on the current line, and a warm-to-cool gutter heatmap showing where the repo still moves.' },
-	{ icon: 'branch', h: 'Branches, tags, stashes, worktrees', p: 'Full operations, right-click everything, per-branch ahead/behind badges, pull without checkout.' },
-	{ icon: 'compare', h: 'Branch compare', p: 'Ahead/behind, the commits between any two refs, and the changed files as native diffs.' },
-	{ icon: 'sync', h: 'Status-bar sync', p: 'One-click fetch · pull · push; force-push defaults to the safer --force-with-lease.' },
+	{ icon: 'rebase', h: 'Interactive rebase', p: 'Reorder commits by dragging them: pick, reword, edit, squash, fixup, drop.' },
+	{ icon: 'undo', h: 'Universal undo', p: 'Every destructive operation writes a reflog snapshot first, so one command restores it. It is separate from editor undo.' },
+	{ icon: 'blame', h: 'Inline blame', p: 'Per-line authorship, plus a code-age heatmap that shades recent lines warm and old lines cool.' },
+	{ icon: 'branch', h: 'Branches and worktrees', p: 'Branches, tags, stashes, and worktrees with full operations and per-branch ahead/behind counts.' },
+	{ icon: 'compare', h: 'Branch compare', p: 'Ahead/behind, the commits between any two refs, and the changed files as diffs.' },
+	{ icon: 'sync', h: 'Status-bar sync', p: 'Fetch, pull, and push from the status bar. Force-push uses --force-with-lease.' },
 ];
 ---
 
 <Site title={title} description={description} jsonLd={jsonLd}>
-	<!-- ============ HERO — THE DESKTOP ============ -->
+	<!-- ============ HERO ============ -->
 	<section class="hero">
 		<div class="container">
-			<p class="eyebrow center hero-eyebrow">GitStudio Desktop · v{APP.version} · macOS · Windows · Linux</p>
-			<h1>A Git client with a <em class="fx">brain.</em></h1>
+			<p class="eyebrow center hero-eyebrow">GitStudio Desktop · v{APP.version} · macOS, Windows, Linux</p>
+			<h1>The full Git and GitHub workflow in one native app.</h1>
 			<p class="lede center-lede">
-				GitStudio is a free, open-source, JetBrains-grade Git &amp; GitHub client for the desktop —
-				a live commit graph, three-pane merge, a rebase you can drag, an Undo for everything, the
-				whole of GitHub, a real terminal, and AI that runs on <strong>your</strong> keys. Native on
-				macOS, Windows, and Linux.
+				A native desktop client for macOS, Windows, and Linux. It puts the full Git workflow,
+				all of GitHub, and a real terminal in one window. The AI assistant runs on your own keys,
+				or fully local. Apache-2.0, free, no account.
 			</p>
 			<div class="cta-row">
 				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
 				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">
 					<svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
-					Star on GitHub
+					View the source
 				</a>
 			</div>
-			<ul class="facts" aria-label="Project facts">
+			<ul class="facts" aria-label="Facts">
 				<li class="chip"><span class="dot" aria-hidden="true"></span>v{APP.version}</li>
 				<li class="chip">Apache-2.0</li>
 				<li class="chip">Auto-updates</li>
@@ -95,166 +66,172 @@ const workflow = [
 		<div class="container hero-shot">
 			<Shot
 				src={appCommits}
-				alt="GitStudio Desktop 1.0 open on its own repository: the Commits view with the full multicolor commit graph, author avatars on the nodes, branch and tag chips, and the terminal dock"
-				caption="GitStudio Desktop 1.0, on its own repository — a real capture, not a render."
+				alt="GitStudio Desktop on its own repository: the Commits view with the commit graph, author avatars on the nodes, branch and tag chips, and the terminal dock"
+				caption="GitStudio Desktop 1.0, running on its own repository."
 				priority
 			/>
 		</div>
 	</section>
 
-	<!-- ============ LIVE GRAPH ============ -->
+	<!-- ============ EXTENSIONS STRIP — early, quiet, one line ============ -->
+	<ExtensionsStrip
+		label="Also in your editor"
+		extDesc="Full Git workflow, VS Code & Cursor"
+		mergeDesc="Three-pane merge editor"
+	/>
+
+	<!-- ============ 01 · COMMIT GRAPH ============ -->
 	<section class="section">
 		<div class="container feature">
 			<div class="f-copy" data-reveal>
-				<p class="eyebrow">01 · Visualize</p>
-				<h2>History you can actually <em class="fx">read.</em></h2>
+				<p class="eyebrow">01 · Commit graph</p>
+				<h2>A commit graph that stays fast at tens of thousands of commits.</h2>
 				<p class="lede">
-					A real commit graph — virtualized, so it stays fast at tens of thousands of commits —
-					with colored lanes, ref chips, author avatars riding the nodes, and keyboard navigation.
-					The same engine lays it out on the desktop and in your editor.
+					The graph is virtualized, so it stays responsive on large repositories. Colored lanes,
+					ref chips, author avatars on the nodes, and full keyboard navigation. The same engine
+					draws it on the desktop and in the editor.
 				</p>
 				<ul class="ticks">
-					<li>Checkout, cherry-pick, branch, or reset from any commit</li>
-					<li>Search by message · author · SHA · refs, with match stepping</li>
-					<li>File history, line history, and a reflog time-machine for recovery</li>
+					<li>Check out, cherry-pick, branch, or reset from any commit.</li>
+					<li>Search by message, author, SHA, or ref, and step through the matches.</li>
+					<li>File history, line history, and reflog recovery.</li>
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
 				<GraphLive />
-				<p class="live-note mono">Not a screenshot — the shipping graph component, live, rendering this repo's real history. Scroll it, click around.</p>
+				<p class="live-note mono">The graph above is the component that ships in GitStudio, rendering this repository's history. Scroll and click through it.</p>
 			</div>
 		</div>
 	</section>
 
-	<!-- ============ MERGE ============ -->
+	<!-- ============ 02 · MERGE ============ -->
 	<section class="section">
 		<div class="container">
 			<div class="f-copy narrow" data-reveal>
 				<p class="eyebrow">02 · Merge</p>
-				<h2>Merges you <em class="fx">finish,</em> not survive.</h2>
+				<h2>A three-pane merge editor that opens on conflict.</h2>
 				<p class="lede">
-					A JetBrains-style three-pane conflict editor — yours, result, theirs — with one-click
-					accept ribbons, and conflicts that open themselves the moment they appear. The exact
-					same merge engine ships in the desktop app, the GitStudio extension, and Merge Studio.
+					Yours, result, and theirs, side by side, with per-hunk accept controls. A conflict
+					opens the editor automatically. The same merge engine ships in the desktop app, the
+					GitStudio extension, and Merge Studio.
 				</p>
 			</div>
 		</div>
 		<div class="container" data-reveal style="--reveal-delay:.1s">
 			<Shot
 				src={mergeEditor}
-				alt="The real three-pane merge editor: yours, result and theirs panes in Monaco with conflict ribbons and per-hunk accept controls"
-				caption="The real merge editor, mid-conflict — 4 changes, 3 conflicts, every ribbon live."
+				alt="The three-pane merge editor resolving conflicts in an auth module: yours, result, and theirs, with accept controls between the panes"
+				caption="Three conflicts open in an auth module — yours, result, and theirs, with accept controls between the panes."
 			/>
 		</div>
 	</section>
 
-	<!-- ============ REST OF THE WORKFLOW (icon grid, no fake windows) ============ -->
+	<!-- ============ 03 · WORKFLOW GRID ============ -->
 	<section class="section">
 		<div class="container">
-			<p class="eyebrow" data-reveal>03 · The rest of the workflow</p>
-			<h2 data-reveal>Every ref, every rewrite, <em class="fx">included.</em></h2>
+			<p class="eyebrow" data-reveal>03 · Everyday Git</p>
+			<h2 data-reveal>The rest of the everyday workflow.</h2>
 			<div class="wf-grid">
 				{workflow.map((w, i) => (
 					<div class="card" data-reveal style={`--reveal-delay:${(i % 3) * 0.06}s`}>
 						<div class="ch"><span class="icon-tile"><Icon name={w.icon as any} /></span><h3>{w.h}</h3></div>
-						<p>{w.p}</p>
+						<p set:html={w.p.replace(/--force-with-lease/g, '<code>--force-with-lease</code>')} />
 					</div>
 				))}
 			</div>
 		</div>
 	</section>
 
-	<!-- ============ GITHUB CLIENT ============ -->
+	<!-- ============ 04 · GITHUB ============ -->
 	<section class="section">
 		<div class="container">
 			<div class="f-copy narrow" data-reveal>
-				<p class="eyebrow">04 · The GitHub client</p>
-				<h2>Close the tabs. It's all <em class="fx">here.</em></h2>
+				<p class="eyebrow">04 · GitHub</p>
+				<h2>All of GitHub, inside the app.</h2>
 				<p class="lede">
-					Review pull requests, triage issues, answer notifications, manage releases, watch
-					Actions, browse org repos and projects, keep gists — every GitHub surface as a
-					first-class native view, tied to the repo in front of you.
+					Every GitHub surface is a native view: pull requests, issues, gists, notifications,
+					releases, Actions, organizations, and projects. Review a pull request — check it out,
+					comment inline, approve, merge — without opening a browser tab.
 				</p>
 			</div>
 		</div>
 		<div class="container" data-reveal style="--reveal-delay:.1s">
 			<Shot
 				src={appPrs}
-				alt="A real pull request open in GitStudio Desktop with Checkout, Approve, Review, AI and Merge actions, Conversation/Commits/Pipelines/Files tabs, and the rendered description"
-				caption="A real PR, reviewed and merged without a browser — Checkout · Approve · Review · AI · Merge."
+				alt="A pull request open in GitStudio Desktop with checkout, approve, review, and merge actions, tabs for conversation, commits, checks, and files, and the rendered description"
+				caption="A pull request in GitStudio: checkout, review, and merge, with the description and checks alongside."
 			/>
 		</div>
 	</section>
 
-	<!-- ============ TERMINAL ============ -->
+	<!-- ============ 05 · TERMINAL ============ -->
 	<section class="section">
 		<div class="container feature">
 			<div class="f-copy" data-reveal>
-				<p class="eyebrow">05 · The terminal</p>
-				<h2>A terminal with <em class="fx">receipts.</em></h2>
+				<p class="eyebrow">05 · Terminal</p>
+				<h2>A real terminal that keeps every command as a block.</h2>
 				<p class="lede">
-					A real PTY — not an emulation — where every run becomes a command block: the command,
-					its output, its exit code, and its timing, kept as a card you can scan, copy, or rerun.
-					Autocomplete reads your history, PATH, and cwd, so it suggests the thing you meant.
+					A real PTY, not an emulation. Each run becomes a block that records its command,
+					output, exit code, and timing.
 				</p>
 				<ul class="ticks">
-					<li>Blocks are receipts — what ran, when, and how it went, at a glance</li>
-					<li>Autocomplete that knows your repo, not just your alphabet</li>
-					<li>One keystroke hands the prompt to the Assistant — agent mode, in place</li>
+					<li>Scan, copy, or rerun any block.</li>
+					<li>Autocomplete draws on your shell history, PATH, and working directory.</li>
+					<li>Hand a command to the assistant without leaving the terminal.</li>
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
 				<Shot
 					src={appTerminal}
-					alt="The terminal dock open inside GitStudio Desktop under the commit graph, with the tab strip and terminal list"
-					caption="The real dock — Commit details · Output · Terminal, under whichever view you're in."
+					alt="The terminal dock open under the commit graph in GitStudio Desktop, showing a command block and its output"
+					caption="The terminal dock open under the commit graph, with a command block and its result."
 				/>
 			</div>
 		</div>
 	</section>
 
-	<!-- ============ AI ASSISTANT ============ -->
+	<!-- ============ 06 · AI ASSISTANT (the one sanctioned emphasis) ============ -->
 	<section class="section ai">
 		<div class="container feature flip">
 			<div class="f-copy" data-reveal>
-				<p class="eyebrow">06 · Assist — optional</p>
-				<h2>An agent on a <em class="fx">leash.</em></h2>
+				<p class="eyebrow">06 · Assistant · optional</p>
+				<h2>AI that runs on <em class="fx">your</em> own keys.</h2>
 				<p class="lede">
-					Connect any model you already pay for — or one running on your own machine — and get
-					commit messages, diff explanations, and an agent that reads real status and history
-					and <strong>asks before every write</strong>. Your keys live in the OS keychain; with
-					nothing connected, the AI simply isn't there. There's a built-in MCP server, too.
+					The assistant is off until you connect a model. It runs on your own API keys across 12
+					providers — 10 cloud, plus Ollama and LM Studio locally. It reads real status, diffs,
+					and history, and asks before every write. A built-in MCP server exposes the same tools
+					to other agents.
 				</p>
 				<ul class="ticks">
-					<li>A permission slider — read-only, commits, or everything. Every tool call visible.</li>
-					<li>10 cloud providers + local models via Ollama and LM Studio — nothing leaves your machine.</li>
-					<li>No GitStudio account, no proxy, no markup. We don't have servers.</li>
+					<li>A permission control — read-only, commits, or everything — that asks before every write, with each tool call visible.</li>
+					<li>Keys live in the OS keychain. Requests go from your machine to your provider.</li>
+					<li>With Ollama or LM Studio, nothing leaves your machine.</li>
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
 				<Shot
 					src={appAssistant}
-					alt="The Assistant in GitStudio Desktop running a local model in read-only mode, summarizing working-tree changes and comparing branches"
-					caption="A real Assistant session — local model, read-only mode, every answer grounded in the repo."
+					alt="The assistant in GitStudio Desktop summarizing working-tree changes in a read-only session, running a local model"
+					caption="The assistant summarizing working-tree changes in a read-only session, on a local model."
 				/>
 			</div>
 		</div>
 		<div class="container">
-			<p class="prov-note mono" data-reveal>10 cloud providers · 2 local runtimes · one settings panel · zero lock-in</p>
+			<p class="prov-note mono" data-reveal>10 cloud providers, plus local models through Ollama and LM Studio</p>
 			<ul class="providers" aria-label="Supported AI providers" data-reveal>
 				{AI_PROVIDERS.map((p) => <li class="chip">{p}</li>)}
 			</ul>
 		</div>
 	</section>
 
-	<!-- ============ PLATFORMS / DOWNLOAD BAND ============ -->
+	<!-- ============ PLATFORMS ============ -->
 	<section class="section platforms">
 		<div class="container center">
-			<p class="eyebrow center" data-reveal>Native everywhere</p>
-			<h2 data-reveal>One app. Every <em class="fx">desk.</em></h2>
+			<p class="eyebrow center" data-reveal>Platforms</p>
+			<h2 data-reveal>Native on macOS, Windows, and Linux.</h2>
 			<p class="lede" data-reveal>
-				Signed installers with auto-update built in — install once and stay current as new
-				releases ship. v{APP.version}, Apache-2.0, no account.
+				Signed installers for every platform, with auto-update built in. v{APP.version}, Apache-2.0,
+				no account.
 			</p>
 			<div class="os-row" data-reveal>
 				<a class="os-card" href="/download#macos">
@@ -274,76 +251,19 @@ const workflow = [
 				</a>
 			</div>
 			<div class="cta-row centered" data-reveal>
-				<a class="btn btn-primary btn-lg" href="/download">Get GitStudio Desktop</a>
+				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
 				<a class="btn btn-ghost btn-lg" href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">All releases</a>
 			</div>
-		</div>
-	</section>
-
-	<!-- ============ THE ONE EXTENSIONS SPOT ============ -->
-	<section class="section ext-spot" id="extensions">
-		<div class="container">
-			<p class="eyebrow" data-reveal>Prefer to stay in your editor?</p>
-			<h2 data-reveal>GitStudio ships two <em class="fx">extensions,</em> too.</h2>
-			<p class="lede" data-reveal>
-				The same engine, packaged for VS Code, Cursor, and every VS Code-compatible editor —
-				live on the Marketplace and Open VSX. Two focused choices:
-			</p>
-			<div class="ext-cards">
-				<div class="card ext-card" data-reveal>
-					<div class="ex-head">
-						<Image src={extIcon} alt="" width="104" height="104" class="ex-icon" />
-						<div class="ex-title">
-							<h3>GitStudio for VS Code &amp; Cursor</h3>
-							<p class="ex-meta">The whole Git workflow in your editor · v{EXT.version} · {EXT.license}</p>
-						</div>
-					</div>
-					<p class="ex-copy">
-						Graph, blame, history, staging, three-pane merge, rebase, worktrees, and in-editor
-						GitHub pull requests. {EXT.commands} commands, five sidebar views — the same engine as the desktop.
-					</p>
-					<EditorChips size="sm" class="ex-editors" />
-					<div class="ex-cta">
-						<a class="btn btn-primary btn-sm" href={EXT.route}>Read more &amp; install →</a>
-						<a class="mkt" href={EXT.marketplaceUrl} target="_blank" rel="noopener">Marketplace</a>
-						<a class="mkt" href={EXT.openVsxUrl} target="_blank" rel="noopener">Open VSX</a>
-					</div>
-				</div>
-
-				<div class="card ext-card" data-reveal style="--reveal-delay:.08s">
-					<div class="ex-head">
-						<Image src={mergeIcon} alt="" width="104" height="104" class="ex-icon" />
-						<div class="ex-title">
-							<h3>Merge Studio</h3>
-							<p class="ex-meta">The focused 3-pane merge &amp; conflict editor · v{MERGE.version} · {MERGE.license}</p>
-						</div>
-					</div>
-					<p class="ex-copy">
-						Just conflicts, done properly: three panes, color ribbons, one-click accepts, a
-						conflicts dashboard, and a named undo history. Tiny, fast, and where GitStudio started.
-					</p>
-					<EditorChips size="sm" class="ex-editors" />
-					<div class="ex-cta">
-						<a class="btn btn-primary btn-sm" href={MERGE.route}>Read more &amp; install →</a>
-						<a class="mkt" href={MERGE.marketplaceUrl} target="_blank" rel="noopener">Marketplace</a>
-						<a class="mkt" href={MERGE.openVsxUrl} target="_blank" rel="noopener">Open VSX</a>
-					</div>
-				</div>
-			</div>
-			<p class="ext-foot" data-reveal>
-				Not sure which? <a href="/extensions">Compare the extensions →</a>
-			</p>
 		</div>
 	</section>
 
 	<!-- ============ COMPARISON ============ -->
 	<section class="section">
 		<div class="container">
-			<p class="eyebrow" data-reveal>The honest table</p>
-			<h2 data-reveal>The features are the <em class="fx">pitch.</em></h2>
+			<p class="eyebrow" data-reveal>How it compares</p>
+			<h2 data-reveal>GitStudio next to the alternatives.</h2>
 			<p class="lede" data-reveal>
-				We like GitLens and GitKraken — GitStudio exists because the best parts of them, and of
-				JetBrains, shouldn't cost a subscription or a context switch.
+				A feature-by-feature comparison with GitKraken, GitLens, and the built-in Git tools.
 			</p>
 			<div class="table-wrap" data-reveal>
 				<table class="cmp">
@@ -359,87 +279,87 @@ const workflow = [
 					<tbody>
 						<tr>
 							<th scope="row">Native desktop app</th>
-							<td class="col-gs"><span class="yes">✓ Free</span></td>
+							<td class="col-gs"><span class="yes">Free</span></td>
 							<td><span class="part">Paid</span></td>
 							<td><span class="no">—</span></td>
 							<td><span class="no">—</span></td>
 						</tr>
 						<tr>
 							<th scope="row">Commit graph on private repos</th>
-							<td class="col-gs"><span class="yes">✓ Free</span></td>
+							<td class="col-gs"><span class="yes">Free</span></td>
 							<td><span class="part">Paid</span></td>
 							<td><span class="part">Pro</span></td>
 							<td><span class="no">—</span></td>
 						</tr>
 						<tr>
 							<th scope="row">Three-pane merge editor</th>
-							<td class="col-gs"><span class="yes">✓</span><small>ribbons, auto-open, dashboard</small></td>
-							<td><span class="yes">✓</span></td>
-							<td><span class="no">uses built-in</span></td>
-							<td><span class="part">basic</span></td>
+							<td class="col-gs"><span class="yes">Yes</span></td>
+							<td><span class="yes">Yes</span></td>
+							<td><span class="no">Uses built-in</span></td>
+							<td><span class="part">Basic</span></td>
 						</tr>
 						<tr>
-							<th scope="row">Full GitHub client (PRs, issues, actions…)</th>
-							<td class="col-gs"><span class="yes">✓ built in</span></td>
-							<td><span class="yes">✓</span></td>
-							<td><span class="part">companion ext</span></td>
-							<td><span class="part">companion ext</span></td>
+							<th scope="row">Full GitHub client in-app</th>
+							<td class="col-gs"><span class="yes">Yes</span></td>
+							<td><span class="yes">Yes</span></td>
+							<td><span class="part">Companion ext</span></td>
+							<td><span class="part">Companion ext</span></td>
 						</tr>
 						<tr>
 							<th scope="row">Universal undo for Git operations</th>
-							<td class="col-gs"><span class="yes">✓</span><small>reflog-powered</small></td>
-							<td><span class="yes">✓</span></td>
+							<td class="col-gs"><span class="yes">Yes</span></td>
+							<td><span class="yes">Yes</span></td>
 							<td><span class="no">—</span></td>
 							<td><span class="no">—</span></td>
 						</tr>
 						<tr>
 							<th scope="row">AI on your own keys</th>
-							<td class="col-gs"><span class="yes">✓</span><small>10+ providers</small></td>
-							<td><span class="part">account + cloud</span></td>
+							<td class="col-gs"><span class="yes">Yes</span></td>
+							<td><span class="part">Account + cloud</span></td>
 							<td><span class="part">Pro / cloud</span></td>
 							<td><span class="part">Copilot sub</span></td>
 						</tr>
 						<tr>
-							<th scope="row">Local-model AI (Ollama, LM Studio)</th>
-							<td class="col-gs"><span class="yes">✓</span></td>
+							<th scope="row">Local-model AI</th>
+							<td class="col-gs"><span class="yes">Ollama, LM Studio</span></td>
 							<td><span class="no">—</span></td>
 							<td><span class="no">—</span></td>
 							<td><span class="no">—</span></td>
 						</tr>
 						<tr>
 							<th scope="row">Also a VS Code / Cursor extension</th>
-							<td class="col-gs"><span class="yes">✓</span></td>
+							<td class="col-gs"><span class="yes">Yes</span></td>
 							<td><span class="no">—</span></td>
-							<td><span class="yes">✓</span></td>
-							<td><span class="yes">✓</span></td>
+							<td><span class="yes">Yes</span></td>
+							<td><span class="yes">Yes</span></td>
 						</tr>
 						<tr>
-							<th scope="row">Fully open source</th>
-							<td class="col-gs"><span class="yes">✓ Apache-2.0</span></td>
-							<td><span class="no">closed</span></td>
-							<td><span class="part">open-core</span></td>
-							<td><span class="yes">✓ MIT</span></td>
+							<th scope="row">Open source</th>
+							<td class="col-gs"><span class="yes">Apache-2.0</span></td>
+							<td><span class="no">Closed</span></td>
+							<td><span class="part">Open-core</span></td>
+							<td><span class="yes">MIT</span></td>
 						</tr>
 						<tr>
 							<th scope="row">Account required</th>
-							<td class="col-gs"><span class="yes">Never</span></td>
-							<td><span class="part">yes</span></td>
-							<td><span class="part">for Pro</span></td>
+							<td class="col-gs"><span class="yes">No</span></td>
+							<td><span class="part">Yes</span></td>
+							<td><span class="part">For Pro</span></td>
 							<td><span class="yes">No</span></td>
 						</tr>
 						<tr>
 							<th scope="row">Price for the full feature set</th>
 							<td class="col-gs"><span class="yes">$0</span></td>
-							<td><span class="part">subscription</span></td>
-							<td><span class="part">subscription</span></td>
-							<td><span class="yes">$0</span><small>small feature set</small></td>
+							<td><span class="part">Subscription</span></td>
+							<td><span class="part">Subscription</span></td>
+							<td><span class="yes">$0</span></td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 			<p class="fine" data-reveal>
-				Reflects each product's publicly documented behavior as of July 2026 — plans change, so
-				check their pricing pages. Spot an error? <a href={`${GITHUB_REPO_URL}/issues`} target="_blank" rel="noopener">File an issue</a> and we'll fix it.
+				Reflects each product's publicly documented behavior as of July 2026. Plans change, so
+				check their pricing pages. Found an error? <a href={`${GITHUB_REPO_URL}/issues`} target="_blank" rel="noopener">File an issue</a> and we'll correct it.
 			</p>
 		</div>
 	</section>
@@ -448,15 +368,15 @@ const workflow = [
 	<section class="section oss">
 		<div class="container center">
 			<p class="eyebrow center" data-reveal>Open source</p>
-			<h2 data-reveal>Free as in <em class="fx">actually.</em></h2>
+			<h2 data-reveal>Apache-2.0, and free on private repos.</h2>
 			<p class="lede" data-reveal>
-				No pro tier. No trial clock. No "unlock the graph" upsell. GitStudio is Apache-2.0
-				(MIT for Merge Studio), built in the open as an npm monorepo around a pure, unit-tested
-				engine. If it's useful, star it. If it's broken, file it. If it's close, PR it.
+				The desktop app and the GitStudio extension are Apache-2.0. Merge Studio is MIT. The
+				source is on GitHub. There is no account, and private repositories work exactly like
+				public ones.
 			</p>
 			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary" href={GITHUB_REPO_URL} target="_blank" rel="noopener">Read the source</a>
-				<a class="btn btn-ghost" href="/blog">How it's built — the blog</a>
+				<a class="btn btn-primary" href={GITHUB_REPO_URL} target="_blank" rel="noopener">View the source</a>
+				<a class="btn btn-ghost" href="/blog">Read the blog</a>
 			</div>
 		</div>
 	</section>
@@ -466,76 +386,71 @@ const workflow = [
 		<div class="container faq-wrap">
 			<div>
 				<p class="eyebrow" data-reveal>FAQ</p>
-				<h2 data-reveal>Asked and <em class="fx">answered.</em></h2>
+				<h2 data-reveal>Questions.</h2>
 			</div>
 			<div class="faqs" data-reveal>
 				<details>
-					<summary>Is GitStudio Desktop really free?</summary>
+					<summary>Is GitStudio actually free?</summary>
 					<p>
-						Yes — the whole app, on public and private repos, on macOS, Windows, and Linux.
-						No account, no trial, telemetry off by default. It's Apache-2.0 on GitHub, so you
-						can hold us to that.
+						Yes. The desktop app and both extensions are free on public and private
+						repositories, with no account and no paid tier. The desktop app and the GitStudio
+						extension are Apache-2.0; Merge Studio is MIT.
 					</p>
 				</details>
 				<details>
-					<summary>Which platforms does the desktop app run on?</summary>
+					<summary>Does my code or data leave my machine?</summary>
 					<p>
-						macOS (Apple Silicon and Intel), Windows (x64), and Linux (AppImage and .deb).
-						Installers are on the <a href="/download">download page</a> with auto-update built in,
-						so you install once and stay current.
+						No. GitStudio has no backend. Git runs locally, GitHub calls go straight to GitHub
+						with your own sign-in, and telemetry is off by default. The assistant is off until
+						you connect a model, and with a local model through Ollama or LM Studio, nothing
+						leaves your machine.
 					</p>
 				</details>
 				<details>
-					<summary>Do I have to use the desktop app?</summary>
+					<summary>Which editors do the extensions support?</summary>
 					<p>
-						No. GitStudio also ships as two editor extensions — the
-						full <a href="/gitstudio-extension">GitStudio extension</a> and the
-						focused <a href="/merge-studio-extension">Merge Studio</a> — both live on the VS Code
-						Marketplace and Open VSX, so they run in VS Code, Cursor, VSCodium, Windsurf, and
-						code-server. Same engine, your editor.
+						VS Code, Cursor, VSCodium, Windsurf, and code-server. VS Code installs from the
+						Marketplace; the others install the same build from Open VSX. See
+						the <a href="/extensions">extensions</a> for details.
 					</p>
 				</details>
 				<details>
-					<summary>What does the AI cost?</summary>
+					<summary>Do I need an account?</summary>
 					<p>
-						Whatever your provider charges — the keys are yours, and requests go straight from
-						your machine to your provider. With Ollama or LM Studio, nothing leaves your machine
-						at all. No GitStudio account, no middleman, no markup. With nothing connected, the AI
-						features simply stay hidden.
+						No. There is no GitStudio account. You sign in to GitHub with your own credentials
+						only when you use the GitHub features.
 					</p>
 				</details>
 				<details>
-					<summary>How is this different from GitKraken?</summary>
+					<summary>How does AI billing work with my own keys?</summary>
 					<p>
-						GitKraken is a great desktop client, but it's closed source, wants an account, and
-						gates its full feature set and AI behind a subscription and its cloud. GitStudio is
-						open source, needs no account, runs AI on your own keys (including fully local
-						models), and is free on private repos.
+						You add your provider's API key, and requests go from your machine to that provider.
+						You pay the provider directly at their rates. GitStudio takes no cut and runs no
+						proxy. Local models through Ollama or LM Studio cost nothing.
 					</p>
 				</details>
 				<details>
 					<summary>Can I trust the installers?</summary>
 					<p>
-						They're built and published by CI from the public source and attached to the GitHub
-						Release, with checksums on the download page. The whole thing is open source, so you
-						can audit it or build it yourself.
+						They are built by CI from the public source and attached to the GitHub release with
+						checksums. You can verify them, or build from source yourself.
 					</p>
 				</details>
 			</div>
 		</div>
 	</section>
 
-	<!-- ============ FINAL CTA ============ -->
+	<!-- ============ CLOSING ============ -->
 	<section class="section final">
 		<div class="container center">
-			<h2 data-reveal>Give your repo the <em class="fx">studio</em> treatment.</h2>
+			<p class="eyebrow center" data-reveal>Download</p>
+			<h2 data-reveal>Get GitStudio Desktop.</h2>
 			<p class="lede" data-reveal>
-				Download once and you've got a commit graph, a real merge editor, the whole of GitHub,
-				and an Undo button — native, free, and open source.
+				Native installers for macOS, Windows, and Linux. Apache-2.0, free, no account.
 			</p>
 			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary btn-lg" href="/download">Download GitStudio Desktop</a>
-				<a class="btn btn-ghost btn-lg" href="/extensions">Or grab the extension</a>
+				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
+				<a class="btn btn-ghost btn-lg" href="/extensions">Compare the extensions</a>
 			</div>
 		</div>
 	</section>
@@ -566,13 +481,13 @@ const workflow = [
 		justify-content: center;
 	}
 	.hero h1 {
-		max-width: 15ch;
+		max-width: 18ch;
 		margin-inline: auto;
 		animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 	}
 	.center-lede {
 		margin-inline: auto;
-		max-width: 60ch;
+		max-width: 62ch;
 		animation: rise 0.8s 0.12s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 	}
 	.cta-row {
@@ -746,72 +661,6 @@ const workflow = [
 		color: var(--faint);
 	}
 
-	/* EXTENSIONS SPOT */
-	.ext-spot {
-		border-top: 1px solid var(--hairline);
-		background: linear-gradient(180deg, rgba(169, 140, 255, 0.03), transparent 40%);
-	}
-	.ext-cards {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1.2rem;
-		margin-top: 2.4rem;
-	}
-	.ext-card {
-		display: flex;
-		flex-direction: column;
-		gap: 0.9rem;
-	}
-	.ex-head {
-		display: flex;
-		align-items: center;
-		gap: 0.9rem;
-	}
-	:global(.ex-icon) {
-		width: 52px;
-		height: 52px;
-		border-radius: 13px;
-		flex: none;
-		box-shadow: 0 0 0 1px rgba(226, 223, 245, 0.1), 0 10px 24px -12px rgba(0, 0, 0, 0.8);
-	}
-	.ex-title h3 {
-		margin: 0;
-		font-size: 1.12rem;
-		letter-spacing: -0.015em;
-	}
-	.ex-meta {
-		margin: 0.2rem 0 0;
-		font-size: 0.78rem;
-		color: var(--muted);
-	}
-	.ex-copy {
-		margin: 0;
-		color: var(--muted);
-		font-size: var(--fs-1);
-		flex: 1;
-	}
-	.ex-editors {
-		margin-top: 0.1rem;
-	}
-	.ex-cta {
-		display: flex;
-		align-items: center;
-		gap: 0.9rem;
-		flex-wrap: wrap;
-	}
-	.ex-cta .mkt {
-		font-size: 0.8rem;
-		color: var(--muted);
-	}
-	.ex-cta .mkt:hover {
-		color: var(--violet-hi);
-	}
-	.ext-foot {
-		margin: 1.8rem 0 0;
-		color: var(--muted);
-		font-size: var(--fs-1);
-	}
-
 	/* generic */
 	.fine {
 		font-size: 0.85rem;
@@ -892,9 +741,6 @@ const workflow = [
 		}
 		.wf-grid {
 			grid-template-columns: 1fr 1fr;
-		}
-		.ext-cards {
-			grid-template-columns: 1fr;
 		}
 		.faq-wrap {
 			grid-template-columns: 1fr;
