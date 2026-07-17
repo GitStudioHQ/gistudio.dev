@@ -6,10 +6,9 @@ import Shot from '../components/Shot.astro';
 import ExtensionsFeature from '../components/ExtensionsFeature.astro';
 import appCommits from '../assets/shots/app-commits.png';
 import appPrs from '../assets/shots/app-prs.png';
-import appTerminal from '../assets/shots/app-terminal.png';
 import appAssistant from '../assets/shots/app-assistant.png';
 import mergeEditor from '../assets/shots/merge-editor.png';
-import { GITHUB_ORG_URL, GITHUB_REPO_URL, GITHUB_RELEASES_URL, APP, AI_PROVIDERS } from '../consts';
+import { GITHUB_ORG_URL, GITHUB_REPO_URL, GITHUB_RELEASES_URL, APP } from '../consts';
 
 const title = 'GitStudio — a native Git and GitHub client for macOS, Windows, Linux';
 const description =
@@ -31,8 +30,7 @@ const workflow = [
 	{ icon: 'undo', h: 'Universal undo', p: 'Every destructive operation writes a reflog snapshot first, so one command restores it. It is separate from editor undo.' },
 	{ icon: 'blame', h: 'Inline blame', p: 'Per-line authorship, plus a code-age heatmap that shades recent lines warm and old lines cool.' },
 	{ icon: 'branch', h: 'Branches and worktrees', p: 'Branches, tags, stashes, and worktrees with full operations and per-branch ahead/behind counts.' },
-	{ icon: 'compare', h: 'Branch compare', p: 'Ahead/behind, the commits between any two refs, and the changed files as diffs.' },
-	{ icon: 'sync', h: 'Status-bar sync', p: 'Fetch, pull, and push from the status bar. Force-push uses --force-with-lease.' },
+	{ icon: 'terminal', h: 'Real terminal', p: 'A real PTY, not an emulation. Every command becomes a block that records its output, exit code, and timing — scan, copy, or rerun any of them.' },
 ];
 ---
 
@@ -57,7 +55,6 @@ const workflow = [
 			<ul class="facts" aria-label="Facts">
 				<li class="chip"><span class="dot" aria-hidden="true"></span>v{APP.version}</li>
 				<li class="chip">Apache-2.0</li>
-				<li class="chip">Auto-updates</li>
 				<li class="chip">No account</li>
 				<li class="chip">No telemetry</li>
 				<li class="chip">AI off by default</li>
@@ -72,9 +69,6 @@ const workflow = [
 			/>
 		</div>
 	</section>
-
-	<!-- ============ EXTENSIONS — visible two-up, secondary to the hero ============ -->
-	<ExtensionsFeature />
 
 	<!-- ============ 01 · COMMIT GRAPH ============ -->
 	<section class="section">
@@ -99,6 +93,9 @@ const workflow = [
 			</div>
 		</div>
 	</section>
+
+	<!-- ============ EXTENSIONS — also in your editor (early, after the live graph) ============ -->
+	<ExtensionsFeature />
 
 	<!-- ============ 02 · MERGE ============ -->
 	<section class="section">
@@ -160,37 +157,11 @@ const workflow = [
 		</div>
 	</section>
 
-	<!-- ============ 05 · TERMINAL ============ -->
-	<section class="section">
-		<div class="container feature">
-			<div class="f-copy" data-reveal>
-				<p class="eyebrow">05 · Terminal</p>
-				<h2>A real terminal that keeps every command as a block.</h2>
-				<p class="lede">
-					A real PTY, not an emulation. Each run becomes a block that records its command,
-					output, exit code, and timing.
-				</p>
-				<ul class="ticks">
-					<li>Scan, copy, or rerun any block.</li>
-					<li>Autocomplete draws on your shell history, PATH, and working directory.</li>
-					<li>Hand a command to the assistant without leaving the terminal.</li>
-				</ul>
-			</div>
-			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
-				<Shot
-					src={appTerminal}
-					alt="The terminal dock open under the commit graph in GitStudio Desktop, showing a command block and its output"
-					caption="The terminal dock open under the commit graph, with a command block and its result."
-				/>
-			</div>
-		</div>
-	</section>
-
-	<!-- ============ 06 · AI ASSISTANT (the one sanctioned emphasis) ============ -->
+	<!-- ============ 05 · AI ASSISTANT (the one sanctioned emphasis) ============ -->
 	<section class="section ai">
 		<div class="container feature flip">
 			<div class="f-copy" data-reveal>
-				<p class="eyebrow">06 · Assistant · optional</p>
+				<p class="eyebrow">05 · Assistant · optional</p>
 				<h2>AI that runs on <em class="fx">your</em> own keys.</h2>
 				<p class="lede">
 					The assistant is off until you connect a model. It runs on your own API keys across 12
@@ -213,10 +184,7 @@ const workflow = [
 			</div>
 		</div>
 		<div class="container">
-			<p class="prov-note mono" data-reveal>10 cloud providers, plus local models through Ollama and LM Studio</p>
-			<ul class="providers" aria-label="Supported AI providers" data-reveal>
-				{AI_PROVIDERS.map((p) => <li class="chip">{p}</li>)}
-			</ul>
+			<p class="prov-note mono" data-reveal>Anthropic, OpenAI, Gemini, and 7 more cloud providers — plus local models through Ollama and LM Studio.</p>
 		</div>
 	</section>
 
@@ -360,23 +328,6 @@ const workflow = [
 		</div>
 	</section>
 
-	<!-- ============ OPEN SOURCE ============ -->
-	<section class="section oss">
-		<div class="container center">
-			<p class="eyebrow center" data-reveal>Open source</p>
-			<h2 data-reveal>Apache-2.0, and free on private repos.</h2>
-			<p class="lede" data-reveal>
-				The desktop app and the GitStudio extension are Apache-2.0. Merge Studio is MIT. The
-				source is on GitHub. There is no account, and private repositories work exactly like
-				public ones.
-			</p>
-			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary" href={GITHUB_REPO_URL} target="_blank" rel="noopener">View the source</a>
-				<a class="btn btn-ghost" href="/blog">Read the blog</a>
-			</div>
-		</div>
-	</section>
-
 	<!-- ============ FAQ ============ -->
 	<section class="section">
 		<div class="container faq-wrap">
@@ -442,11 +393,13 @@ const workflow = [
 			<p class="eyebrow center" data-reveal>Download</p>
 			<h2 data-reveal>Get GitStudio Desktop.</h2>
 			<p class="lede" data-reveal>
-				Native installers for macOS, Windows, and Linux. Apache-2.0, free, no account.
+				Native installers for macOS, Windows, and Linux. The desktop app and the GitStudio
+				extension are Apache-2.0, Merge Studio is MIT, and private repositories work exactly like
+				public ones — free, no account.
 			</p>
 			<div class="cta-row" data-reveal>
 				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
-				<a class="btn btn-ghost btn-lg" href="/extensions">Compare the extensions</a>
+				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">View the source</a>
 			</div>
 		</div>
 	</section>
