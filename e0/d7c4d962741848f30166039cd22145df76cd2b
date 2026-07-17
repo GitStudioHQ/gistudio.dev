@@ -1,0 +1,27 @@
+src/pages/index.astro
+  s_44fb38c224c892::t_74a7a437cb8016 210
+  s_44fb38c224c892::t_b9e54d2e65534d 215
+src/pages/download.astro
+  s_44fb38c224c892::t_0e5d00dd654f5a 247-257
+  s_44fb38c224c892::t_74a1a73ea24713 417-433
+  s_44fb38c224c892::t_8f85f31a042688 468-472
+  s_44fb38c224c892::t_168cd7ec976300 12
+  s_44fb38c224c892::t_e2381a522bc789 25-26,32-34
+  s_44fb38c224c892::t_f6f05d5d1a739b 119-120
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "e0d7c4d962741848f30166039cd22145df76cd2b",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
