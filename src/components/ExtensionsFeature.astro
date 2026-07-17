@@ -1,0 +1,356 @@
+---
+// ExtensionsFeature — the "and it's also in your editor" beat. Placed right
+// after the hero and before "01 · Commit graph". A centered section header
+// over two equal product cards on one row (they stack on mobile): a real
+// screenshot, the real product icon, the name, one tight line of what-it-is,
+// three glyph features, a version/license meta line, an Open VSX install stat
+// for social proof, and a whole-card link into each extension's page. The
+// flagship (GitStudio) leads via a violet accent — a stronger border, a thin
+// top gradient rule and a soft wash — not a second hero: this is an H2 with
+// quiet card links, so the desktop hero and its Download button stay loudest.
+// Product facts come from ../consts.
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import extIcon from '../assets/brand/ext-icon-192.png';
+import mergeIcon from '../assets/brand/merge-icon-192.png';
+import graphPanel from '../assets/shots/graph-panel.png';
+import mergeEditor from '../assets/shots/merge-editor.png';
+import { EXT, MERGE, EDITORS, OPENVSX_INSTALLS } from '../consts';
+
+const editorList = EDITORS.map((e) => e.label);
+const editorsText =
+	editorList.slice(0, -1).join(', ') + ', and ' + editorList[editorList.length - 1];
+---
+
+<section class="ext-section section" aria-labelledby="ext-title">
+	<div class="container">
+		<header class="ext-header" data-reveal>
+			<p class="eyebrow center">Also in your editor</p>
+			<h2 id="ext-title">GitStudio is also two editor extensions.</h2>
+			<p class="lede">
+				The same engine that runs the desktop app ships as two open-source
+				extensions — the full Git workflow and a dedicated merge editor — for
+				VS&nbsp;Code, Cursor, and every VS&nbsp;Code-compatible editor.
+			</p>
+		</header>
+
+		<div class="ext-grid">
+			<!-- GitStudio — the flagship, carries the violet accent -->
+			<article class="card ext-card ext-card--flag" data-reveal>
+				<a class="ext-shot" href={EXT.route} tabindex="-1" aria-hidden="true">
+					<Image
+						src={graphPanel}
+						alt=""
+						widths={[440, 660, 900]}
+						sizes="(max-width: 720px) 92vw, 520px"
+						loading="lazy"
+					/>
+				</a>
+
+				<div class="ext-top">
+					<Image class="ext-ic" src={extIcon} alt="" width={128} height={128} />
+					<div class="ext-id">
+						<h3 class="ext-name">
+							<a class="ext-link" href={EXT.route} aria-label={`${EXT.name} editor extension`}>
+								{EXT.name}
+							</a>
+						</h3>
+						<p class="ext-what">The full Git workflow, inside your editor.</p>
+					</div>
+				</div>
+
+				<ul class="ext-feats">
+					<li><Icon class="fic" name="graph" size={18} />Commit graph</li>
+					<li><Icon class="fic" name="blame" size={18} />Inline blame</li>
+					<li><Icon class="fic" name="pr" size={18} />GitHub pull requests</li>
+				</ul>
+
+				<div class="ext-foot">
+					<p class="ext-meta">v{EXT.version} · {EXT.license} · {EXT.commands} commands</p>
+					<p class="ext-stat">
+						<span class="dot" aria-hidden="true"></span>
+						{OPENVSX_INSTALLS.gitstudio} installs on Open VSX
+					</p>
+					<span class="ext-cta" aria-hidden="true">
+						Explore {EXT.name}<span class="arr">→</span>
+					</span>
+				</div>
+			</article>
+
+			<!-- Merge Studio — the focused editor -->
+			<article class="card ext-card" data-reveal style="--reveal-delay:.08s">
+				<a class="ext-shot" href={MERGE.route} tabindex="-1" aria-hidden="true">
+					<Image
+						src={mergeEditor}
+						alt=""
+						widths={[440, 660, 900]}
+						sizes="(max-width: 720px) 92vw, 520px"
+						loading="lazy"
+					/>
+				</a>
+
+				<div class="ext-top">
+					<Image class="ext-ic" src={mergeIcon} alt="" width={128} height={128} />
+					<div class="ext-id">
+						<h3 class="ext-name">
+							<a class="ext-link" href={MERGE.route} aria-label={`${MERGE.name} editor extension`}>
+								{MERGE.name}
+							</a>
+						</h3>
+						<p class="ext-what">A focused three-pane merge and conflict editor.</p>
+					</div>
+				</div>
+
+				<ul class="ext-feats">
+					<li><Icon class="fic" name="merge" size={18} />Three-pane merge</li>
+					<li><Icon class="fic" name="compare" size={18} />Conflicts dashboard</li>
+					<li><Icon class="fic" name="undo" size={18} />Named undo history</li>
+				</ul>
+
+				<div class="ext-foot">
+					<p class="ext-meta">v{MERGE.version} · {MERGE.license}</p>
+					<p class="ext-stat">
+						<span class="dot" aria-hidden="true"></span>
+						{OPENVSX_INSTALLS.mergeStudio} installs on Open VSX
+					</p>
+					<span class="ext-cta" aria-hidden="true">
+						See {MERGE.name}<span class="arr">→</span>
+					</span>
+				</div>
+			</article>
+		</div>
+
+		<p class="ext-editors" data-reveal>
+			Runs in {editorsText}. VS&nbsp;Code installs from the Marketplace, the rest
+			from Open&nbsp;VSX.
+		</p>
+	</div>
+</section>
+
+<style>
+	/* One local, token-derived shadow so cards and icons read as lifted without
+	   any hardcoded color. --bg-0 (#08080f) is the page's near-black. */
+	.ext-section {
+		--ext-shadow: 0 18px 40px -24px color-mix(in srgb, var(--bg-0) 85%, transparent);
+		--ext-shadow-sm: 0 8px 20px -12px color-mix(in srgb, var(--bg-0) 80%, transparent);
+	}
+
+	.ext-header {
+		max-width: 680px;
+		margin-inline: auto;
+		text-align: center;
+		margin-bottom: clamp(2.5rem, 5vw, 3.75rem);
+	}
+	.ext-header h2 {
+		margin-top: 0.7rem;
+	}
+	.ext-header .lede {
+		margin-top: 1rem;
+		margin-inline: auto;
+		max-width: 60ch;
+		color: var(--muted);
+	}
+
+	.ext-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: clamp(16px, 2.4vw, 24px);
+	}
+
+	/* base .card supplies bg / border / radius / hover-lift; we set the internal
+	   layout and a taller, deliberate rhythm, and make the whole card clickable
+	   via a stretched link on the title. */
+	.ext-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 1.3rem;
+		padding: clamp(1.4rem, 3vw, 1.9rem);
+	}
+	.ext-card--flag {
+		border-color: var(--violet-line);
+		background:
+			radial-gradient(130% 80% at 100% 0%, var(--violet-wash), transparent 58%),
+			linear-gradient(180deg, var(--bg-2), var(--bg-1) 130%);
+	}
+	/* the thin top gradient rule that marks the flagship */
+	.ext-card--flag::before {
+		content: '';
+		position: absolute;
+		inset: 0 0 auto;
+		height: 2px;
+		border-radius: var(--r-lg) var(--r-lg) 0 0;
+		background: var(--grad);
+		opacity: 0.9;
+	}
+	.ext-card:hover {
+		border-color: var(--hairline-strong);
+	}
+	.ext-card--flag:hover {
+		border-color: var(--violet);
+	}
+	/* keyboard focus ring on the card (the link inside is the stretched target) */
+	.ext-card:focus-within {
+		outline: 2px solid var(--violet);
+		outline-offset: 3px;
+	}
+
+	/* framed screenshot — the image anchor that holds the eye on a fast scroll.
+	   Kept light (short frame, soft shadow) so it reads as "also", not a hero. */
+	.ext-shot {
+		display: block;
+		border: 1px solid var(--hairline-strong);
+		border-radius: var(--r-md);
+		overflow: hidden;
+		background: var(--bg-0);
+		aspect-ratio: 16 / 9;
+		box-shadow: var(--ext-shadow);
+		transition: border-color 0.2s ease;
+	}
+	.ext-shot :global(img) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: top center;
+		transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+	.ext-card:hover .ext-shot {
+		border-color: var(--violet-line);
+	}
+	.ext-card:hover .ext-shot :global(img) {
+		transform: scale(1.015);
+	}
+
+	.ext-top {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+	.ext-ic {
+		width: 64px;
+		height: 64px;
+		border-radius: 16px;
+		flex: none;
+		box-shadow: 0 0 0 1px var(--hairline-strong), var(--ext-shadow-sm);
+	}
+	.ext-id {
+		min-width: 0;
+	}
+	.ext-name {
+		font-size: 1.3rem;
+		font-weight: 650;
+		letter-spacing: -0.01em;
+		line-height: 1.15;
+	}
+	.ext-link {
+		color: var(--ink);
+	}
+	.ext-link:hover {
+		color: var(--violet-hi);
+		text-decoration: none;
+	}
+	/* stretched link — one accessible link per card, whole card clickable */
+	.ext-link::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+	}
+	.ext-what {
+		margin-top: 0.35rem;
+		font-size: var(--fs-1);
+		color: var(--text);
+	}
+
+	.ext-feats {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem 1.4rem;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		/* the eyelet hole in each glyph adapts to the card surface */
+		--icon-hole: var(--bg-2);
+	}
+	.ext-feats li {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: var(--fs-0);
+		color: var(--text);
+	}
+	.ext-feats :global(svg.fic) {
+		color: var(--violet-hi);
+		flex: none;
+	}
+
+	.ext-foot {
+		margin-top: auto;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--hairline);
+		display: flex;
+		flex-direction: column;
+		gap: 0.55rem;
+	}
+	.ext-meta {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.01em;
+		color: var(--muted);
+	}
+	.ext-stat {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.01em;
+		color: var(--muted);
+	}
+	.ext-stat .dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--violet);
+		box-shadow: 0 0 8px var(--violet-line);
+		flex: none;
+	}
+	.ext-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		margin-top: 0.35rem;
+		font-size: var(--fs-1);
+		font-weight: 600;
+		color: var(--violet-hi);
+	}
+	.ext-cta .arr {
+		transition: transform 0.18s ease;
+	}
+	.ext-card:hover .ext-cta .arr {
+		transform: translateX(4px);
+	}
+
+	.ext-editors {
+		margin-top: clamp(1.9rem, 3.5vw, 2.6rem);
+		text-align: center;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.02em;
+		color: var(--faint);
+	}
+
+	@media (max-width: 720px) {
+		.ext-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ext-shot :global(img),
+		.ext-cta .arr {
+			transition: none;
+		}
+	}
+</style>

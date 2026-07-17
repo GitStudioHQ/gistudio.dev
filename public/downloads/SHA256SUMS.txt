@@ -1,0 +1,1 @@
+37d43b76929ca24d75d00ccafcb1bd86b6493b106424b82c9e9fed60ce3f00d3  gitstudio-1.0.0.vsix

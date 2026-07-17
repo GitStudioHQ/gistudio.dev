@@ -1,0 +1,434 @@
+---
+import Site from '../layouts/Site.astro';
+import Shot from '../components/Shot.astro';
+import graphPanel from '../assets/shots/graph-panel.png';
+import changesView from '../assets/shots/changes-view.png';
+import commitsRail from '../assets/shots/commits-rail.png';
+import branchDialog from '../assets/shots/branch-dialog.png';
+import Icon from '../components/Icon.astro';
+import ListingCard from '../components/ListingCard.astro';
+import EditorChips from '../components/EditorChips.astro';
+import InstallMatrix from '../components/InstallMatrix.astro';
+import extIcon from '../assets/brand/ext-icon-192.png';
+import GraphLive from '../components/GraphLive.astro';
+import { EXT, MERGE, GITHUB_REPO_URL } from '../consts';
+
+const title = 'GitStudio for VS Code, Cursor & VSCodium — Git client extension';
+const description =
+	'GitStudio is a free, open-source Git client extension for VS Code, Cursor, VSCodium, Windsurf, and code-server: a live commit graph, inline blame with a code-age heatmap, hunk/line staging, three-pane merge, interactive rebase with a universal Undo, worktrees, and in-editor GitHub pull requests. 77 commands, on the Marketplace and Open VSX.';
+
+const jsonLd = [
+	{
+		'@context': 'https://schema.org',
+		'@type': 'SoftwareApplication',
+		name: 'GitStudio',
+		description,
+		url: 'https://gitstudio.dev/gitstudio-extension',
+		installUrl: EXT.marketplaceUrl,
+		sameAs: [EXT.marketplaceUrl, EXT.openVsxUrl],
+		applicationCategory: 'DeveloperApplication',
+		operatingSystem: 'VS Code, Cursor, VSCodium, Windsurf, code-server',
+		softwareVersion: EXT.version,
+		license: 'https://www.apache.org/licenses/LICENSE-2.0',
+		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'BreadcrumbList',
+		itemListElement: [
+			{ '@type': 'ListItem', position: 1, name: 'GitStudio Desktop', item: 'https://gitstudio.dev/' },
+			{ '@type': 'ListItem', position: 2, name: 'Extensions', item: 'https://gitstudio.dev/extensions' },
+			{ '@type': 'ListItem', position: 3, name: 'GitStudio for VS Code & Cursor', item: 'https://gitstudio.dev/gitstudio-extension' },
+		],
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		mainEntity: [
+			{ '@type': 'Question', name: 'Which editors does the GitStudio extension support?', acceptedAnswer: { '@type': 'Answer', text: 'VS Code, Cursor, VSCodium, Windsurf, and code-server — any editor built on VS Code 1.74 or newer. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.' } },
+			{ '@type': 'Question', name: 'How do I install GitStudio in Cursor?', acceptedAnswer: { '@type': 'Answer', text: 'Search “GitStudio” in Cursor’s Extensions view (Cursor reads the Open VSX registry), or run cursor --install-extension gitstudio.gitstudio from a shell.' } },
+			{ '@type': 'Question', name: 'Is the GitStudio extension free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes — every feature is free on public and private repos. It is Apache-2.0 licensed and open source, with no account and telemetry off by default.' } },
+		],
+	},
+];
+---
+
+<Site title={title} description={description} jsonLd={jsonLd} og="/og/gitstudio-extension.png">
+	<section class="hero">
+		<div class="container">
+			<nav class="crumbs mono" aria-label="Breadcrumb">
+				<a href="/">GitStudio</a> <span aria-hidden="true">/</span>
+				<a href="/extensions">Extensions</a> <span aria-hidden="true">/</span>
+				<span>GitStudio</span>
+			</nav>
+			<p class="eyebrow" data-reveal>GitStudio extension · VS Code &amp; Cursor · v{EXT.version}</p>
+			<h1 data-reveal>The full Git workflow in VS Code and Cursor.</h1>
+			<p class="lede" data-reveal>
+				One extension that puts the full Git workflow in your editor: a commit graph, inline blame,
+				hunk and line staging, a three-pane merge editor, interactive rebase, worktrees, and GitHub
+				pull requests. {EXT.commands} commands across five sidebar views. Free and open source.
+			</p>
+			<div class="cta-row" data-reveal>
+				<a class="btn btn-primary btn-lg" href="#install">Install now</a>
+				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">View source</a>
+			</div>
+			<div class="listing-wrap" data-reveal style="--reveal-delay:.06s">
+				<ListingCard
+					icon={extIcon}
+					name="GitStudio"
+					tagline="The whole Git workflow, in one extension"
+					meta={[`v${EXT.version}`, 'Apache-2.0', `${EXT.commands} commands`, 'VS Code 1.74+']}
+					primaryHref={EXT.marketplaceUrl}
+					primaryLabel="Install from Marketplace"
+					secondaryHref={EXT.openVsxUrl}
+					secondaryLabel="Open VSX"
+				/>
+			</div>
+			<EditorChips class="hero-editors" data-reveal />
+		</div>
+		<div class="container heromock" data-reveal>
+			<GraphLive />
+			<p class="live-note mono">The graph component that ships in the extension, rendering this repo's history. Scroll and click through it.</p>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<p class="eyebrow" data-reveal>Six pillars</p>
+			<h2 data-reveal>What the extension does.</h2>
+			<div class="pillars">
+				{[
+					{ n: '01', icon: 'graph', name: 'Visualize', desc: 'Understand any repo at a glance.', items: ['Virtualized commit graph — fast at tens of thousands of commits, with colored lanes, ref chips, and keyboard navigation', 'Sidebar Commits view: compact topology, author avatars on the nodes, search by message · author · SHA · refs', 'Inline blame + full-file annotations with a code-age heatmap', 'File history, line history, revision stepping, reflog time-machine'] },
+					{ n: '02', icon: 'stage', name: 'Change', desc: 'Stage and commit with precision.', items: ['Hunk- and line-level staging from any editor or diff', 'Side-by-side and unified diffs with word-level highlighting', 'Three-pane merge editor with one-click accept ribbons — conflicts auto-open as they appear', 'Guided commit box: amend, sign-off, author override, Commit & Push'] },
+					{ n: '03', icon: 'rebase', name: 'Rewrite', desc: 'Rewrite history without losing it.', items: ['Drag-to-reorder interactive rebase: pick · reword · edit · squash · fixup · drop', 'Universal Undo — a reflog snapshot before every destructive op, one command to reverse it', 'Pushed history falls back to a safe revert; force-push uses --force-with-lease'] },
+					{ n: '04', icon: 'branch', name: 'Manage', desc: 'Branches, remotes, tags, worktrees.', items: ['Branches, remotes, tags, stashes, worktrees — five views, full operations', 'Branch compare: ahead/behind, commits between refs, changed files as native diffs', 'Live sync: push/pull from the status bar and Changes header, per-branch ↑↓ badges', 'Pull a branch without checking it out — fast-forward straight from its submenu'] },
+					{ n: '05', icon: 'pr', name: 'Collaborate', desc: 'GitHub PRs without the browser.', items: ['List, open, and check out pull requests from the sidebar', 'Review with inline comments and submit — approve, comment, request changes', 'Create and merge PRs in-editor, with the GitHub sign-in your editor already has'] },
+					{ n: '06', icon: 'sparkle', name: 'Assist', desc: 'Optional AI. Your keys.', items: ['Commit messages drafted from your staged diff — the ✨ button in the commit box', 'Explain-this-diff and change summaries on demand', "Bring your own Anthropic key, or go zero-key via GitHub Copilot's model", 'Off by default — and it never gates or breaks a Git operation'] },
+				].map((p, i) => (
+					<div class="card pillar" data-reveal style={`--reveal-delay:${(i % 2) * 0.07}s`}>
+						<div class="ph">
+							<span class="icon-tile"><Icon name={p.icon as any} /></span>
+							<div class="pht">
+								<h3>{p.name}</h3>
+								<span class="pd">{p.desc}</span>
+							</div>
+							<span class="pn">{p.n}</span>
+						</div>
+						<ul>
+							{p.items.map((it) => (
+								<li set:html={it.replace(/--force-with-lease/g, '<code>--force-with-lease</code>')} />
+							))}
+						</ul>
+					</div>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<p class="eyebrow" data-reveal>Straight from the product</p>
+			<h2 data-reveal>The extension in use.</h2>
+			<p class="lede" data-reveal>
+				The Commit Graph panel and the sidebar views, from GitStudio {EXT.version}.
+			</p>
+			<div class="tour-big" data-reveal>
+				<Shot
+					src={graphPanel}
+					alt="The full GitStudio Commit Graph panel: colored branch lanes, ref chips, author avatars riding the commit nodes, changes bars, and commit details"
+					caption="The full Commit Graph panel — lanes, chips, avatars on nodes, per-commit changes."
+				/>
+			</div>
+			<div class="tour">
+				<div data-reveal>
+					<Shot src={changesView} crop="680/1000" alt="The Changes view: staged and unstaged groups, the guided commit box, and live Push/Pull buttons" caption="Changes — guided commit box, instant staging" />
+				</div>
+				<div data-reveal style="--reveal-delay:.08s">
+					<Shot src={commitsRail} crop="660/1000" alt="The Commits sidebar view: compact two-line rows, topology rail, mini author avatars, scoped search" caption="Commits — the sidebar-native rail" />
+				</div>
+				<div data-reveal style="--reveal-delay:.16s">
+					<Shot src={branchDialog} crop="680/1000" alt="The branch dialog: per-branch ahead/behind badges, in-place fetch, pull without checkout" caption="Branches — ↑↓ badges, fetch in place" />
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<div class="f-copy narrow" data-reveal>
+				<p class="eyebrow">Ambient history</p>
+				<h2>Inline blame and a code-age heatmap.</h2>
+				<p class="lede">
+					Authorship on the current line and in the status bar, always. Turn on full-file
+					annotations and every line carries its author, age, and commit — with
+					a <strong>code-age heatmap</strong> in the gutter: recent changes run warm, old code
+					cools down. Hover any line for the commit, the diff, and one-click actions; step a
+					single line through every revision with line history; and recover from the reflog
+					time-machine the day a branch simply vanishes.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container keysec">
+			<div data-reveal>
+				<p class="eyebrow">Muscle memory</p>
+				<h2>Every command under one chord.</h2>
+				<p class="lede">
+					Every GitStudio shortcut lives under a single conflict-free chord —
+					<span class="kbd">Ctrl+Alt+G</span> (<span class="kbd">Cmd+Alt+G</span> on macOS),
+					then a letter. In the commit box, <span class="kbd">Enter</span> commits.
+					All bindings are remappable.
+				</p>
+			</div>
+			<div class="keys" data-reveal style="--reveal-delay:.08s">
+				{[
+					{ k: 'B', what: 'Toggle file blame' },
+					{ k: 'H', what: 'Show line history' },
+					{ k: 'D', what: 'Open changes vs HEAD' },
+					{ k: 'S', what: 'Stage selected lines' },
+					{ k: 'U', what: 'Unstage selected lines' },
+					{ k: 'Z', what: 'Undo last Git operation' },
+				].map((k) => (
+					<div class="keyrow">
+						<span><span class="kbd">Ctrl+Alt+G</span> <span class="kbd">{k.k}</span></span>
+						<span class="kw">{k.what}</span>
+					</div>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<!-- INSTALL — per editor, anchored for search -->
+	<section class="section" id="install">
+		<div class="container">
+			<p class="eyebrow" data-reveal>Install</p>
+			<h2 data-reveal>Install for your editor.</h2>
+			<p class="lede" data-reveal>
+				Search <strong>“GitStudio”</strong> in your editor's Extensions view, or grab the exact
+				command below. Requires VS Code {EXT.minVsCode}+ (or any editor built on it) and git on
+				your PATH. Prefer an artifact? The <a href="/download#extension">download page</a> has the
+				VSIX with a SHA-256.
+			</p>
+			<InstallMatrix ext={EXT} />
+		</div>
+	</section>
+
+	<!-- CROSS-LINKS: disambiguate + up-link to desktop -->
+	<section class="section related">
+		<div class="container">
+			<div class="rel-grid">
+				<a class="card rel" href={MERGE.route} data-reveal>
+					<p class="rel-eyebrow mono">Just want conflict resolution?</p>
+					<h3>Merge Studio</h3>
+					<p>The focused three-pane merge editor on its own — tiny, fast, MIT. GitStudio already includes it; this is for people who want only that.</p>
+					<span class="link-arrow">See Merge Studio</span>
+				</a>
+				<a class="card rel" href="/" data-reveal style="--reveal-delay:.08s">
+					<p class="rel-eyebrow mono">Part of GitStudio</p>
+					<h3>The desktop app</h3>
+					<p>The same engine in a native macOS, Windows, and Linux client — with a built-in terminal, the full GitHub client, and an AI assistant on your own keys.</p>
+					<span class="link-arrow">See the desktop app</span>
+				</a>
+			</div>
+		</div>
+	</section>
+</Site>
+
+<style>
+	.hero {
+		padding-top: clamp(48px, 7vw, 88px);
+		background: radial-gradient(45% 50% at 24% 0%, rgba(169, 140, 255, 0.12), transparent 70%);
+	}
+	.crumbs {
+		font-size: 0.75rem;
+		color: var(--faint);
+		margin-bottom: 1.4rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.crumbs a {
+		color: var(--muted);
+	}
+	.hero h1 {
+		max-width: 21ch;
+	}
+	.cta-row {
+		display: flex;
+		gap: 0.8rem;
+		flex-wrap: wrap;
+		margin-top: 2rem;
+	}
+	.listing-wrap {
+		margin-top: 2rem;
+		max-width: 720px;
+	}
+	.hero-editors {
+		margin-top: 1.6rem;
+	}
+	.live-note {
+		margin-top: 0.8rem;
+		font-size: 0.7rem;
+		letter-spacing: 0.04em;
+		color: var(--faint);
+		text-align: center;
+	}
+	.heromock {
+		margin-top: 3.2rem;
+		padding-bottom: clamp(48px, 7vw, 80px);
+		max-width: 1000px;
+	}
+
+	.pillars {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.1rem;
+		margin-top: 2.4rem;
+	}
+	.pillar .ph {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+		margin-bottom: 1rem;
+	}
+	.pht {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+		min-width: 0;
+	}
+	.pillar h3 {
+		margin: 0;
+	}
+	.pn {
+		margin-left: auto;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		color: var(--violet);
+	}
+	.pd {
+		color: var(--faint);
+		font-size: 0.85rem;
+	}
+	.pillar ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.55rem;
+	}
+	.pillar li {
+		position: relative;
+		padding-left: 1.3rem;
+		color: var(--muted);
+		font-size: var(--fs-1);
+		line-height: 1.55;
+	}
+	.pillar li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.6em;
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--violet);
+		opacity: 0.7;
+	}
+
+	.tour-big {
+		margin-top: 2.4rem;
+	}
+	.tour {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.3rem;
+		margin-top: 1.3rem;
+	}
+	.f-copy.narrow {
+		max-width: 760px;
+	}
+
+	.keysec > * {
+		min-width: 0;
+	}
+	.keysec {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: clamp(2rem, 5vw, 4rem);
+		align-items: center;
+	}
+	.keys {
+		display: flex;
+		flex-direction: column;
+		border: 1px solid var(--hairline);
+		border-radius: var(--r-lg);
+		overflow: hidden;
+	}
+	.keyrow {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.85rem 1.2rem;
+		border-bottom: 1px solid var(--hairline);
+		background: var(--bg-2);
+	}
+	.keyrow:last-child {
+		border-bottom: none;
+	}
+	.keyrow:nth-child(odd) {
+		background: rgba(255, 255, 255, 0.015);
+	}
+	.kw {
+		color: var(--muted);
+		font-size: var(--fs-1);
+	}
+
+	.related {
+		border-top: 1px solid var(--hairline);
+	}
+	.rel-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.2rem;
+	}
+	.rel {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		color: inherit;
+	}
+	.rel:hover {
+		text-decoration: none;
+		transform: translateY(-3px);
+	}
+	.rel h3 {
+		margin: 0;
+	}
+	.rel p {
+		color: var(--muted);
+		font-size: var(--fs-1);
+		margin: 0;
+		flex: 1;
+	}
+	.rel-eyebrow {
+		font-size: 0.72rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--violet);
+		margin: 0;
+	}
+
+	@media (max-width: 960px) {
+		.pillars,
+		.keysec,
+		.tour,
+		.rel-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

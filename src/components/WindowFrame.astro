@@ -1,0 +1,21 @@
+---
+interface Props {
+	title?: string;
+	class?: string;
+}
+const { title, class: className } = Astro.props;
+---
+
+<figure class:list={['window', className]} role="img" aria-label={title ? `Stylized product view: ${title}` : 'Stylized product view'}>
+	<div class="titlebar">
+		<div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
+		{title && <span class="title">{title}</span>}
+	</div>
+	<slot />
+</figure>
+
+<style>
+	figure {
+		margin: 0;
+	}
+</style>
