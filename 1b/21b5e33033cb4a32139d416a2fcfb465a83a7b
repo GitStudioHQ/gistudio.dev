@@ -1,0 +1,23 @@
+package.json
+  s_44fb38c224c892::t_3b7d3f3d2e6a27 20-22,24
+src/components/Icon.astro
+  s_44fb38c224c892::t_6b0f125d9d45b5 2-5,9,14-40,42-43,52-55,57-58
+package-lock.json
+  s_44fb38c224c892::t_c3d22a0c334bf8 17-19,3707-3713
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "1b21b5e33033cb4a32139d416a2fcfb465a83a7b",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
