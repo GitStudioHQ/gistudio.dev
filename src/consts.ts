@@ -54,17 +54,29 @@ export const APP = {
 	version: '1.0.0',
 	license: 'Apache-2.0',
 	releasesUrl: GITHUB_RELEASES_URL,
+	// The full artifact matrix. Every row renders as a download button and must
+	// have a matching file on the GitHub Release (see the release/build pipeline).
 	downloads: [
 		{ os: 'macOS', arch: 'Apple Silicon', format: '.dmg', url: `${APP_DL}/GitStudio-1.0.0-arm64.dmg` },
 		{ os: 'macOS', arch: 'Intel', format: '.dmg', url: `${APP_DL}/GitStudio-1.0.0-x64.dmg` },
 		{ os: 'Windows', arch: 'x64', format: '.exe', url: `${APP_DL}/GitStudio-Setup-1.0.0.exe` },
-		{ os: 'Linux', arch: 'universal', format: '.AppImage', url: `${APP_DL}/GitStudio-1.0.0-x86_64.AppImage` },
+		{ os: 'Windows', arch: 'ARM64', format: '.exe', url: `${APP_DL}/GitStudio-Setup-1.0.0-arm64.exe` },
 		{ os: 'Linux', arch: 'Debian / Ubuntu', format: '.deb', url: `${APP_DL}/GitStudio-1.0.0-amd64.deb` },
+		{ os: 'Linux', arch: 'Fedora / RHEL', format: '.rpm', url: `${APP_DL}/GitStudio-1.0.0-x86_64.rpm` },
+		{ os: 'Linux', arch: 'Universal', format: '.AppImage', url: `${APP_DL}/GitStudio-1.0.0-x86_64.AppImage` },
+		{ os: 'Linux', arch: 'Portable', format: '.tar.gz', url: `${APP_DL}/GitStudio-1.0.0-x86_64.tar.gz` },
 	],
+	// The one-line install per OS (package managers / install script). These
+	// channels must be published for the commands to resolve.
+	install: {
+		macos: 'brew install --cask gitstudio',
+		windows: 'winget install GitStudioHQ.GitStudio',
+		linux: 'curl -fsSL https://gitstudio.dev/install.sh | sh',
+	},
 	platforms: [
-		{ os: 'macOS', arch: 'Apple Silicon & Intel', format: '.dmg / .zip' },
-		{ os: 'Windows', arch: 'x64', format: '.exe (NSIS)' },
-		{ os: 'Linux', arch: 'x64', format: '.AppImage / .deb' },
+		{ os: 'macOS', arch: 'Apple Silicon & Intel', format: '.dmg' },
+		{ os: 'Windows', arch: 'x64 & ARM64', format: '.exe' },
+		{ os: 'Linux', arch: 'x86-64', format: '.deb · .rpm · .AppImage · .tar.gz' },
 	],
 };
 
