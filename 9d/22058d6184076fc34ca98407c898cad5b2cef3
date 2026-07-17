@@ -1,0 +1,24 @@
+src/pages/index.astro
+  s_44fb38c224c892::t_14c7c68f6084ff 33
+  s_44fb38c224c892::t_ae67b11d31f8c5 97-99
+  s_44fb38c224c892::t_81b1dc7e4b3d79 11
+  s_44fb38c224c892::t_5cbbbfc1753509 396-398,402
+  s_44fb38c224c892::t_130653c3becd4a 187
+  s_44fb38c224c892::t_c4092aacef2b13 160,164
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "9d22058d6184076fc34ca98407c898cad5b2cef3",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
