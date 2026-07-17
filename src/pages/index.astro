@@ -1,6 +1,7 @@
 ---
 import Site from '../layouts/Site.astro';
 import Icon from '../components/Icon.astro';
+import OsIcon from '../components/OsIcon.astro';
 import GraphLive from '../components/GraphLive.astro';
 import Shot from '../components/Shot.astro';
 import ExtensionsFeature from '../components/ExtensionsFeature.astro';
@@ -199,17 +200,17 @@ const workflow = [
 			</p>
 			<div class="os-row" data-reveal>
 				<a class="os-card" href="/download#macos">
-					<Icon name="package" size={26} />
+					<OsIcon name="apple" size={26} />
 					<span class="os-name">macOS</span>
 					<span class="os-meta">Apple Silicon &amp; Intel · .dmg</span>
 				</a>
 				<a class="os-card" href="/download#windows">
-					<Icon name="package" size={26} />
+					<OsIcon name="windows" size={24} />
 					<span class="os-name">Windows</span>
 					<span class="os-meta">x64 · .exe</span>
 				</a>
 				<a class="os-card" href="/download#linux">
-					<Icon name="package" size={26} />
+					<OsIcon name="linux" size={26} />
 					<span class="os-name">Linux</span>
 					<span class="os-meta">.AppImage · .deb</span>
 				</a>
@@ -597,7 +598,11 @@ const workflow = [
 		border-color: var(--violet-line);
 		transform: translateY(-2px);
 	}
-	.os-card :global(.gs-icon) {
+	.os-card :global(.os-icon) {
+		color: var(--ink);
+		transition: color 0.15s ease;
+	}
+	.os-card:hover :global(.os-icon) {
 		color: var(--violet-hi);
 	}
 	.os-name {
