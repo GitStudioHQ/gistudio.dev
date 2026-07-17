@@ -3,7 +3,7 @@ import Site from '../layouts/Site.astro';
 import Icon from '../components/Icon.astro';
 import GraphLive from '../components/GraphLive.astro';
 import Shot from '../components/Shot.astro';
-import ExtensionsStrip from '../components/ExtensionsStrip.astro';
+import ExtensionsFeature from '../components/ExtensionsFeature.astro';
 import appCommits from '../assets/shots/app-commits.png';
 import appPrs from '../assets/shots/app-prs.png';
 import appTerminal from '../assets/shots/app-terminal.png';
@@ -73,12 +73,8 @@ const workflow = [
 		</div>
 	</section>
 
-	<!-- ============ EXTENSIONS STRIP — early, quiet, one line ============ -->
-	<ExtensionsStrip
-		label="Also in your editor"
-		extDesc="Full Git workflow, VS Code & Cursor"
-		mergeDesc="Three-pane merge editor"
-	/>
+	<!-- ============ EXTENSIONS — visible two-up, secondary to the hero ============ -->
+	<ExtensionsFeature />
 
 	<!-- ============ 01 · COMMIT GRAPH ============ -->
 	<section class="section">
