@@ -6,7 +6,9 @@ interface Props {
 const { title, class: className } = Astro.props;
 ---
 
-<figure class:list={['window', className]} role="img" aria-label={title ? `Stylized product view: ${title}` : 'Stylized product view'}>
+{/* No role="img" here: it would prune the subtree from the a11y tree, and this
+    frame wraps the REAL interactive <gitstudio-graph>. The .title span names it. */}
+<figure class:list={['window', className]}>
 	<div class="titlebar">
 		<div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
 		{title && <span class="title">{title}</span>}

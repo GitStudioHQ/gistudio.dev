@@ -10,10 +10,10 @@ export const GITHUB_ORG_URL = 'https://github.com/GitStudioHQ';
 export const GITHUB_REPO_URL = 'https://github.com/GitStudioHQ/gitstudio';
 export const GITHUB_RELEASES_URL = 'https://github.com/GitStudioHQ/gitstudio/releases';
 
-// TODO: flip these to deep links (/blob/main/docs/ai-and-agents.md, /tree/main/brand)
-// once the full codebase lands on the public main branch — deep links 404 today.
-export const DOCS_AI_URL = GITHUB_REPO_URL;
-export const BRAND_KIT_URL = GITHUB_REPO_URL;
+// The full codebase is on public main now, so these deep-link to the real docs
+// (both verified 200 on 2026-07-18).
+export const DOCS_AI_URL = `${GITHUB_REPO_URL}/blob/main/docs/ai-and-agents.md`;
+export const BRAND_KIT_URL = `${GITHUB_REPO_URL}/tree/main/brand`;
 export const LICENSE_URL = 'https://www.apache.org/licenses/LICENSE-2.0';
 
 /** GitStudio — the flagship VS Code / Cursor extension. v1.0.0, live everywhere. */
@@ -73,11 +73,6 @@ export const APP = {
 		windows: 'winget install GitStudioHQ.GitStudio',
 		linux: 'curl -fsSL https://gitstudio.dev/install.sh | sh',
 	},
-	platforms: [
-		{ os: 'macOS', arch: 'Apple Silicon & Intel', format: '.dmg' },
-		{ os: 'Windows', arch: 'x64 & ARM64', format: '.exe' },
-		{ os: 'Linux', arch: 'x86-64', format: '.deb · .rpm · .AppImage · .tar.gz' },
-	],
 };
 
 export const AI_PROVIDERS = [

@@ -22,6 +22,7 @@ const { cmd, prompt = '$' } = Astro.props;
 
 <style>
 	.ic {
+		position: relative;
 		display: flex;
 		align-items: center;
 		gap: 0.7rem;
@@ -32,6 +33,17 @@ const { cmd, prompt = '$' } = Astro.props;
 		font-family: var(--font-mono);
 		font-size: 0.82rem;
 		min-width: 0;
+	}
+	/* The command scrolls inside its own box with the scrollbar hidden; this fade
+	   is the only affordance that there is more text to the right. */
+	.ic::after {
+		content: '';
+		position: absolute;
+		inset-block: 1px;
+		right: 38px;
+		width: 26px;
+		pointer-events: none;
+		background: linear-gradient(90deg, transparent, var(--bg-0));
 	}
 	.prompt {
 		color: var(--violet);

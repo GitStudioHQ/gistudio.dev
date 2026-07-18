@@ -27,7 +27,7 @@ const { title, description, og, noindex, jsonLd } = Astro.props;
 	</head>
 	<body>
 		<SiteNav />
-		<main id="main">
+		<main id="main" tabindex="-1">
 			<slot />
 		</main>
 		<SiteFooter />
@@ -60,11 +60,11 @@ const { title, description, og, noindex, jsonLd } = Astro.props;
 					try {
 						await navigator.clipboard.writeText(text);
 						btn.classList.add('copied');
-						const prev = btn.getAttribute('aria-label') ?? 'Copy';
+						btn.dataset.origLabel ??= btn.getAttribute('aria-label') ?? 'Copy';
 						btn.setAttribute('aria-label', 'Copied');
 						setTimeout(() => {
 							btn.classList.remove('copied');
-							btn.setAttribute('aria-label', prev);
+							btn.setAttribute('aria-label', btn.dataset.origLabel);
 						}, 1600);
 					} catch {
 						/* clipboard unavailable — leave the text selectable */

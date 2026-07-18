@@ -716,6 +716,18 @@ html.no-js [data-reveal] {
 
 /* ---------- utilities ---------- */
 
+/* The skip link targets <main id="main" tabindex="-1">; without this the
+   programmatic focus would paint a ring on the whole page region. */
+main[tabindex='-1']:focus {
+	outline: none;
+}
+
+/* One anchor clearance for every in-page target, so nothing lands under the
+   sticky nav (#download, #all-builds, #install, per-OS and per-editor ids). */
+[id] {
+	scroll-margin-top: 100px;
+}
+
 .sr-only {
 	position: absolute !important;
 	width: 1px;

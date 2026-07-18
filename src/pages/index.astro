@@ -10,20 +10,37 @@ import appCommits from '../assets/shots/app-commits.png';
 import appPrs from '../assets/shots/app-prs.png';
 import appAssistant from '../assets/shots/app-assistant.png';
 import mergeEditor from '../assets/shots/merge-editor.png';
-import { GITHUB_ORG_URL, GITHUB_REPO_URL, GITHUB_RELEASES_URL, APP } from '../consts';
+import { GITHUB_ORG_URL, GITHUB_REPO_URL, GITHUB_RELEASES_URL, LICENSE_URL, APP, AI_PROVIDERS } from '../consts';
+
+// Provider counts are derived, never hand-typed (AI_PROVIDERS ends with the two local runtimes).
+const cloudCount = AI_PROVIDERS.length - 2;
 
 const title = 'GitStudio — a native Git and GitHub client for macOS, Windows, Linux';
 const description =
-	'GitStudio is a free, open-source, native Git and GitHub client for macOS, Windows, and Linux: a commit graph, a three-pane merge editor, interactive rebase, the full GitHub client, a real terminal, and AI that runs on your own keys.';
+	'Download GitStudio: a free, open-source, native Git and GitHub client for macOS, Windows, and Linux. Commit graph, three-pane merge editor, interactive rebase, and AI on your own keys.';
 
 const jsonLd = [
-	{ '@context': 'https://schema.org', '@type': 'Organization', name: 'GitStudio', url: 'https://gitstudio.dev/', logo: 'https://gitstudio.dev/favicon-32.png', sameAs: [GITHUB_ORG_URL, 'https://marketplace.visualstudio.com/publishers/gitstudio', 'https://open-vsx.org/namespace/gitstudio'] },
+	// Organization logo must be >=112px for Google — favicon-32 fails validation.
+	{ '@context': 'https://schema.org', '@type': 'Organization', name: 'GitStudio', url: 'https://gitstudio.dev/', logo: 'https://gitstudio.dev/apple-touch-icon.png', sameAs: [GITHUB_ORG_URL, 'https://marketplace.visualstudio.com/publishers/gitstudio', 'https://open-vsx.org/namespace/gitstudio'] },
 	{ '@context': 'https://schema.org', '@type': 'WebSite', name: 'GitStudio', url: 'https://gitstudio.dev/' },
 	{
 		'@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'GitStudio Desktop', description,
 		url: 'https://gitstudio.dev/', applicationCategory: 'DeveloperApplication', operatingSystem: 'macOS, Windows, Linux',
-		softwareVersion: APP.version, license: 'https://www.apache.org/licenses/LICENSE-2.0', downloadUrl: 'https://gitstudio.dev/#download',
+		softwareVersion: APP.version, license: LICENSE_URL,
+		// Crawlers strip fragments, so downloadUrl points at the real artifacts.
+		downloadUrl: GITHUB_RELEASES_URL, installUrl: 'https://gitstudio.dev/#download',
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+	},
+	{
+		'@context': 'https://schema.org', '@type': 'FAQPage',
+		mainEntity: [
+			{ '@type': 'Question', name: 'Is GitStudio actually free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The desktop app and both extensions are free on public and private repositories, with no account and no paid tier. The desktop app and the GitStudio extension are Apache-2.0; Merge Studio is MIT.' } },
+			{ '@type': 'Question', name: 'Does my code or data leave my machine?', acceptedAnswer: { '@type': 'Answer', text: 'No. GitStudio has no backend. Git runs locally, GitHub calls go straight to GitHub with your own sign-in, and telemetry is off by default. The assistant is off until you connect a model, and with a local model through Ollama or LM Studio, nothing leaves your machine.' } },
+			{ '@type': 'Question', name: 'Which editors do the extensions support?', acceptedAnswer: { '@type': 'Answer', text: 'VS Code, Cursor, VSCodium, Windsurf, and code-server. VS Code installs from the Marketplace; the others install the same build from Open VSX.' } },
+			{ '@type': 'Question', name: 'Do I need an account?', acceptedAnswer: { '@type': 'Answer', text: 'No. There is no GitStudio account. You sign in to GitHub with your own credentials only when you use the GitHub features.' } },
+			{ '@type': 'Question', name: 'How does AI billing work with my own keys?', acceptedAnswer: { '@type': 'Answer', text: 'You add your provider’s API key, and requests go from your machine to that provider. You pay the provider directly at their rates. GitStudio takes no cut and runs no proxy. Local models through Ollama or LM Studio cost nothing.' } },
+			{ '@type': 'Question', name: 'Can I trust the installers?', acceptedAnswer: { '@type': 'Answer', text: 'They are built by CI from the public source and attached to the GitHub release with checksums. You can verify them, or build from source yourself.' } },
+		],
 	},
 ];
 
@@ -103,8 +120,7 @@ const oses = [
 				<h2>A commit graph that stays fast at tens of thousands of commits.</h2>
 				<p class="lede">
 					The graph is virtualized, so it stays responsive on large repositories. Colored lanes,
-					ref chips, author avatars on the nodes, and full keyboard navigation. The same engine
-					draws it on the desktop and in the editor.
+					ref chips, author avatars on the nodes, and full keyboard navigation.
 				</p>
 				<ul class="ticks">
 					<li>Check out, cherry-pick, branch, or reset from any commit.</li>
@@ -190,7 +206,7 @@ const oses = [
 				<h2>AI that runs on <em class="fx">your</em> own keys.</h2>
 				<p class="lede">
 					The assistant is off until you connect a model. It runs on your own API keys across 12
-					providers — 10 cloud, plus Ollama and LM Studio locally. It reads real status, diffs,
+					providers — {cloudCount} cloud, plus Ollama and LM Studio locally. It reads real status, diffs,
 					and history, and asks before every write. A built-in MCP server exposes the same tools
 					to other agents.
 				</p>
@@ -209,7 +225,7 @@ const oses = [
 			</div>
 		</div>
 		<div class="container">
-			<p class="prov-note mono" data-reveal>Anthropic, OpenAI, Gemini, and 7 more cloud providers — plus local models through Ollama and LM Studio.</p>
+			<p class="prov-note mono" data-reveal>{AI_PROVIDERS.slice(0, 3).join(', ')}, and {cloudCount - 3} more cloud providers — plus local models through Ollama and LM Studio.</p>
 		</div>
 	</section>
 
@@ -221,7 +237,7 @@ const oses = [
 			<p class="lede" data-reveal>
 				A feature-by-feature comparison with GitKraken, GitLens, and the built-in Git tools.
 			</p>
-			<div class="table-wrap" data-reveal>
+			<div class="table-wrap" data-reveal tabindex="0" role="region" aria-label="GitStudio compared with GitKraken, GitLens, and built-in Git">
 				<table class="cmp">
 					<thead>
 						<tr>
@@ -237,15 +253,15 @@ const oses = [
 							<th scope="row">Native desktop app</th>
 							<td class="col-gs"><span class="yes">Free</span></td>
 							<td><span class="part">Paid</span></td>
-							<td><span class="no">—</span></td>
-							<td><span class="no">—</span></td>
+							<td><span class="no" aria-hidden="true">—</span><span class="sr-only">No</span></td>
+							<td><span class="no" aria-hidden="true">—</span><span class="sr-only">No</span></td>
 						</tr>
 						<tr>
 							<th scope="row">Commit graph on private repos</th>
 							<td class="col-gs"><span class="yes">Free</span></td>
 							<td><span class="part">Paid</span></td>
 							<td><span class="part">Pro</span></td>
-							<td><span class="no">—</span></td>
+							<td><span class="no" aria-hidden="true">—</span><span class="sr-only">No</span></td>
 						</tr>
 						<tr>
 							<th scope="row">Three-pane merge editor</th>
@@ -265,8 +281,8 @@ const oses = [
 							<th scope="row">Universal undo for Git operations</th>
 							<td class="col-gs"><span class="yes">Yes</span></td>
 							<td><span class="yes">Yes</span></td>
-							<td><span class="no">—</span></td>
-							<td><span class="no">—</span></td>
+							<td><span class="no" aria-hidden="true">—</span><span class="sr-only">No</span></td>
+							<td><span class="no" aria-hidden="true">—</span><span class="sr-only">No</span></td>
 						</tr>
 						<tr>
 							<th scope="row">AI on your own keys</th>
@@ -278,14 +294,14 @@ const oses = [
 						<tr>
 							<th scope="row">Local-model AI</th>
 							<td class="col-gs"><span class="yes">Ollama, LM Studio</span></td>
-							<td><span class="no">—</span></td>
-							<td><span class="no">—</span></td>
-							<td><span class="no">—</span></td>
+							<td><span class="no" aria-hidden="true">—</span><span class="sr-only">No</span></td>
+							<td><span class="no" aria-hidden="true">—</span><span class="sr-only">No</span></td>
+							<td><span class="no" aria-hidden="true">—</span><span class="sr-only">No</span></td>
 						</tr>
 						<tr>
 							<th scope="row">Also a VS Code / Cursor extension</th>
 							<td class="col-gs"><span class="yes">Yes</span></td>
-							<td><span class="no">—</span></td>
+							<td><span class="no" aria-hidden="true">—</span><span class="sr-only">No</span></td>
 							<td><span class="yes">Yes</span></td>
 							<td><span class="yes">Yes</span></td>
 						</tr>
@@ -383,11 +399,9 @@ const oses = [
 	<section class="section final" id="download">
 		<div class="container center">
 			<p class="eyebrow center" data-reveal>Download · v{APP.version}</p>
-			<h2 data-reveal>Get GitStudio Desktop.</h2>
+			<h2 data-reveal>Download GitStudio Desktop.</h2>
 			<p class="lede" data-reveal>
-				Native installers for macOS, Windows, and Linux, with auto-update built in. The desktop app
-				and the GitStudio extension are Apache-2.0, Merge Studio is MIT, and private repositories
-				work exactly like public ones — free, no account.
+				Native installers for macOS, Windows, and Linux, with auto-update built in.
 			</p>
 		</div>
 
@@ -423,10 +437,10 @@ const oses = [
 							</div>
 						</div>
 						<InstallCmd cmd={os.cmd} />
-						<p class="or mono" aria-hidden="true"><span>or download</span></p>
+						<p class="or mono"><span>or download</span></p>
 						<div class="os-dls">
 							{os.dls.map((d) => (
-								<a class="dl-btn" href={d.url}>
+								<a class="dl-btn" href={d.url} aria-label={`Download GitStudio for ${os.name}, ${d.arch} (${d.format})`}>
 									<span class="dl-arch">{d.arch}</span>
 									<code>{d.format}</code>
 								</a>
@@ -439,12 +453,12 @@ const oses = [
 			</div>
 			<div class="center">
 				<p class="release-note" data-reveal>
-					Apache-2.0 · auto-updates · checksums &amp; older versions on
+					Apache-2.0 · checksums &amp; older versions on
 					the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases page</a>.
 				</p>
 				<details class="verify" data-reveal>
 					<summary>Build from source instead (Node 22+)</summary>
-					<InstallCmd cmd="git clone https://github.com/GitStudioHQ/gitstudio.git" />
+					<InstallCmd cmd={`git clone ${GITHUB_REPO_URL}.git`} />
 					<InstallCmd cmd="cd gitstudio && npm install && npm run dist --workspace apps/desktop" />
 					<p class="fine">The installer for your OS lands in <code>apps/desktop/release/</code>. The whole thing is open source, so you can audit it or build it yourself.</p>
 				</details>
@@ -453,7 +467,7 @@ const oses = [
 	</section>
 </Site>
 
-<script define:vars={{ dl }}>
+<script define:vars={{ dl, version: APP.version }}>
 	(function () {
 		const card = document.getElementById('smart-dl');
 		if (!card) return;
@@ -464,37 +478,47 @@ const oses = [
 		const eyebrow = document.getElementById('smart-eyebrow');
 		const icons = card.querySelectorAll('.smart-logo [data-os]');
 		const showIcon = (os) => icons.forEach((s) => (s.hidden = s.getAttribute('data-os') !== os));
-		const set = (href, sub) => { if (href) primary.href = href; subEl.textContent = sub; };
+		const set = (href, sub) => { if (href) primary.href = href; subEl.textContent = sub + ' · ' + version; };
 
 		const ua = navigator.userAgent || '';
 		const uad = navigator.userAgentData;
 		const plat = ((uad && uad.platform) || navigator.platform || '').toLowerCase();
-		const isMobile = /android|iphone|ipad|ipod|mobile/i.test(ua);
+		// iPadOS reports as "Macintosh" — treat any touch Mac as mobile so we
+		// never hand a phone or tablet a desktop .dmg.
+		const isMobile =
+			/android|iphone|ipad|ipod|mobile/i.test(ua) ||
+			(/mac/.test(plat) && (navigator.maxTouchPoints || 0) > 1);
 
 		let os = 'macos';
 		if (/win/.test(plat) || /windows/i.test(ua)) os = 'windows';
 		else if (/linux|x11|cros/.test(plat) || (/linux/i.test(ua) && !/android/i.test(ua))) os = 'linux';
 		else if (/mac/.test(plat) || /mac os x/i.test(ua)) os = 'macos';
 
-		if (isMobile) { card.setAttribute('data-mobile', 'true'); return; }
+		if (isMobile) {
+			eyebrow.textContent = 'Desktop app';
+			mainEl.textContent = 'See every build';
+			subEl.textContent = 'macOS · Windows · Linux · ' + version;
+			primary.href = '#all-builds';
+			altEl.textContent = 'Install it on the machine you code on.';
+			icons.forEach((s) => (s.hidden = true));
+			return;
+		}
 
 		const labels = { macos: 'Mac', windows: 'Windows PC', linux: 'Linux machine' };
 		showIcon(os);
 		eyebrow.textContent = 'Recommended for your ' + labels[os];
 		mainEl.textContent = 'Download for ' + (os === 'macos' ? 'macOS' : os === 'windows' ? 'Windows' : 'Linux');
 
+		// Each branch sets a correct default SYNCHRONOUSLY (so an immediate click
+		// never downloads the wrong OS's artifact), then upgrades in place if the
+		// async arch probe disagrees.
 		if (os === 'windows') {
-			let wdone = false;
-			const applyWin = (arch) => {
-				if (wdone) return;
-				wdone = true;
-				if (arch === 'arm') { set(dl.winArm, 'ARM64 · .exe'); altEl.innerHTML = 'On an x64 PC? <a href="' + dl.winX64 + '">Get the x64 build</a>'; }
-				else { set(dl.winX64, 'x64 · .exe'); altEl.innerHTML = 'Windows on ARM? <a href="' + dl.winArm + '">Get the ARM64 build</a>'; }
-			};
+			const winX64 = () => { set(dl.winX64, 'x64 · .exe'); altEl.innerHTML = 'Windows on ARM? <a href="' + dl.winArm + '">Get the ARM64 build</a>'; };
+			const winArm = () => { set(dl.winArm, 'ARM64 · .exe'); altEl.innerHTML = 'On an x64 PC? <a href="' + dl.winX64 + '">Get the x64 build</a>'; };
+			winX64();
 			if (uad && uad.getHighEntropyValues) {
-				uad.getHighEntropyValues(['architecture']).then((h) => applyWin(h.architecture === 'arm' ? 'arm' : 'x64')).catch(() => {});
+				uad.getHighEntropyValues(['architecture']).then((h) => { if (h.architecture === 'arm') winArm(); }).catch(() => {});
 			}
-			setTimeout(() => applyWin('x64'), 300);
 			return;
 		}
 		if (os === 'linux') {
@@ -503,26 +527,21 @@ const oses = [
 			return;
 		}
 
-		// macOS — resolve Apple Silicon vs Intel, best-effort.
-		let done = false;
-		const apply = (arch) => {
-			if (done) return;
-			done = true;
-			if (arch === 'intel') { set(dl.macIntel, 'Intel · .dmg'); altEl.innerHTML = 'On Apple Silicon? <a href="' + dl.macArm + '">Get the Apple Silicon build</a>'; }
-			else { set(dl.macArm, 'Apple Silicon · .dmg'); altEl.innerHTML = 'Intel Mac? <a href="' + dl.macIntel + '">Get the Intel build</a>'; }
-		};
+		// macOS — default to Apple Silicon (the server-rendered state), downgrade
+		// to Intel only on positive evidence.
+		const macArm = () => { set(dl.macArm, 'Apple Silicon · .dmg'); altEl.innerHTML = 'Intel Mac? <a href="' + dl.macIntel + '">Get the Intel build</a>'; };
+		const macIntel = () => { set(dl.macIntel, 'Intel · .dmg'); altEl.innerHTML = 'On Apple Silicon? <a href="' + dl.macArm + '">Get the Apple Silicon build</a>'; };
+		macArm();
 		if (uad && uad.getHighEntropyValues) {
-			uad.getHighEntropyValues(['architecture']).then((h) => apply(h.architecture === 'x86' ? 'intel' : 'arm')).catch(() => {});
+			uad.getHighEntropyValues(['architecture']).then((h) => { if (h.architecture === 'x86') macIntel(); }).catch(() => {});
 		}
 		try {
 			const c = document.createElement('canvas');
 			const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
 			const dbg = gl && gl.getExtension('WEBGL_debug_renderer_info');
 			const r = (dbg && gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) || '';
-			if (/apple/i.test(r) && !/intel/i.test(r)) apply('arm');
-			else if (/intel/i.test(r)) apply('intel');
+			if (/intel/i.test(r) && !/apple/i.test(r)) macIntel();
 		} catch (e) {}
-		setTimeout(() => apply('arm'), 300);
 	})();
 </script>
 
@@ -566,9 +585,6 @@ const oses = [
 		justify-content: center;
 		flex-wrap: wrap;
 		margin-top: 2.1rem;
-	}
-	.cta-row.centered {
-		margin-top: 2.4rem;
 	}
 	.hero .cta-row {
 		animation: rise 0.8s 0.22s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -679,15 +695,6 @@ const oses = [
 		color: var(--violet);
 		margin: 3.2rem 0 1rem;
 	}
-	.ai .providers {
-		list-style: none;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.55rem;
-		justify-content: center;
-		margin: 0;
-		padding: 0;
-	}
 
 	/* DOWNLOAD — auto-detect card */
 	.final .lede {
@@ -772,15 +779,17 @@ const oses = [
 	}
 	.os-grid {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		/* minmax(0,1fr) releases the min-content floor — without it the nowrap
+		   install command inside each card widens the tracks past the container. */
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 1.2rem;
 	}
 	.os-col {
+		min-width: 0;
 		border: 1px solid var(--hairline);
 		border-radius: var(--r-lg);
-		background: var(--bg-2);
+		background: linear-gradient(180deg, var(--bg-2), var(--bg-1) 130%);
 		padding: 1.5rem 1.4rem;
-		scroll-margin-top: 90px;
 		display: flex;
 		flex-direction: column;
 		gap: 0.85rem;
@@ -860,7 +869,8 @@ const oses = [
 		color: var(--muted);
 	}
 	.os-note {
-		margin: 0;
+		margin-top: auto;
+		margin-bottom: 0;
 		font-size: 0.82rem;
 		color: var(--faint);
 		line-height: 1.55;
@@ -985,11 +995,12 @@ const oses = [
 	}
 	@media (max-width: 900px) {
 		.os-grid {
-			grid-template-columns: 1fr;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 	@media (max-width: 620px) {
-		.wf-grid {
+		.wf-grid,
+		.os-grid {
 			grid-template-columns: 1fr;
 		}
 	}
@@ -1000,6 +1011,14 @@ const oses = [
 		}
 		.smart-body {
 			align-items: center;
+		}
+		/* global .btn is white-space:nowrap; the 35-char hero label bleeds past
+		   both gutters on small phones. */
+		.hero .cta-row .btn {
+			white-space: normal;
+			max-width: 100%;
+			text-align: center;
+			line-height: 1.25;
 		}
 	}
 </style>

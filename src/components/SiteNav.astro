@@ -1,5 +1,5 @@
 ---
-import { GITHUB_REPO_URL } from '../consts';
+import { GITHUB_REPO_URL, APP } from '../consts';
 import mark from '../assets/brand/gitstudio-mark.svg';
 
 const path = Astro.url.pathname;
@@ -22,7 +22,7 @@ const isActive = (href: string) => {
 	<div class="container">
 		<a href="/#download">
 			<span class="pulse" aria-hidden="true"></span>
-			GitStudio Desktop 1.0 is out for macOS, Windows<span class="hide-sm"> &amp; Linux</span> <span class="arr">→</span>
+			GitStudio Desktop {APP.version} is out for macOS, Windows<span class="hide-sm"> &amp; Linux</span> <span class="arr">→</span>
 		</a>
 	</div>
 </div>

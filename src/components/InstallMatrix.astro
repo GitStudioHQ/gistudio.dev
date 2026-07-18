@@ -37,11 +37,13 @@ const { ext } = Astro.props;
 <style>
 	.matrix {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		/* minmax(0,1fr): the nowrap install command must not floor the tracks */
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 1rem;
 		margin-top: 2rem;
 	}
 	.ed {
+		min-width: 0;
 		border: 1px solid var(--hairline);
 		border-radius: var(--r-lg);
 		background: var(--bg-2);

@@ -63,18 +63,18 @@ const { skeletonRows = 9 } = Astro.props;
 				// here) and slim the fixed tracks so subjects keep real width.
 				const narrow = host.getBoundingClientRect().width < 620;
 				try {
-					if (!localStorage.getItem('gitstudio.graph.cols.widths')) {
-						localStorage.setItem(
-							'gitstudio.graph.cols.widths',
-							JSON.stringify(narrow ? { refs: 110, date: 60 } : { refs: 150, author: 112, date: 72 }),
-						);
-					}
-					if (!localStorage.getItem('gitstudio.graph.cols.hidden')) {
-						localStorage.setItem(
-							'gitstudio.graph.cols.hidden',
-							JSON.stringify(narrow ? ['changes', 'sha', 'author'] : ['changes']),
-						);
-					}
+					// Always write the breakpoint-appropriate config. Guarding on
+					// "already set" would bake in whatever viewport the visitor first
+					// loaded at, so a desktop-then-phone visit renders columns that
+					// cannot fit. This embed has no user column prefs worth keeping.
+					localStorage.setItem(
+						'gitstudio.graph.cols.widths',
+						JSON.stringify(narrow ? { refs: 110, date: 60 } : { refs: 150, author: 112, date: 72 }),
+					);
+					localStorage.setItem(
+						'gitstudio.graph.cols.hidden',
+						JSON.stringify(narrow ? ['changes', 'sha', 'author'] : ['changes']),
+					);
 				} catch {
 					/* storage unavailable — defaults still render, just tighter */
 				}
