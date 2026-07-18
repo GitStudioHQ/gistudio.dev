@@ -2,6 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     { "source": "/desktop", "destination": "/", "permanent": true },
+    { "source": "/download", "destination": "/#download", "permanent": true },
+    { "source": "/download/:path*", "destination": "/#download", "permanent": true },
     { "source": "/extension", "destination": "/gitstudio-extension", "permanent": true },
     { "source": "/merge-studio", "destination": "/merge-studio-extension", "permanent": true }
   ]

@@ -9,6 +9,7 @@ import Icon from '../components/Icon.astro';
 import ListingCard from '../components/ListingCard.astro';
 import EditorChips from '../components/EditorChips.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
+import InstallCmd from '../components/InstallCmd.astro';
 import extIcon from '../assets/brand/ext-icon-192.png';
 import GraphLive from '../components/GraphLive.astro';
 import { EXT, MERGE, GITHUB_REPO_URL } from '../consts';
@@ -208,10 +209,15 @@ const jsonLd = [
 			<p class="lede" data-reveal>
 				Search <strong>“GitStudio”</strong> in your editor's Extensions view, or grab the exact
 				command below. Requires VS Code {EXT.minVsCode}+ (or any editor built on it) and git on
-				your PATH. Prefer an artifact? The <a href="/download#extension">download page</a> has the
-				VSIX with a SHA-256.
+				your PATH. Prefer a raw artifact? The signed VSIX is at the bottom of this section.
 			</p>
 			<InstallMatrix ext={EXT} />
+			<details class="vsix" data-reveal>
+				<summary>Prefer the raw VSIX? ({EXT.vsixSizeMb} MB)</summary>
+				<a class="btn btn-ghost btn-sm vsix-btn" href={EXT.vsixPath} download>Download {EXT.vsixFile}</a>
+				<InstallCmd cmd={`shasum -a 256 ${EXT.vsixFile}`} />
+				<p class="sha">Expected: <code>{EXT.vsixSha256}</code></p>
+			</details>
 		</div>
 	</section>
 
@@ -421,6 +427,50 @@ const jsonLd = [
 		text-transform: uppercase;
 		color: var(--violet);
 		margin: 0;
+	}
+
+	/* raw VSIX artifact (moved here from the retired /download page) */
+	.vsix {
+		margin-top: 1.6rem;
+		border: 1px solid var(--hairline);
+		border-radius: var(--r-md);
+		background: var(--bg-2);
+		padding: 0 1rem;
+		max-width: 640px;
+	}
+	.vsix summary {
+		cursor: pointer;
+		list-style: none;
+		padding: 0.85rem 0;
+		color: var(--text);
+		font-weight: 550;
+		font-size: 0.9rem;
+	}
+	.vsix summary::-webkit-details-marker {
+		display: none;
+	}
+	.vsix summary::before {
+		content: '⌄ ';
+		color: var(--violet);
+	}
+	.vsix[open] summary::before {
+		content: '⌃ ';
+	}
+	.vsix > *:not(summary) {
+		margin-bottom: 0.9rem;
+	}
+	.vsix-btn {
+		width: 100%;
+		justify-content: center;
+	}
+	.sha {
+		font-size: 0.76rem;
+		color: var(--muted);
+		overflow-wrap: anywhere;
+		margin: 0;
+	}
+	.sha code {
+		font-size: 0.68rem;
 	}
 
 	@media (max-width: 960px) {

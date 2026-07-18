@@ -5,6 +5,7 @@ import OsIcon from '../components/OsIcon.astro';
 import GraphLive from '../components/GraphLive.astro';
 import Shot from '../components/Shot.astro';
 import ExtensionsFeature from '../components/ExtensionsFeature.astro';
+import InstallCmd from '../components/InstallCmd.astro';
 import appCommits from '../assets/shots/app-commits.png';
 import appPrs from '../assets/shots/app-prs.png';
 import appAssistant from '../assets/shots/app-assistant.png';
@@ -21,7 +22,7 @@ const jsonLd = [
 	{
 		'@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'GitStudio Desktop', description,
 		url: 'https://gitstudio.dev/', applicationCategory: 'DeveloperApplication', operatingSystem: 'macOS, Windows, Linux',
-		softwareVersion: APP.version, license: 'https://www.apache.org/licenses/LICENSE-2.0', downloadUrl: 'https://gitstudio.dev/download',
+		softwareVersion: APP.version, license: 'https://www.apache.org/licenses/LICENSE-2.0', downloadUrl: 'https://gitstudio.dev/#download',
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 	},
 ];
@@ -32,6 +33,29 @@ const workflow = [
 	{ icon: 'blame', h: 'Inline blame', p: 'Per-line authorship, plus a code-age heatmap that shades recent lines warm and old lines cool.' },
 	{ icon: 'branch', h: 'Branches and worktrees', p: 'Branches, tags, stashes, and worktrees with full operations and per-branch ahead/behind counts.' },
 	{ icon: 'terminal', h: 'Real terminal', p: 'A real PTY, not an emulation. Every command becomes a block that records its output, exit code, and timing — scan, copy, or rerun any of them.' },
+];
+
+// ---- Downloads (folded in from the old /download page; #download is the anchor) ----
+const byOs = {
+	macOS: APP.downloads.filter((d) => d.os === 'macOS'),
+	Windows: APP.downloads.filter((d) => d.os === 'Windows'),
+	Linux: APP.downloads.filter((d) => d.os === 'Linux'),
+};
+
+// Direct links the auto-detect card resolves to.
+const dl = {
+	macArm: byOs.macOS.find((d) => d.arch === 'Apple Silicon')?.url,
+	macIntel: byOs.macOS.find((d) => d.arch === 'Intel')?.url,
+	winX64: byOs.Windows.find((d) => d.arch === 'x64')?.url,
+	winArm: byOs.Windows.find((d) => d.arch === 'ARM64')?.url,
+	linApp: byOs.Linux.find((d) => d.format === '.AppImage')?.url,
+	linDeb: byOs.Linux.find((d) => d.format === '.deb')?.url,
+};
+
+const oses = [
+	{ id: 'macos', name: 'macOS', icon: 'apple' as const, min: 'Apple Silicon & Intel · macOS 11+', cmd: APP.install.macos, dls: byOs.macOS, note: 'Unsigned builds may trip Gatekeeper — after dragging the app in, clear the quarantine flag once:', gatekeeper: 'xattr -cr /Applications/GitStudio.app' },
+	{ id: 'windows', name: 'Windows', icon: 'windows' as const, min: '64-bit · Windows 10 & 11', cmd: APP.install.windows, dls: byOs.Windows, note: 'If SmartScreen appears, choose <strong>More info → Run anyway</strong>. The NSIS installer lets you pick the install directory.', gatekeeper: null },
+	{ id: 'linux', name: 'Linux', icon: 'linux' as const, min: 'x86-64 · arm64 coming', cmd: APP.install.linux, dls: byOs.Linux, note: 'The <code>.AppImage</code> is universal — <code>chmod +x</code> and run. On Debian/Ubuntu: <code>sudo apt install ./GitStudio-*.deb</code>; on Fedora/RHEL: <code>sudo dnf install ./GitStudio-*.rpm</code>.', gatekeeper: null },
 ];
 ---
 
@@ -47,7 +71,7 @@ const workflow = [
 				or fully local. Apache-2.0, free, no account.
 			</p>
 			<div class="cta-row">
-				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
+				<a class="btn btn-primary btn-lg" href="#download">Download for macOS, Windows &amp; Linux</a>
 				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">
 					<svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
 					View the source
@@ -186,39 +210,6 @@ const workflow = [
 		</div>
 		<div class="container">
 			<p class="prov-note mono" data-reveal>Anthropic, OpenAI, Gemini, and 7 more cloud providers — plus local models through Ollama and LM Studio.</p>
-		</div>
-	</section>
-
-	<!-- ============ PLATFORMS ============ -->
-	<section class="section platforms">
-		<div class="container center">
-			<p class="eyebrow center" data-reveal>Platforms</p>
-			<h2 data-reveal>Native on macOS, Windows, and Linux.</h2>
-			<p class="lede" data-reveal>
-				Signed installers for every platform, with auto-update built in. v{APP.version}, Apache-2.0,
-				no account.
-			</p>
-			<div class="os-row" data-reveal>
-				<a class="os-card" href="/download#macos">
-					<OsIcon name="apple" size={26} />
-					<span class="os-name">macOS</span>
-					<span class="os-meta">Apple Silicon &amp; Intel · .dmg</span>
-				</a>
-				<a class="os-card" href="/download#windows">
-					<OsIcon name="windows" size={24} />
-					<span class="os-name">Windows</span>
-					<span class="os-meta">x64 &amp; ARM64 · .exe</span>
-				</a>
-				<a class="os-card" href="/download#linux">
-					<OsIcon name="linux" size={26} />
-					<span class="os-name">Linux</span>
-					<span class="os-meta">.deb · .rpm · .AppImage · .tar.gz</span>
-				</a>
-			</div>
-			<div class="cta-row centered" data-reveal>
-				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
-				<a class="btn btn-ghost btn-lg" href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">All releases</a>
-			</div>
 		</div>
 	</section>
 
@@ -388,23 +379,152 @@ const workflow = [
 		</div>
 	</section>
 
-	<!-- ============ CLOSING ============ -->
-	<section class="section final">
+	<!-- ============ DOWNLOAD (the final ask — folded in from the old /download page) ============ -->
+	<section class="section final" id="download">
 		<div class="container center">
-			<p class="eyebrow center" data-reveal>Download</p>
+			<p class="eyebrow center" data-reveal>Download · v{APP.version}</p>
 			<h2 data-reveal>Get GitStudio Desktop.</h2>
 			<p class="lede" data-reveal>
-				Native installers for macOS, Windows, and Linux. The desktop app and the GitStudio
-				extension are Apache-2.0, Merge Studio is MIT, and private repositories work exactly like
-				public ones — free, no account.
+				Native installers for macOS, Windows, and Linux, with auto-update built in. The desktop app
+				and the GitStudio extension are Apache-2.0, Merge Studio is MIT, and private repositories
+				work exactly like public ones — free, no account.
 			</p>
-			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
-				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">View the source</a>
+		</div>
+
+		<div class="container">
+			<div class="smart-card" id="smart-dl" data-reveal>
+				<div class="smart-logo" aria-hidden="true">
+					<span data-os="macos"><OsIcon name="apple" size={44} /></span>
+					<span data-os="windows" hidden><OsIcon name="windows" size={40} /></span>
+					<span data-os="linux" hidden><OsIcon name="linux" size={44} /></span>
+				</div>
+				<div class="smart-body">
+					<p class="smart-eyebrow mono" id="smart-eyebrow">Recommended for your Mac</p>
+					<a class="btn btn-primary btn-lg smart-primary" id="smart-primary" href={dl.macArm}>
+						<span class="sp-main">Download for macOS</span>
+						<span class="sp-sub mono">Apple Silicon · .dmg · {APP.version}</span>
+					</a>
+					<p class="smart-alt" id="smart-alt">Intel Mac? <a href={dl.macIntel}>Get the Intel build</a></p>
+				</div>
+			</div>
+			<p class="smart-hint" data-reveal>On a different machine? <a href="#all-builds">See every build below ↓</a></p>
+		</div>
+
+		<div class="container dl-all" id="all-builds">
+			<p class="all-eyebrow eyebrow center" data-reveal>All builds</p>
+			<div class="os-grid">
+				{oses.map((os) => (
+					<div class="os-col" id={os.id} data-reveal>
+						<div class="os-head">
+							<span class="os-logo"><OsIcon name={os.icon} size={24} /></span>
+							<div>
+								<h3>{os.name}</h3>
+								<span class="os-min mono">{os.min}</span>
+							</div>
+						</div>
+						<InstallCmd cmd={os.cmd} />
+						<p class="or mono" aria-hidden="true"><span>or download</span></p>
+						<div class="os-dls">
+							{os.dls.map((d) => (
+								<a class="dl-btn" href={d.url}>
+									<span class="dl-arch">{d.arch}</span>
+									<code>{d.format}</code>
+								</a>
+							))}
+						</div>
+						<p class="os-note" set:html={os.note} />
+						{os.gatekeeper && <InstallCmd cmd={os.gatekeeper} />}
+					</div>
+				))}
+			</div>
+			<div class="center">
+				<p class="release-note" data-reveal>
+					Apache-2.0 · auto-updates · checksums &amp; older versions on
+					the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases page</a>.
+				</p>
+				<details class="verify" data-reveal>
+					<summary>Build from source instead (Node 22+)</summary>
+					<InstallCmd cmd="git clone https://github.com/GitStudioHQ/gitstudio.git" />
+					<InstallCmd cmd="cd gitstudio && npm install && npm run dist --workspace apps/desktop" />
+					<p class="fine">The installer for your OS lands in <code>apps/desktop/release/</code>. The whole thing is open source, so you can audit it or build it yourself.</p>
+				</details>
 			</div>
 		</div>
 	</section>
 </Site>
+
+<script define:vars={{ dl }}>
+	(function () {
+		const card = document.getElementById('smart-dl');
+		if (!card) return;
+		const primary = document.getElementById('smart-primary');
+		const mainEl = primary.querySelector('.sp-main');
+		const subEl = primary.querySelector('.sp-sub');
+		const altEl = document.getElementById('smart-alt');
+		const eyebrow = document.getElementById('smart-eyebrow');
+		const icons = card.querySelectorAll('.smart-logo [data-os]');
+		const showIcon = (os) => icons.forEach((s) => (s.hidden = s.getAttribute('data-os') !== os));
+		const set = (href, sub) => { if (href) primary.href = href; subEl.textContent = sub; };
+
+		const ua = navigator.userAgent || '';
+		const uad = navigator.userAgentData;
+		const plat = ((uad && uad.platform) || navigator.platform || '').toLowerCase();
+		const isMobile = /android|iphone|ipad|ipod|mobile/i.test(ua);
+
+		let os = 'macos';
+		if (/win/.test(plat) || /windows/i.test(ua)) os = 'windows';
+		else if (/linux|x11|cros/.test(plat) || (/linux/i.test(ua) && !/android/i.test(ua))) os = 'linux';
+		else if (/mac/.test(plat) || /mac os x/i.test(ua)) os = 'macos';
+
+		if (isMobile) { card.setAttribute('data-mobile', 'true'); return; }
+
+		const labels = { macos: 'Mac', windows: 'Windows PC', linux: 'Linux machine' };
+		showIcon(os);
+		eyebrow.textContent = 'Recommended for your ' + labels[os];
+		mainEl.textContent = 'Download for ' + (os === 'macos' ? 'macOS' : os === 'windows' ? 'Windows' : 'Linux');
+
+		if (os === 'windows') {
+			let wdone = false;
+			const applyWin = (arch) => {
+				if (wdone) return;
+				wdone = true;
+				if (arch === 'arm') { set(dl.winArm, 'ARM64 · .exe'); altEl.innerHTML = 'On an x64 PC? <a href="' + dl.winX64 + '">Get the x64 build</a>'; }
+				else { set(dl.winX64, 'x64 · .exe'); altEl.innerHTML = 'Windows on ARM? <a href="' + dl.winArm + '">Get the ARM64 build</a>'; }
+			};
+			if (uad && uad.getHighEntropyValues) {
+				uad.getHighEntropyValues(['architecture']).then((h) => applyWin(h.architecture === 'arm' ? 'arm' : 'x64')).catch(() => {});
+			}
+			setTimeout(() => applyWin('x64'), 300);
+			return;
+		}
+		if (os === 'linux') {
+			set(dl.linApp, '.AppImage · x86-64');
+			altEl.innerHTML = 'Debian or Ubuntu? <a href="' + dl.linDeb + '">Get the .deb</a>';
+			return;
+		}
+
+		// macOS — resolve Apple Silicon vs Intel, best-effort.
+		let done = false;
+		const apply = (arch) => {
+			if (done) return;
+			done = true;
+			if (arch === 'intel') { set(dl.macIntel, 'Intel · .dmg'); altEl.innerHTML = 'On Apple Silicon? <a href="' + dl.macArm + '">Get the Apple Silicon build</a>'; }
+			else { set(dl.macArm, 'Apple Silicon · .dmg'); altEl.innerHTML = 'Intel Mac? <a href="' + dl.macIntel + '">Get the Intel build</a>'; }
+		};
+		if (uad && uad.getHighEntropyValues) {
+			uad.getHighEntropyValues(['architecture']).then((h) => apply(h.architecture === 'x86' ? 'intel' : 'arm')).catch(() => {});
+		}
+		try {
+			const c = document.createElement('canvas');
+			const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+			const dbg = gl && gl.getExtension('WEBGL_debug_renderer_info');
+			const r = (dbg && gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) || '';
+			if (/apple/i.test(r) && !/intel/i.test(r)) apply('arm');
+			else if (/intel/i.test(r)) apply('intel');
+		} catch (e) {}
+		setTimeout(() => apply('arm'), 300);
+	})();
+</script>
 
 <style>
 	/* HERO */
@@ -569,50 +689,216 @@ const workflow = [
 		padding: 0;
 	}
 
-	/* PLATFORMS */
-	.platforms {
-		background: radial-gradient(55% 80% at 50% 0%, rgba(169, 140, 255, 0.08), transparent 70%);
+	/* DOWNLOAD — auto-detect card */
+	.final .lede {
+		margin-inline: auto;
+		max-width: 62ch;
 	}
-	.os-row {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1rem;
-		max-width: 720px;
-		margin: 2.4rem auto 0;
+	.smart-card {
+		display: flex;
+		align-items: center;
+		gap: clamp(1.1rem, 3vw, 1.9rem);
+		max-width: 560px;
+		margin: clamp(2rem, 4vw, 2.8rem) auto 0;
+		padding: clamp(1.3rem, 3vw, 1.8rem) clamp(1.3rem, 3vw, 2rem);
+		border: 1px solid var(--violet-line);
+		border-radius: var(--r-lg);
+		background:
+			radial-gradient(120% 130% at 0% 0%, var(--violet-wash), transparent 58%),
+			linear-gradient(180deg, var(--bg-2), var(--bg-1) 150%);
+		box-shadow: 0 24px 60px -34px rgba(0, 0, 0, 0.9);
 	}
-	.os-card {
+	.smart-logo {
+		width: 52px;
+		flex: none;
+		display: flex;
+		justify-content: center;
+		color: var(--ink);
+	}
+	.smart-logo span[hidden] {
+		display: none;
+	}
+	.smart-body {
+		flex: 1;
+		min-width: 0;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		gap: 0.35rem;
-		padding: 1.4rem 1rem;
+		align-items: flex-start;
+		gap: 0.7rem;
+	}
+	.smart-eyebrow {
+		margin: 0;
+		font-size: 0.7rem;
+		letter-spacing: 0.13em;
+		text-transform: uppercase;
+		color: var(--violet);
+	}
+	.smart-primary {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.15rem;
+		padding: 0.72rem 1.25rem;
+		white-space: normal;
+	}
+	.sp-main {
+		font-size: 1rem;
+		font-weight: 640;
+		line-height: 1.1;
+	}
+	.sp-sub {
+		font-size: 0.72rem;
+		font-weight: 500;
+		opacity: 0.82;
+	}
+	.smart-alt {
+		margin: 0;
+		font-size: 0.82rem;
+		color: var(--muted);
+	}
+	.smart-hint {
+		text-align: center;
+		margin: 1.1rem 0 0;
+		font-size: 0.85rem;
+		color: var(--faint);
+	}
+
+	/* DOWNLOAD — all builds */
+	.dl-all {
+		margin-top: clamp(3rem, 6vw, 4.5rem);
+		scroll-margin-top: 80px;
+	}
+	.all-eyebrow {
+		margin-bottom: 1.8rem;
+	}
+	.os-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.2rem;
+	}
+	.os-col {
 		border: 1px solid var(--hairline);
 		border-radius: var(--r-lg);
 		background: var(--bg-2);
-		color: var(--ink);
-		--icon-hole: var(--bg-2);
-		transition: border-color 0.15s ease, transform 0.15s ease;
+		padding: 1.5rem 1.4rem;
+		scroll-margin-top: 90px;
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
 	}
-	.os-card:hover {
+	.os-col :global(.ic) {
+		width: 100%;
+	}
+	.os-head {
+		display: flex;
+		align-items: center;
+		gap: 0.8rem;
+	}
+	.os-logo {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 42px;
+		height: 42px;
+		border-radius: 11px;
+		flex: none;
+		background: var(--bg-3);
+		border: 1px solid var(--hairline-strong);
+		color: var(--ink);
+	}
+	.os-head h3 {
+		margin: 0;
+		font-size: 1.25rem;
+		line-height: 1.1;
+	}
+	.os-min {
+		font-size: 0.72rem;
+		color: var(--faint);
+	}
+	.or {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		margin: 0.1rem 0;
+		font-size: 0.66rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--faint);
+	}
+	.or::before,
+	.or::after {
+		content: '';
+		flex: 1;
+		height: 1px;
+		background: var(--hairline);
+	}
+	.os-dls {
+		display: flex;
+		flex-direction: column;
+		gap: 0.55rem;
+	}
+	.dl-btn {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.7rem;
+		padding: 0.7rem 0.9rem;
+		border: 1px solid var(--hairline-strong);
+		border-radius: 10px;
+		background: rgba(255, 255, 255, 0.02);
+		color: var(--ink);
+		font-weight: 560;
+		font-size: 0.9rem;
+		transition: border-color 0.15s ease, background 0.15s ease;
+	}
+	.dl-btn:hover {
 		text-decoration: none;
 		border-color: var(--violet-line);
-		transform: translateY(-2px);
+		background: var(--violet-wash);
 	}
-	.os-card :global(.os-icon) {
-		color: var(--ink);
-		transition: color 0.15s ease;
+	.dl-btn code {
+		font-size: 0.72rem;
+		color: var(--muted);
 	}
-	.os-card:hover :global(.os-icon) {
-		color: var(--violet-hi);
-	}
-	.os-name {
-		font-weight: 640;
-		font-size: 1.05rem;
-	}
-	.os-meta {
-		font-family: var(--font-mono);
-		font-size: 0.7rem;
+	.os-note {
+		margin: 0;
+		font-size: 0.82rem;
 		color: var(--faint);
+		line-height: 1.55;
+	}
+	.release-note {
+		margin: 2.2rem 0 0;
+		font-size: 0.9rem;
+		color: var(--muted);
+	}
+	.verify {
+		margin: 1.4rem auto 0;
+		max-width: 640px;
+		text-align: left;
+		border: 1px solid var(--hairline);
+		border-radius: var(--r-md);
+		background: var(--bg-2);
+		padding: 0 1rem;
+	}
+	.verify summary {
+		cursor: pointer;
+		list-style: none;
+		padding: 0.85rem 0;
+		color: var(--text);
+		font-weight: 550;
+		font-size: 0.92rem;
+	}
+	.verify summary::-webkit-details-marker {
+		display: none;
+	}
+	.verify summary::before {
+		content: '⌄ ';
+		color: var(--violet);
+	}
+	.verify[open] summary::before {
+		content: '⌃ ';
+	}
+	.verify > *:not(summary) {
+		margin-bottom: 0.9rem;
 	}
 
 	/* generic */
@@ -621,9 +907,6 @@ const workflow = [
 		color: var(--faint);
 		margin-top: 1.1rem;
 		max-width: 70ch;
-	}
-	.oss {
-		background: radial-gradient(50% 70% at 50% 110%, rgba(169, 140, 255, 0.1), transparent 70%);
 	}
 	.final {
 		background: radial-gradient(55% 80% at 50% 0%, rgba(169, 140, 255, 0.09), transparent 70%);
@@ -700,10 +983,23 @@ const workflow = [
 			grid-template-columns: 1fr;
 		}
 	}
-	@media (max-width: 620px) {
-		.wf-grid,
-		.os-row {
+	@media (max-width: 900px) {
+		.os-grid {
 			grid-template-columns: 1fr;
+		}
+	}
+	@media (max-width: 620px) {
+		.wf-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+	@media (max-width: 460px) {
+		.smart-card {
+			flex-direction: column;
+			text-align: center;
+		}
+		.smart-body {
+			align-items: center;
 		}
 	}
 </style>

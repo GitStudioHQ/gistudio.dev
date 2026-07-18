@@ -20,7 +20,7 @@ const isActive = (href: string) => {
 
 <div class="announce">
 	<div class="container">
-		<a href="/download">
+		<a href="/#download">
 			<span class="pulse" aria-hidden="true"></span>
 			GitStudio Desktop 1.0 is out for macOS, Windows<span class="hide-sm"> &amp; Linux</span> <span class="arr">→</span>
 		</a>
@@ -48,7 +48,7 @@ const isActive = (href: string) => {
 					/>
 				</svg>
 			</a>
-			<a class="btn btn-primary btn-sm" href="/download">Download</a>
+			<a class="btn btn-primary btn-sm" href="/#download">Download</a>
 			<button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
 				<span></span><span></span>
 			</button>
@@ -60,7 +60,7 @@ const isActive = (href: string) => {
 			<a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>{l.label}</a>
 		))}
 		<a href={GITHUB_REPO_URL} target="_blank" rel="noopener">GitHub</a>
-		<a href="/download" class="dl">Download</a>
+		<a href="/#download" class="dl">Download</a>
 	</nav>
 </header>
 
