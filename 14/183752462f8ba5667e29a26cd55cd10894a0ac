@@ -1,0 +1,54 @@
+astro.config.mjs
+  s_44fb38c224c892::t_a448e5fd482a52 33-35
+src/pages/index.astro
+  s_44fb38c224c892::t_4f241ab4f8e154 574,580,586-587,590-634,641-647,652,662,668,674,676-705,710-718
+  s_44fb38c224c892::t_ddac9f4c83dbcd 908,913-918
+  s_44fb38c224c892::t_25c6acf58e2c95 977,982-993,1000-1006
+  s_44fb38c224c892::t_3b90f74c18ce7d 1102,1105
+  s_44fb38c224c892::t_420f1324176f6d 588-589
+  s_44fb38c224c892::t_16a8e1aa4f6086 827-832
+  s_44fb38c224c892::t_6342cd0232f709 102
+  s_44fb38c224c892::t_e8e9fd6ed00ca4 254
+  s_44fb38c224c892::t_5dc137e53c0937 116-120
+  s_44fb38c224c892::t_f6b037c1d4ad1c 82-99
+  s_44fb38c224c892::t_cf92486c291e89 224
+  s_44fb38c224c892::t_514da16b4613a2 420-421
+  s_44fb38c224c892::t_5124faf2f11cb2 448-449
+src/layouts/Site.astro
+  s_44fb38c224c892::t_ba09132bccae44 51
+src/components/SiteNav.astro
+  s_44fb38c224c892::t_66783b8adf5e12 271-274
+  s_44fb38c224c892::t_39c25f3c5f923c 292-307
+  s_44fb38c224c892::t_5e2fcb6b35bce8 132-138,145-148
+src/styles/global.css
+  s_44fb38c224c892::t_6ddec34b1c8a1d 208-214
+  s_44fb38c224c892::t_f8127181902aa6 265-266,277-278
+  s_44fb38c224c892::t_a1b55906733cef 55-58
+  s_44fb38c224c892::t_953b6cb94223a5 471-473,478-482
+  s_44fb38c224c892::t_964a861b55b933 756-761,763-766
+  s_44fb38c224c892::t_7f09db644ec663 84,90-100
+  s_44fb38c224c892::t_ed30aeb82d145f 101,586-592,599-600
+  s_44fb38c224c892::t_61bf142865eba9 629-632,639-640,647
+  s_44fb38c224c892::t_3c2abda6262442 556-557
+  s_44fb38c224c892::t_629d8b3f92d691 288
+  s_44fb38c224c892::t_a7fa83d025b21e 102
+src/components/InstallCmd.astro
+  s_44fb38c224c892::t_f98cc7e600b6ad 86-90,96-101
+  s_44fb38c224c892::t_35721b32e8d93e 76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "14183752462f8ba5667e29a26cd55cd10894a0ac",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
