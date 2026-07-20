@@ -73,7 +73,7 @@ const { cmd, prompt = '$' } = Astro.props;
 		background: var(--bg-2);
 		color: var(--muted);
 		cursor: pointer;
-		transition: color 0.15s ease, border-color 0.15s ease;
+		transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 	}
 	.copy:hover {
 		color: var(--ink);
@@ -83,10 +83,21 @@ const { cmd, prompt = '$' } = Astro.props;
 		display: none;
 		color: var(--add);
 	}
+	.copy.copied {
+		color: var(--add);
+		border-color: rgba(76, 195, 138, 0.45);
+		background: rgba(76, 195, 138, 0.1);
+	}
 	.copy.copied .i-copy {
 		display: none;
 	}
 	.copy.copied .i-check {
 		display: block;
+		animation: copy-pop 0.32s var(--ease-out);
+	}
+	@keyframes copy-pop {
+		0% { transform: scale(0.55); }
+		55% { transform: scale(1.15); }
+		100% { transform: scale(1); }
 	}
 </style>

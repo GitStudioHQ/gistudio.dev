@@ -30,7 +30,9 @@ export default defineConfig({
 			provider: fontProviders.google(),
 			name: 'Newsreader',
 			cssVariable: '--font-serif',
-			weights: [500, 600],
+			// Variable range (not discrete weights) so the file carries the opsz
+			// axis — font-optical-sizing then tunes the serif at display size.
+			weights: ['500 600'],
 			styles: ['italic'],
 			subsets: ['latin'],
 			fallbacks: ['Georgia', 'serif'],

@@ -79,9 +79,27 @@ const oses = [
 <Site title={title} description={description} jsonLd={jsonLd}>
 	<!-- ============ HERO ============ -->
 	<section class="hero">
+		<svg class="hero-graph" viewBox="0 0 1200 520" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+			<g class="lanes">
+				<path pathLength="1" d="M150 24 V 496" />
+				<path pathLength="1" d="M150 150 C 150 212, 300 208, 300 272 V 470" />
+				<path pathLength="1" d="M300 352 C 300 414, 150 410, 150 458" />
+				<path pathLength="1" d="M412 60 V 300 C 412 360, 300 356, 300 396" />
+				<path pathLength="1" d="M1050 24 V 496" />
+				<path pathLength="1" d="M1050 168 C 1050 230, 900 226, 900 290 V 470" />
+				<path pathLength="1" d="M900 360 C 900 422, 1050 418, 1050 466" />
+				<path pathLength="1" d="M788 78 V 318 C 788 378, 900 374, 900 408" />
+			</g>
+			<g class="nodes">
+				<circle r="4" cx="150" cy="150" /><circle r="4" cx="300" cy="272" />
+				<circle r="4" cx="412" cy="60" /><circle r="4" cx="150" cy="458" />
+				<circle r="4" cx="1050" cy="168" /><circle r="4" cx="900" cy="290" />
+				<circle r="4" cx="788" cy="78" />
+			</g>
+		</svg>
 		<div class="container">
 			<p class="eyebrow center hero-eyebrow">GitStudio Desktop · v{APP.version} · macOS, Windows, Linux</p>
-			<h1>The full Git and GitHub workflow in one native app.</h1>
+			<h1>The full Git and GitHub workflow in one <span class="fx">native</span> app.</h1>
 			<p class="lede center-lede">
 				A native desktop client for macOS, Windows, and Linux. It puts the full Git workflow,
 				all of GitHub, and a real terminal in one window. The AI assistant runs on your own keys,
@@ -95,11 +113,11 @@ const oses = [
 				</a>
 			</div>
 			<ul class="facts" aria-label="Facts">
-				<li class="chip"><span class="dot" aria-hidden="true"></span>v{APP.version}</li>
-				<li class="chip">Apache-2.0</li>
-				<li class="chip">No account</li>
-				<li class="chip">No telemetry</li>
-				<li class="chip">AI off by default</li>
+				<li class="facts-lead"><span class="dot" aria-hidden="true"></span>v{APP.version}</li>
+				<li>Apache-2.0</li>
+				<li>No account</li>
+				<li>No telemetry</li>
+				<li>AI off by default</li>
 			</ul>
 		</div>
 		<div class="container hero-shot">
@@ -203,7 +221,7 @@ const oses = [
 		<div class="container feature flip">
 			<div class="f-copy" data-reveal>
 				<p class="eyebrow">05 · Assistant · optional</p>
-				<h2>AI that runs on <em class="fx">your</em> own keys.</h2>
+				<h2>AI that runs on your own keys.</h2>
 				<p class="lede">
 					The assistant is off until you connect a model. It runs on your own API keys across 12
 					providers — {cloudCount} cloud, plus Ollama and LM Studio locally. It reads real status, diffs,
@@ -233,7 +251,7 @@ const oses = [
 	<section class="section">
 		<div class="container">
 			<p class="eyebrow" data-reveal>How it compares</p>
-			<h2 data-reveal>GitStudio next to the alternatives.</h2>
+			<h2 data-reveal style="--reveal-delay:.06s">GitStudio next to the alternatives.</h2>
 			<p class="lede" data-reveal>
 				A feature-by-feature comparison with GitKraken, GitLens, and the built-in Git tools.
 			</p>
@@ -399,8 +417,8 @@ const oses = [
 	<section class="section final" id="download">
 		<div class="container center">
 			<p class="eyebrow center" data-reveal>Download · v{APP.version}</p>
-			<h2 data-reveal>Download GitStudio Desktop.</h2>
-			<p class="lede" data-reveal>
+			<h2 data-reveal style="--reveal-delay:.06s">Download GitStudio Desktop.</h2>
+			<p class="lede" data-reveal style="--reveal-delay:.12s">
 				Native installers for macOS, Windows, and Linux, with auto-update built in.
 			</p>
 		</div>
@@ -427,8 +445,8 @@ const oses = [
 		<div class="container dl-all" id="all-builds">
 			<p class="all-eyebrow eyebrow center" data-reveal>All builds</p>
 			<div class="os-grid">
-				{oses.map((os) => (
-					<div class="os-col" id={os.id} data-reveal>
+				{oses.map((os, i) => (
+					<div class="os-col" id={os.id} data-reveal style={`--reveal-delay:${i * 0.07}s`}>
 						<div class="os-head">
 							<span class="os-logo"><OsIcon name={os.icon} size={24} /></span>
 							<div>
@@ -553,18 +571,66 @@ const oses = [
 		position: relative;
 		overflow: clip;
 	}
+	/* One faint radial keeps depth; the commit-graph SVG carries the character. */
 	.hero::before {
 		content: '';
 		position: absolute;
 		inset: -20% -10% auto;
 		height: 78%;
-		background:
-			radial-gradient(46% 55% at 50% 6%, rgba(169, 140, 255, 0.14), transparent 70%),
-			radial-gradient(30% 40% at 78% 26%, rgba(195, 107, 240, 0.07), transparent 70%);
+		background: radial-gradient(46% 55% at 50% 6%, rgba(169, 140, 255, 0.1), transparent 70%);
 		pointer-events: none;
 	}
 	.hero > * {
 		position: relative;
+	}
+	/* the brand's own vocabulary: sparse lanes drawing themselves, masked to keep
+	   a clear text column, fading down so the real live graph at 01 takes over. */
+	/* higher specificity than `.hero > *` so it stays absolute (behind content) */
+	.hero > .hero-graph {
+		position: absolute;
+		inset: -6% 0 auto;
+		width: 100%;
+		height: 74%;
+		pointer-events: none;
+		z-index: 0;
+		mask-image:
+			radial-gradient(58% 62% at 50% 20%, transparent, #000 76%),
+			linear-gradient(180deg, #000 55%, transparent);
+		-webkit-mask-image:
+			radial-gradient(58% 62% at 50% 20%, transparent, #000 76%),
+			linear-gradient(180deg, #000 55%, transparent);
+		-webkit-mask-composite: source-in;
+		mask-composite: intersect;
+	}
+	.hero-graph path {
+		fill: none;
+		stroke: var(--violet);
+		stroke-width: 1.25;
+		opacity: 0.16;
+		stroke-dasharray: 1;
+		stroke-dashoffset: 1;
+		animation: lane-draw 1.3s var(--ease-out) both;
+	}
+	.hero-graph path:nth-child(2) { animation-delay: 0.12s; }
+	.hero-graph path:nth-child(3) { animation-delay: 0.22s; }
+	.hero-graph path:nth-child(4) { animation-delay: 0.32s; }
+	.hero-graph path:nth-child(5) { animation-delay: 0.06s; }
+	.hero-graph path:nth-child(6) { animation-delay: 0.18s; }
+	.hero-graph path:nth-child(7) { animation-delay: 0.28s; }
+	.hero-graph path:nth-child(8) { animation-delay: 0.38s; }
+	.hero-graph circle {
+		fill: var(--violet);
+		opacity: 0;
+		animation: node-pop 0.5s var(--ease-out) both;
+	}
+	.hero-graph .nodes circle:nth-child(odd) { animation-delay: 0.9s; }
+	.hero-graph .nodes circle:nth-child(even) { animation-delay: 1.05s; }
+	@keyframes lane-draw {
+		to { stroke-dashoffset: 0; }
+	}
+	@keyframes node-pop {
+		from { opacity: 0; transform: scale(0.2); }
+		to { opacity: 0.5; transform: none; }
 	}
 	.hero-eyebrow {
 		justify-content: center;
@@ -572,12 +638,18 @@ const oses = [
 	.hero h1 {
 		max-width: 18ch;
 		margin-inline: auto;
-		animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+		animation: rise 0.8s var(--ease-out) both;
+	}
+	/* the one serif accent, tuned for display size (global .fx is calibrated for body) */
+	.hero h1 .fx {
+		font-size: 1em;
+		font-weight: 500;
+		letter-spacing: -0.018em;
 	}
 	.center-lede {
 		margin-inline: auto;
 		max-width: 62ch;
-		animation: rise 0.8s 0.12s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+		animation: rise 0.8s 0.12s var(--ease-out) both;
 	}
 	.cta-row {
 		display: flex;
@@ -587,24 +659,63 @@ const oses = [
 		margin-top: 2.1rem;
 	}
 	.hero .cta-row {
-		animation: rise 0.8s 0.22s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+		animation: rise 0.8s 0.22s var(--ease-out) both;
 	}
 	@keyframes rise {
 		from { opacity: 0; transform: translateY(16px); }
 		to { opacity: 1; transform: none; }
 	}
+	/* fact chips → one hairline-divided mono manifest; only v1.0 carries the accent */
 	.facts {
 		list-style: none;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.55rem;
 		justify-content: center;
+		gap: 0 1.1rem;
 		padding: 0;
-		margin: 2rem 0 0;
+		margin: 1.9rem 0 0;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.04em;
+		color: var(--faint);
+		animation: rise 0.8s 0.3s var(--ease-out) both;
+	}
+	.facts li {
+		display: flex;
+		align-items: center;
+		gap: 1.1rem;
+	}
+	.facts li + li::before {
+		content: '';
+		width: 1px;
+		height: 0.85em;
+		background: var(--hairline-strong);
+	}
+	.facts-lead {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		color: var(--muted);
+	}
+	.facts-lead .dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--add);
+		box-shadow: 0 0 8px rgba(76, 195, 138, 0.55);
 	}
 	.hero-shot {
 		margin-top: clamp(2.5rem, 5vw, 4rem);
 		max-width: 1080px;
+		animation: rise-shot 0.9s 0.34s var(--ease-out) both;
+	}
+	@keyframes rise-shot {
+		from { opacity: 0; transform: translateY(26px) scale(0.985); }
+		to { opacity: 1; transform: none; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero-graph path { stroke-dashoffset: 0; animation: none; }
+		.hero-graph circle { opacity: 0.5; animation: none; }
 	}
 
 	/* FEATURES */
@@ -713,7 +824,12 @@ const oses = [
 		background:
 			radial-gradient(120% 130% at 0% 0%, var(--violet-wash), transparent 58%),
 			linear-gradient(180deg, var(--bg-2), var(--bg-1) 150%);
-		box-shadow: 0 24px 60px -34px rgba(0, 0, 0, 0.9);
+		box-shadow: inset 0 1px 0 rgba(195, 174, 255, 0.09), 0 24px 60px -34px rgba(0, 0, 0, 0.9);
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+	.smart-card:hover {
+		border-color: var(--violet);
+		box-shadow: 0 24px 60px -34px rgba(0, 0, 0, 0.9), 0 0 44px -18px rgba(169, 140, 255, 0.28);
 	}
 	.smart-logo {
 		width: 52px;
@@ -789,10 +905,17 @@ const oses = [
 		border: 1px solid var(--hairline);
 		border-radius: var(--r-lg);
 		background: linear-gradient(180deg, var(--bg-2), var(--bg-1) 130%);
+		box-shadow: inset 0 1px 0 rgba(226, 223, 245, 0.055);
 		padding: 1.5rem 1.4rem;
 		display: flex;
 		flex-direction: column;
 		gap: 0.85rem;
+		/* border + shadow only — NO lift: these hold live download click targets */
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+	.os-col:hover {
+		border-color: var(--violet-line);
+		box-shadow: inset 0 1px 0 rgba(195, 174, 255, 0.1), 0 20px 50px -30px rgba(0, 0, 0, 0.8);
 	}
 	.os-col :global(.ic) {
 		width: 100%;
@@ -848,21 +971,38 @@ const oses = [
 	.dl-btn {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 		gap: 0.7rem;
 		padding: 0.7rem 0.9rem;
 		border: 1px solid var(--hairline-strong);
-		border-radius: 10px;
+		border-radius: var(--r-md);
 		background: rgba(255, 255, 255, 0.02);
 		color: var(--ink);
 		font-weight: 560;
 		font-size: 0.9rem;
-		transition: border-color 0.15s ease, background 0.15s ease;
+		transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+	}
+	.dl-btn .dl-arch {
+		flex: 1;
+	}
+	/* a real download affordance: the mono glyph nudges down on hover */
+	.dl-btn::after {
+		content: '↓';
+		font-family: var(--font-mono);
+		font-size: 0.85rem;
+		color: var(--faint);
+		transition: transform 0.16s ease, color 0.16s ease;
 	}
 	.dl-btn:hover {
 		text-decoration: none;
 		border-color: var(--violet-line);
 		background: var(--violet-wash);
+	}
+	.dl-btn:hover::after {
+		color: var(--violet-hi);
+		transform: translateY(2px);
+	}
+	.dl-btn:active {
+		transform: translateY(1px);
 	}
 	.dl-btn code {
 		font-size: 0.72rem;
@@ -959,10 +1099,10 @@ const oses = [
 		color: var(--violet);
 		font-size: 1.15rem;
 		flex: none;
-		transition: transform 0.2s ease;
+		transition: transform 0.28s var(--ease-out);
 	}
 	details[open] summary::after {
-		transform: rotate(45deg);
+		transform: rotate(135deg);
 	}
 	summary:hover {
 		color: var(--violet-hi);

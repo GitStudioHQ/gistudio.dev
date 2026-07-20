@@ -129,12 +129,23 @@ const isActive = (href: string) => {
 		backdrop-filter: blur(14px);
 		-webkit-backdrop-filter: blur(14px);
 		border-bottom: 1px solid var(--hairline);
+		transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+	}
+	/* condense + gain a shadow the instant you leave the hero — the dev-tool tell */
+	.nav-wrap.scrolled {
+		background: color-mix(in srgb, var(--bg-1) 92%, transparent);
+		border-bottom-color: var(--hairline-strong);
+		box-shadow: 0 10px 34px -20px rgba(0, 0, 0, 0.75);
 	}
 	.nav {
 		display: flex;
 		align-items: center;
 		gap: 2rem;
 		height: 62px;
+		transition: height 0.22s ease;
+	}
+	.nav-wrap.scrolled .nav {
+		height: 54px;
 	}
 	.brand {
 		display: flex;
@@ -257,7 +268,10 @@ const isActive = (href: string) => {
 			display: flex;
 		}
 		.nav {
-			height: 58px;
+			height: 56px;
+		}
+		.nav-wrap.scrolled .nav {
+			height: 50px;
 		}
 	}
 	@media (max-width: 560px) {
@@ -275,4 +289,20 @@ const isActive = (href: string) => {
 		burger.setAttribute('aria-expanded', String(!open));
 		if (menu) menu.hidden = open;
 	});
+
+	// Condense the bar once the hero scrolls away. Passive + rAF-throttled.
+	const wrap = document.querySelector('.nav-wrap');
+	if (wrap) {
+		let ticking = false;
+		const onScroll = () => {
+			if (ticking) return;
+			ticking = true;
+			requestAnimationFrame(() => {
+				wrap.classList.toggle('scrolled', window.scrollY > 8);
+				ticking = false;
+			});
+		};
+		addEventListener('scroll', onScroll, { passive: true });
+		onScroll();
+	}
 </script>
