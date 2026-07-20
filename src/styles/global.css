@@ -224,6 +224,11 @@ hr {
 		animation-duration: 0.01ms !important;
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.01ms !important;
+		/* also kill delays, or `both`-filled staggered intros (hero rise/rise-shot)
+		   hold at opacity:0 for their delay window then snap in — a flash reduced
+		   motion should suppress. */
+		animation-delay: 0s !important;
+		transition-delay: 0s !important;
 	}
 }
 
