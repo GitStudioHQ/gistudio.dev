@@ -7,23 +7,23 @@
 
 :root {
 	/* surfaces */
-	--bg-0: #08080f;
+	--bg-0: #06060b;
 	--bg-1: #0c0c16; /* page base — brand tile deep end */
-	--bg-2: #12121e;
-	--bg-3: #181828;
-	--bg-4: #1f1f31;
+	--bg-2: #13121f;
+	--bg-3: #19182b;
+	--bg-4: #211f36;
 
 	/* ink */
-	--ink: #f2f1f8;
-	--text: #c5c3d4;
-	--muted: #8f8da2;
+	--ink: #f7f6fc;
+	--text: #cdcbdc;
+	--muted: #928fa6;
 	--faint: #83819a;
 
 	/* brand */
 	--violet: #a98cff;
-	--violet-hi: #c3aeff;
+	--violet-hi: #c9b6ff;
 	--violet-dim: #7f6bc4;
-	--grad: linear-gradient(94deg, #a98cff 0%, #8e78f6 48%, #c36bf0 100%);
+	--grad: linear-gradient(94deg, #b49aff 0%, #9d85ff 48%, #d478ff 100%);
 
 	/* semantics (diff colors — part of the product language) */
 	--add: #4cc38a;
@@ -31,10 +31,10 @@
 	--warn: #e3b341;
 
 	/* lines */
-	--hairline: rgba(226, 223, 245, 0.09);
-	--hairline-strong: rgba(226, 223, 245, 0.16);
-	--violet-line: rgba(169, 140, 255, 0.22);
-	--violet-wash: rgba(169, 140, 255, 0.07);
+	--hairline: rgba(226, 223, 245, 0.12);
+	--hairline-strong: rgba(226, 223, 245, 0.22);
+	--violet-line: rgba(169, 140, 255, 0.34);
+	--violet-wash: rgba(169, 140, 255, 0.1);
 
 	/* shape + rhythm */
 	--r-sm: 8px;
@@ -199,9 +199,30 @@ hr {
 	margin: 2.5rem 0;
 }
 
+/* selecting text flips to solid brand violet — a small, unmistakable signature */
 ::selection {
-	background: rgba(169, 140, 255, 0.32);
-	color: #fff;
+	background: var(--violet);
+	color: #16101f;
+}
+
+/* branded thin scrollbar — the kind of detail devs notice */
+html {
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--violet) 22%, var(--bg-2)) var(--bg-1);
+}
+::-webkit-scrollbar {
+	width: 10px;
+}
+::-webkit-scrollbar-track {
+	background: var(--bg-1);
+}
+::-webkit-scrollbar-thumb {
+	background: color-mix(in srgb, var(--violet) 22%, var(--bg-2));
+	border-radius: 5px;
+	border: 2px solid var(--bg-1);
+}
+::-webkit-scrollbar-thumb:hover {
+	background: color-mix(in srgb, var(--violet) 34%, var(--bg-2));
 }
 
 :focus-visible {
@@ -341,14 +362,20 @@ hr {
 }
 
 .btn-primary {
-	background: var(--violet);
+	background: linear-gradient(180deg, #bda6ff, var(--violet));
 	color: #16101f;
-	box-shadow: 0 0 0 1px rgba(169, 140, 255, 0.35), 0 8px 28px -10px rgba(169, 140, 255, 0.55);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.32),
+		0 0 0 1px rgba(169, 140, 255, 0.55),
+		0 10px 32px -10px rgba(169, 140, 255, 0.75);
 }
 
 .btn-primary:hover {
-	background: var(--violet-hi);
-	box-shadow: 0 0 0 1px rgba(195, 174, 255, 0.5), 0 12px 34px -10px rgba(169, 140, 255, 0.65);
+	background: linear-gradient(180deg, #cbb9ff, var(--violet-hi));
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.38),
+		0 0 0 1px rgba(195, 174, 255, 0.65),
+		0 14px 38px -10px rgba(169, 140, 255, 0.85);
 }
 
 .btn-ghost {
