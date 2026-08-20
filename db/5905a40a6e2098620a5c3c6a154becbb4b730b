@@ -1,0 +1,24 @@
+src/styles/global.css
+  s_44fb38c224c892::t_29e3b4c34e654c 34-37
+  s_44fb38c224c892::t_fa67d5f9d7c40d 365,367-370,374-378
+  s_44fb38c224c892::t_905ad358d1d4c3 202,204-225
+  s_44fb38c224c892::t_5fccc69f74a7f2 10,12-14,17-19,24,26
+src/components/SiteFooter.astro
+  s_44fb38c224c892::t_d767d6bfde5b47 59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "db5905a40a6e2098620a5c3c6a154becbb4b730b",
+  "prompts": {},
+  "sessions": {
+    "s_44fb38c224c892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45934cde-7240-4a19-aa2b-c90af4b011fc",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
