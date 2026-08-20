@@ -154,6 +154,7 @@ const oses = [
 
 	<!-- ============ 01 · COMMIT GRAPH ============ -->
 	<section class="section">
+		<span class="secno" aria-hidden="true">01</span>
 		<div class="container feature">
 			<div class="f-copy" data-reveal>
 				<p class="eyebrow">01 · Commit graph</p>
@@ -180,6 +181,7 @@ const oses = [
 
 	<!-- ============ 02 · MERGE ============ -->
 	<section class="section">
+		<span class="secno" aria-hidden="true">02</span>
 		<div class="container">
 			<div class="f-copy narrow" data-reveal>
 				<p class="eyebrow">02 · Merge</p>
@@ -202,6 +204,7 @@ const oses = [
 
 	<!-- ============ 03 · WORKFLOW GRID ============ -->
 	<section class="section">
+		<span class="secno" aria-hidden="true">03</span>
 		<div class="container">
 			<p class="eyebrow" data-reveal>03 · Everyday Git</p>
 			<h2 data-reveal>The rest of the everyday workflow.</h2>
@@ -218,6 +221,7 @@ const oses = [
 
 	<!-- ============ 04 · GITHUB ============ -->
 	<section class="section">
+		<span class="secno" aria-hidden="true">04</span>
 		<div class="container">
 			<div class="f-copy narrow" data-reveal>
 				<p class="eyebrow">04 · GitHub</p>
@@ -240,6 +244,7 @@ const oses = [
 
 	<!-- ============ 05 · AI ASSISTANT (the one sanctioned emphasis) ============ -->
 	<section class="section ai">
+		<span class="secno" aria-hidden="true">05</span>
 		<div class="container feature flip">
 			<div class="f-copy" data-reveal>
 				<p class="eyebrow">05 · Assistant · optional</p>
@@ -437,6 +442,7 @@ const oses = [
 
 	<!-- ============ 06 · INSTALL (the final ask) ============ -->
 	<section class="section final" id="download">
+		<span class="secno" aria-hidden="true">06</span>
 		<div class="container center">
 			<p class="eyebrow center" data-reveal>06 · Install</p>
 			<h2 data-reveal style="--reveal-delay:.06s">Download GitStudio Desktop.</h2>
@@ -508,8 +514,10 @@ const oses = [
 		inset: -20% -10% auto;
 		height: 78%;
 		background:
-			radial-gradient(46% 55% at 50% 6%, rgba(169, 140, 255, 0.18), transparent 70%),
-			radial-gradient(30% 40% at 76% 24%, rgba(212, 120, 255, 0.08), transparent 70%);
+			radial-gradient(50% 44% at 50% 2%, rgba(169, 140, 255, 0.34), transparent 66%),
+			radial-gradient(32% 30% at 74% 10%, rgba(212, 120, 255, 0.2), transparent 70%),
+			radial-gradient(30% 28% at 26% 8%, rgba(141, 120, 246, 0.22), transparent 70%),
+			radial-gradient(72% 58% at 50% 10%, rgba(169, 140, 255, 0.1), transparent 76%);
 		pointer-events: none;
 	}
 	.hero > * {
@@ -594,6 +602,23 @@ const oses = [
 	.hero .cta-row {
 		animation: rise 0.8s 0.22s var(--ease-out) both;
 	}
+	.hero .cta-row .btn-primary {
+		animation: cta-breathe 3.6s ease-in-out 1.8s infinite;
+	}
+	@keyframes cta-breathe {
+		0%, 100% {
+			box-shadow:
+				inset 0 1px 0 rgba(255, 255, 255, 0.32),
+				0 0 0 1px rgba(169, 140, 255, 0.55),
+				0 10px 32px -10px rgba(169, 140, 255, 0.75);
+		}
+		50% {
+			box-shadow:
+				inset 0 1px 0 rgba(255, 255, 255, 0.38),
+				0 0 0 1px rgba(195, 174, 255, 0.8),
+				0 12px 46px -8px rgba(169, 140, 255, 1);
+		}
+	}
 	@keyframes rise {
 		from { opacity: 0; transform: translateY(16px); }
 		to { opacity: 1; transform: none; }
@@ -638,9 +663,26 @@ const oses = [
 		box-shadow: 0 0 8px rgba(76, 195, 138, 0.55);
 	}
 	.hero-shot {
+		position: relative;
 		margin-top: clamp(2.5rem, 5vw, 4rem);
 		max-width: 1080px;
 		animation: rise-shot 0.9s 0.34s var(--ease-out) both;
+	}
+	/* the product sits in its own pool of light */
+	.hero-shot::before {
+		content: '';
+		position: absolute;
+		inset: -6% -10% -14%;
+		background: radial-gradient(
+			55% 58% at 50% 42%,
+			rgba(169, 140, 255, 0.32),
+			rgba(212, 120, 255, 0.09) 55%,
+			transparent 74%
+		);
+		pointer-events: none;
+	}
+	.hero-shot > :global(*) {
+		position: relative;
 	}
 	@keyframes rise-shot {
 		from { opacity: 0; transform: translateY(26px) scale(0.985); }
@@ -741,6 +783,9 @@ const oses = [
 	}
 
 	/* 06 · INSTALL — three open columns divided by hairlines, no card boxes */
+	.final {
+		background: radial-gradient(60% 70% at 50% 0%, rgba(169, 140, 255, 0.16), transparent 70%);
+	}
 	.final .lede {
 		margin-inline: auto;
 		max-width: 62ch;
@@ -983,7 +1028,33 @@ const oses = [
 			grid-template-columns: 1fr;
 		}
 	}
+	/* giant editorial ghost numerals — the tour markers you can't miss */
+	.secno {
+		position: absolute;
+		top: clamp(26px, 4vw, 48px);
+		right: max(var(--pad), calc((100% - var(--container)) / 2));
+		font-family: var(--font-mono);
+		font-weight: 800;
+		font-size: clamp(72px, 9vw, 132px);
+		line-height: 0.85;
+		letter-spacing: -0.05em;
+		color: transparent;
+		-webkit-text-stroke: 1.5px rgba(169, 140, 255, 0.34);
+		pointer-events: none;
+		user-select: none;
+		z-index: 0;
+	}
+	/* the two-column features hold a tall visual on one side — keep the numeral
+	   inside the section's padding band there so it never clips the frame */
+	.section:has(.feature) .secno {
+		top: clamp(16px, 2.4vw, 30px);
+		font-size: clamp(60px, 7vw, 104px);
+	}
+
 	@media (max-width: 900px) {
+		.secno {
+			display: none;
+		}
 		/* install columns stack; the dividers rotate to horizontal rules */
 		.os-grid {
 			grid-template-columns: 1fr;
