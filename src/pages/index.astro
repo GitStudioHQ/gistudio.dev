@@ -52,27 +52,49 @@ const workflow = [
 	{ icon: 'terminal', h: 'Real terminal', p: 'A real PTY, not an emulation. Every command becomes a block that records its output, exit code, and timing — scan, copy, or rerun any of them.' },
 ];
 
-// ---- Downloads (folded in from the old /download page; #download is the anchor) ----
+// ---- Downloads (#download is the anchor). Per-OS install columns: one-line
+// install command, then every artifact as a compact button, then requirements.
 const byOs = {
 	macOS: APP.downloads.filter((d) => d.os === 'macOS'),
 	Windows: APP.downloads.filter((d) => d.os === 'Windows'),
 	Linux: APP.downloads.filter((d) => d.os === 'Linux'),
 };
-
-// Direct links the auto-detect card resolves to.
-const dl = {
-	macArm: byOs.macOS.find((d) => d.arch === 'Apple Silicon')?.url,
-	macIntel: byOs.macOS.find((d) => d.arch === 'Intel')?.url,
-	winX64: byOs.Windows.find((d) => d.arch === 'x64')?.url,
-	winArm: byOs.Windows.find((d) => d.arch === 'ARM64')?.url,
-	linApp: byOs.Linux.find((d) => d.format === '.AppImage')?.url,
-	linDeb: byOs.Linux.find((d) => d.format === '.deb')?.url,
-};
+const art = (os: keyof typeof byOs, m: (d: (typeof APP.downloads)[number]) => boolean) =>
+	byOs[os].find(m)?.url ?? APP.releasesUrl;
 
 const oses = [
-	{ id: 'macos', name: 'macOS', icon: 'apple' as const, min: 'Apple Silicon & Intel · macOS 11+', cmd: APP.install.macos, dls: byOs.macOS, note: 'Unsigned builds may trip Gatekeeper — after dragging the app in, clear the quarantine flag once:', gatekeeper: 'xattr -cr /Applications/GitStudio.app' },
-	{ id: 'windows', name: 'Windows', icon: 'windows' as const, min: '64-bit · Windows 10 & 11', cmd: APP.install.windows, dls: byOs.Windows, note: 'If SmartScreen appears, choose <strong>More info → Run anyway</strong>. The NSIS installer lets you pick the install directory.', gatekeeper: null },
-	{ id: 'linux', name: 'Linux', icon: 'linux' as const, min: 'x86-64 · arm64 coming', cmd: APP.install.linux, dls: byOs.Linux, note: 'The <code>.AppImage</code> is universal — <code>chmod +x</code> and run. On Debian/Ubuntu: <code>sudo apt install ./GitStudio-*.deb</code>; on Fedora/RHEL: <code>sudo dnf install ./GitStudio-*.rpm</code>.', gatekeeper: null },
+	{
+		id: 'macos', name: 'macOS', icon: 'apple' as const, prompt: '$', cmd: APP.install.macos,
+		buttons: [
+			{ big: 'Apple Silicon', sub: '.dmg', url: art('macOS', (d) => d.arch === 'Apple Silicon'), label: 'Download GitStudio for macOS, Apple Silicon (.dmg)' },
+			{ big: 'Intel', sub: null, url: art('macOS', (d) => d.arch === 'Intel'), label: 'Download GitStudio for macOS, Intel (.dmg)' },
+		],
+		note: null,
+		gk: { text: 'Grabbed the .dmg? Clear Gatekeeper once:', cmd: 'xattr -cr /Applications/GitStudio.app' },
+		req: 'macOS 11 or later',
+	},
+	{
+		id: 'linux', name: 'Linux', icon: 'linux' as const, prompt: '$', cmd: APP.install.linux,
+		buttons: [
+			{ big: '.deb', sub: 'Debian · Ubuntu', url: art('Linux', (d) => d.format === '.deb'), label: 'Download GitStudio for Linux, .deb for Debian and Ubuntu' },
+			{ big: '.rpm', sub: null, url: art('Linux', (d) => d.format === '.rpm'), label: 'Download GitStudio for Linux, .rpm for Fedora and RHEL' },
+			{ big: 'AppImage', sub: null, url: art('Linux', (d) => d.format === '.AppImage'), label: 'Download GitStudio for Linux, universal AppImage' },
+			{ big: '.tar.gz', sub: null, url: art('Linux', (d) => d.format === '.tar.gz'), label: 'Download GitStudio for Linux, portable .tar.gz' },
+		],
+		note: 'AppImage: chmod +x and run.',
+		gk: null,
+		req: 'x86-64 · arm64 coming',
+	},
+	{
+		id: 'windows', name: 'Windows', icon: 'windows' as const, prompt: '>', cmd: APP.install.windows,
+		buttons: [
+			{ big: 'x64', sub: '.exe', url: art('Windows', (d) => d.arch === 'x64'), label: 'Download GitStudio for Windows, x64 (.exe)' },
+			{ big: 'ARM64', sub: null, url: art('Windows', (d) => d.arch === 'ARM64'), label: 'Download GitStudio for Windows, ARM64 (.exe)' },
+		],
+		note: 'If SmartScreen appears: More info → Run anyway.',
+		gk: null,
+		req: 'Windows 11 / 10',
+	},
 ];
 ---
 
@@ -413,66 +435,52 @@ const oses = [
 		</div>
 	</section>
 
-	<!-- ============ DOWNLOAD (the final ask — folded in from the old /download page) ============ -->
+	<!-- ============ 06 · INSTALL (the final ask) ============ -->
 	<section class="section final" id="download">
 		<div class="container center">
-			<p class="eyebrow center" data-reveal>Download · v{APP.version}</p>
+			<p class="eyebrow center" data-reveal>06 · Install</p>
 			<h2 data-reveal style="--reveal-delay:.06s">Download GitStudio Desktop.</h2>
 			<p class="lede" data-reveal style="--reveal-delay:.12s">
-				Native installers for macOS, Windows, and Linux, with auto-update built in.
+				macOS, Linux, and Windows — free and open source. No accounts, no license keys, nothing
+				to activate.
 			</p>
 		</div>
 
-		<div class="container">
-			<div class="smart-card" id="smart-dl" data-reveal>
-				<div class="smart-logo" aria-hidden="true">
-					<span data-os="macos"><OsIcon name="apple" size={44} /></span>
-					<span data-os="windows" hidden><OsIcon name="windows" size={40} /></span>
-					<span data-os="linux" hidden><OsIcon name="linux" size={44} /></span>
-				</div>
-				<div class="smart-body">
-					<p class="smart-eyebrow mono" id="smart-eyebrow">Recommended for your Mac</p>
-					<a class="btn btn-primary btn-lg smart-primary" id="smart-primary" href={dl.macArm}>
-						<span class="sp-main">Download for macOS</span>
-						<span class="sp-sub mono">Apple Silicon · .dmg · {APP.version}</span>
-					</a>
-					<p class="smart-alt" id="smart-alt">Intel Mac? <a href={dl.macIntel}>Get the Intel build</a></p>
-				</div>
-			</div>
-			<p class="smart-hint" data-reveal>On a different machine? <a href="#all-builds">See every build below ↓</a></p>
-		</div>
-
 		<div class="container dl-all" id="all-builds">
-			<p class="all-eyebrow eyebrow center" data-reveal>All builds</p>
 			<div class="os-grid">
 				{oses.map((os, i) => (
 					<div class="os-col" id={os.id} data-reveal style={`--reveal-delay:${i * 0.07}s`}>
 						<div class="os-head">
-							<span class="os-logo"><OsIcon name={os.icon} size={24} /></span>
-							<div>
-								<h3>{os.name}</h3>
-								<span class="os-min mono">{os.min}</span>
-							</div>
+							<OsIcon name={os.icon} size={20} />
+							<h3>{os.name}</h3>
 						</div>
-						<InstallCmd cmd={os.cmd} />
+						<InstallCmd cmd={os.cmd} prompt={os.prompt} />
 						<p class="or mono"><span>or download</span></p>
 						<div class="os-dls">
-							{os.dls.map((d) => (
-								<a class="dl-btn" href={d.url} aria-label={`Download GitStudio for ${os.name}, ${d.arch} (${d.format})`}>
-									<span class="dl-arch">{d.arch}</span>
-									<code>{d.format}</code>
+							{os.buttons.map((b) => (
+								<a class="dl-btn" href={b.url} aria-label={b.label}>
+									<Icon name="download" size={13} />
+									<span class="dl-big">{b.big}</span>
+									{b.sub && <span class="dl-sub">{b.sub}</span>}
 								</a>
 							))}
 						</div>
-						<p class="os-note" set:html={os.note} />
-						{os.gatekeeper && <InstallCmd cmd={os.gatekeeper} />}
+						{os.note && <p class="mini mono">{os.note}</p>}
+						{os.gk && (
+							<>
+								<p class="mini mono">{os.gk.text}</p>
+								<InstallCmd cmd={os.gk.cmd} />
+							</>
+						)}
+						<p class="os-req mono">{os.req}</p>
 					</div>
 				))}
 			</div>
 			<div class="center">
 				<p class="release-note" data-reveal>
-					Apache-2.0 · checksums &amp; older versions on
-					the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases page</a>.
+					Every build is on
+					the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">releases page</a> —
+					checksums, changelogs and older versions.
 				</p>
 				<details class="verify" data-reveal>
 					<summary>Build from source instead (Node 22+)</summary>
@@ -484,84 +492,6 @@ const oses = [
 		</div>
 	</section>
 </Site>
-
-<script define:vars={{ dl, version: APP.version }}>
-	(function () {
-		const card = document.getElementById('smart-dl');
-		if (!card) return;
-		const primary = document.getElementById('smart-primary');
-		const mainEl = primary.querySelector('.sp-main');
-		const subEl = primary.querySelector('.sp-sub');
-		const altEl = document.getElementById('smart-alt');
-		const eyebrow = document.getElementById('smart-eyebrow');
-		const icons = card.querySelectorAll('.smart-logo [data-os]');
-		const showIcon = (os) => icons.forEach((s) => (s.hidden = s.getAttribute('data-os') !== os));
-		const set = (href, sub) => { if (href) primary.href = href; subEl.textContent = sub + ' · ' + version; };
-
-		const ua = navigator.userAgent || '';
-		const uad = navigator.userAgentData;
-		const plat = ((uad && uad.platform) || navigator.platform || '').toLowerCase();
-		// iPadOS reports as "Macintosh" — treat any touch Mac as mobile so we
-		// never hand a phone or tablet a desktop .dmg.
-		const isMobile =
-			/android|iphone|ipad|ipod|mobile/i.test(ua) ||
-			(/mac/.test(plat) && (navigator.maxTouchPoints || 0) > 1);
-
-		let os = 'macos';
-		if (/win/.test(plat) || /windows/i.test(ua)) os = 'windows';
-		else if (/linux|x11|cros/.test(plat) || (/linux/i.test(ua) && !/android/i.test(ua))) os = 'linux';
-		else if (/mac/.test(plat) || /mac os x/i.test(ua)) os = 'macos';
-
-		if (isMobile) {
-			eyebrow.textContent = 'Desktop app';
-			mainEl.textContent = 'See every build';
-			subEl.textContent = 'macOS · Windows · Linux · ' + version;
-			primary.href = '#all-builds';
-			altEl.textContent = 'Install it on the machine you code on.';
-			icons.forEach((s) => (s.hidden = true));
-			return;
-		}
-
-		const labels = { macos: 'Mac', windows: 'Windows PC', linux: 'Linux machine' };
-		showIcon(os);
-		eyebrow.textContent = 'Recommended for your ' + labels[os];
-		mainEl.textContent = 'Download for ' + (os === 'macos' ? 'macOS' : os === 'windows' ? 'Windows' : 'Linux');
-
-		// Each branch sets a correct default SYNCHRONOUSLY (so an immediate click
-		// never downloads the wrong OS's artifact), then upgrades in place if the
-		// async arch probe disagrees.
-		if (os === 'windows') {
-			const winX64 = () => { set(dl.winX64, 'x64 · .exe'); altEl.innerHTML = 'Windows on ARM? <a href="' + dl.winArm + '">Get the ARM64 build</a>'; };
-			const winArm = () => { set(dl.winArm, 'ARM64 · .exe'); altEl.innerHTML = 'On an x64 PC? <a href="' + dl.winX64 + '">Get the x64 build</a>'; };
-			winX64();
-			if (uad && uad.getHighEntropyValues) {
-				uad.getHighEntropyValues(['architecture']).then((h) => { if (h.architecture === 'arm') winArm(); }).catch(() => {});
-			}
-			return;
-		}
-		if (os === 'linux') {
-			set(dl.linApp, '.AppImage · x86-64');
-			altEl.innerHTML = 'Debian or Ubuntu? <a href="' + dl.linDeb + '">Get the .deb</a>';
-			return;
-		}
-
-		// macOS — default to Apple Silicon (the server-rendered state), downgrade
-		// to Intel only on positive evidence.
-		const macArm = () => { set(dl.macArm, 'Apple Silicon · .dmg'); altEl.innerHTML = 'Intel Mac? <a href="' + dl.macIntel + '">Get the Intel build</a>'; };
-		const macIntel = () => { set(dl.macIntel, 'Intel · .dmg'); altEl.innerHTML = 'On Apple Silicon? <a href="' + dl.macArm + '">Get the Apple Silicon build</a>'; };
-		macArm();
-		if (uad && uad.getHighEntropyValues) {
-			uad.getHighEntropyValues(['architecture']).then((h) => { if (h.architecture === 'x86') macIntel(); }).catch(() => {});
-		}
-		try {
-			const c = document.createElement('canvas');
-			const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
-			const dbg = gl && gl.getExtension('WEBGL_debug_renderer_info');
-			const r = (dbg && gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) || '';
-			if (/intel/i.test(r) && !/apple/i.test(r)) macIntel();
-		} catch (e) {}
-	})();
-</script>
 
 <style>
 	/* HERO */
@@ -577,7 +507,9 @@ const oses = [
 		position: absolute;
 		inset: -20% -10% auto;
 		height: 78%;
-		background: radial-gradient(46% 55% at 50% 6%, rgba(169, 140, 255, 0.1), transparent 70%);
+		background:
+			radial-gradient(46% 55% at 50% 6%, rgba(169, 140, 255, 0.18), transparent 70%),
+			radial-gradient(30% 40% at 76% 24%, rgba(212, 120, 255, 0.08), transparent 70%);
 		pointer-events: none;
 	}
 	.hero > * {
@@ -605,8 +537,8 @@ const oses = [
 	.hero-graph path {
 		fill: none;
 		stroke: var(--violet);
-		stroke-width: 1.25;
-		opacity: 0.16;
+		stroke-width: 1.5;
+		opacity: 0.32;
 		stroke-dasharray: 1;
 		stroke-dashoffset: 1;
 		animation: lane-draw 1.3s var(--ease-out) both;
@@ -621,6 +553,7 @@ const oses = [
 	.hero-graph circle {
 		fill: var(--violet);
 		opacity: 0;
+		filter: drop-shadow(0 0 6px rgba(169, 140, 255, 0.9));
 		animation: node-pop 0.5s var(--ease-out) both;
 	}
 	.hero-graph .nodes circle:nth-child(odd) { animation-delay: 0.9s; }
@@ -630,7 +563,7 @@ const oses = [
 	}
 	@keyframes node-pop {
 		from { opacity: 0; transform: scale(0.2); }
-		to { opacity: 0.5; transform: none; }
+		to { opacity: 0.85; transform: none; }
 	}
 	.hero-eyebrow {
 		justify-content: center;
@@ -715,7 +648,7 @@ const oses = [
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.hero-graph path { stroke-dashoffset: 0; animation: none; }
-		.hero-graph circle { opacity: 0.5; animation: none; }
+		.hero-graph circle { opacity: 0.85; animation: none; }
 	}
 
 	/* FEATURES */
@@ -754,22 +687,22 @@ const oses = [
 	}
 	.ticks li {
 		position: relative;
-		padding-left: 1.7rem;
+		padding-left: 1.5rem;
 		color: var(--muted);
 		font-size: var(--fs-1);
 		line-height: 1.6;
 	}
+	/* diff-style additions — the list markers speak Git */
 	.ticks li::before {
-		content: '';
+		content: '+';
 		position: absolute;
 		left: 0;
-		top: 0.52em;
-		width: 13px;
-		height: 13px;
-		border-radius: 50%;
-		background: var(--violet-wash);
-		border: 1.5px solid var(--violet);
-		box-shadow: inset 0 0 0 2.5px var(--bg-1);
+		top: 0;
+		font-family: var(--font-mono);
+		font-weight: 700;
+		font-size: 0.95em;
+		line-height: 1.7;
+		color: var(--add);
 	}
 	.live-note {
 		margin-top: 0.8rem;
@@ -807,144 +740,60 @@ const oses = [
 		margin: 3.2rem 0 1rem;
 	}
 
-	/* DOWNLOAD — auto-detect card */
+	/* 06 · INSTALL — three open columns divided by hairlines, no card boxes */
 	.final .lede {
 		margin-inline: auto;
 		max-width: 62ch;
 	}
-	.smart-card {
-		display: flex;
-		align-items: center;
-		gap: clamp(1.1rem, 3vw, 1.9rem);
-		max-width: 560px;
-		margin: clamp(2rem, 4vw, 2.8rem) auto 0;
-		padding: clamp(1.3rem, 3vw, 1.8rem) clamp(1.3rem, 3vw, 2rem);
-		border: 1px solid var(--violet-line);
-		border-radius: var(--r-lg);
-		background:
-			radial-gradient(120% 130% at 0% 0%, var(--violet-wash), transparent 58%),
-			linear-gradient(180deg, var(--bg-2), var(--bg-1) 150%);
-		box-shadow: inset 0 1px 0 rgba(195, 174, 255, 0.09), 0 24px 60px -34px rgba(0, 0, 0, 0.9);
-		transition: border-color 0.2s ease, box-shadow 0.2s ease;
-	}
-	.smart-card:hover {
-		border-color: var(--violet);
-		box-shadow: 0 24px 60px -34px rgba(0, 0, 0, 0.9), 0 0 44px -18px rgba(169, 140, 255, 0.28);
-	}
-	.smart-logo {
-		width: 52px;
-		flex: none;
-		display: flex;
-		justify-content: center;
-		color: var(--ink);
-	}
-	.smart-logo span[hidden] {
-		display: none;
-	}
-	.smart-body {
-		flex: 1;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.7rem;
-	}
-	.smart-eyebrow {
-		margin: 0;
-		font-size: 0.7rem;
-		letter-spacing: 0.13em;
-		text-transform: uppercase;
-		color: var(--violet);
-	}
-	.smart-primary {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.15rem;
-		padding: 0.72rem 1.25rem;
-		white-space: normal;
-	}
-	.sp-main {
-		font-size: 1rem;
-		font-weight: 640;
-		line-height: 1.1;
-	}
-	.sp-sub {
-		font-size: 0.72rem;
-		font-weight: 500;
-		opacity: 0.82;
-	}
-	.smart-alt {
-		margin: 0;
-		font-size: 0.82rem;
-		color: var(--muted);
-	}
-	.smart-hint {
-		text-align: center;
-		margin: 1.1rem 0 0;
-		font-size: 0.85rem;
-		color: var(--faint);
-	}
-
-	/* DOWNLOAD — all builds */
 	.dl-all {
-		margin-top: clamp(3rem, 6vw, 4.5rem);
+		margin-top: clamp(2.6rem, 5vw, 4rem);
 		scroll-margin-top: 80px;
-	}
-	.all-eyebrow {
-		margin-bottom: 1.8rem;
 	}
 	.os-grid {
 		display: grid;
 		/* minmax(0,1fr) releases the min-content floor — without it the nowrap
-		   install command inside each card widens the tracks past the container. */
+		   install command inside each column widens the tracks past the container. */
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1.2rem;
+		gap: 0;
 	}
 	.os-col {
 		min-width: 0;
-		border: 1px solid var(--hairline);
-		border-radius: var(--r-lg);
-		background: linear-gradient(180deg, var(--bg-2), var(--bg-1) 130%);
-		box-shadow: inset 0 1px 0 rgba(226, 223, 245, 0.055);
-		padding: 1.5rem 1.4rem;
+		padding: 0.4rem 1.8rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.85rem;
-		/* border + shadow only — NO lift: these hold live download click targets */
-		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+		gap: 0.9rem;
 	}
-	.os-col:hover {
-		border-color: var(--violet-line);
-		box-shadow: inset 0 1px 0 rgba(195, 174, 255, 0.1), 0 20px 50px -30px rgba(0, 0, 0, 0.8);
+	.os-col:first-child {
+		padding-left: 0;
 	}
-	.os-col :global(.ic) {
-		width: 100%;
+	.os-col:last-child {
+		padding-right: 0;
+	}
+	.os-col + .os-col {
+		border-left: 1px solid var(--hairline);
 	}
 	.os-head {
 		display: flex;
 		align-items: center;
-		gap: 0.8rem;
-	}
-	.os-logo {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 42px;
-		height: 42px;
-		border-radius: 11px;
-		flex: none;
-		background: var(--bg-3);
-		border: 1px solid var(--hairline-strong);
+		gap: 0.65rem;
 		color: var(--ink);
+		margin-bottom: 0.35rem;
 	}
 	.os-head h3 {
 		margin: 0;
-		font-size: 1.25rem;
-		line-height: 1.1;
+		font-family: var(--font-mono);
+		font-size: 1rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
 	}
-	.os-min {
-		font-size: 0.72rem;
-		color: var(--faint);
+	/* command rows run open here — transparent, ringed in violet like a live prompt */
+	.os-col :global(.ic) {
+		width: 100%;
+		background: transparent;
+		border-color: rgba(169, 140, 255, 0.45);
+	}
+	.os-col :global(.ic)::after {
+		background: linear-gradient(90deg, transparent, var(--bg-1));
 	}
 	.or {
 		display: flex;
@@ -965,55 +814,56 @@ const oses = [
 	}
 	.os-dls {
 		display: flex;
-		flex-direction: column;
-		gap: 0.55rem;
+		flex-wrap: wrap;
+		gap: 0.5rem;
 	}
 	.dl-btn {
-		display: flex;
+		display: inline-flex;
 		align-items: center;
-		gap: 0.7rem;
-		padding: 0.7rem 0.9rem;
+		gap: 0.45rem;
+		padding: 0.72rem 0.85rem;
 		border: 1px solid var(--hairline-strong);
-		border-radius: var(--r-md);
-		background: rgba(255, 255, 255, 0.02);
+		border-radius: var(--r-sm);
+		background: var(--bg-3);
 		color: var(--ink);
-		font-weight: 560;
-		font-size: 0.9rem;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		font-weight: 700;
+		line-height: 1;
 		transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
 	}
-	.dl-btn .dl-arch {
-		flex: 1;
+	.dl-btn :global(.gs-icon) {
+		color: var(--muted);
+		transition: color 0.15s ease;
 	}
-	/* a real download affordance: the mono glyph nudges down on hover */
-	.dl-btn::after {
-		content: '↓';
-		font-family: var(--font-mono);
-		font-size: 0.85rem;
+	.dl-sub {
+		font-size: 0.6875rem;
+		font-weight: 500;
 		color: var(--faint);
-		transition: transform 0.16s ease, color 0.16s ease;
 	}
 	.dl-btn:hover {
 		text-decoration: none;
 		border-color: var(--violet-line);
-		background: var(--violet-wash);
+		background: var(--bg-4);
 	}
-	.dl-btn:hover::after {
+	.dl-btn:hover :global(.gs-icon) {
 		color: var(--violet-hi);
-		transform: translateY(2px);
 	}
 	.dl-btn:active {
 		transform: translateY(1px);
 	}
-	.dl-btn code {
+	.mini {
+		margin: 0.15rem 0 0;
 		font-size: 0.72rem;
 		color: var(--muted);
+		line-height: 1.6;
 	}
-	.os-note {
+	.os-req {
+		margin: 0;
 		margin-top: auto;
-		margin-bottom: 0;
-		font-size: 0.82rem;
+		padding-top: 0.9rem;
+		font-size: 0.72rem;
 		color: var(--faint);
-		line-height: 1.55;
 	}
 	.release-note {
 		margin: 2.2rem 0 0;
@@ -1134,24 +984,30 @@ const oses = [
 		}
 	}
 	@media (max-width: 900px) {
+		/* install columns stack; the dividers rotate to horizontal rules */
 		.os-grid {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-columns: 1fr;
+		}
+		.os-col {
+			padding: 1.7rem 0;
+		}
+		.os-col:first-child {
+			padding-top: 0.4rem;
+		}
+		.os-col + .os-col {
+			border-left: 0;
+			border-top: 1px solid var(--hairline);
+		}
+		.os-req {
+			padding-top: 0.4rem;
 		}
 	}
 	@media (max-width: 620px) {
-		.wf-grid,
-		.os-grid {
+		.wf-grid {
 			grid-template-columns: 1fr;
 		}
 	}
 	@media (max-width: 460px) {
-		.smart-card {
-			flex-direction: column;
-			text-align: center;
-		}
-		.smart-body {
-			align-items: center;
-		}
 		/* global .btn is white-space:nowrap; the 35-char hero label bleeds past
 		   both gutters on small phones. */
 		.hero .cta-row .btn {
