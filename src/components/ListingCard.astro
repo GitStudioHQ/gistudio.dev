@@ -134,6 +134,12 @@ const { icon, name, tagline, meta, primaryHref, primaryLabel, secondaryHref, sec
 		flex-wrap: wrap;
 	}
 	.meta .chip {
+		/* long value chips (editor lists) must wrap inside the pill, never
+		   overflow the card on narrow phones */
+		white-space: normal;
+		line-height: 1.4;
+		height: auto;
+		text-align: left;
 		font-size: 0.68rem;
 		padding: 0.22rem 0.55rem;
 	}
@@ -153,6 +159,8 @@ const { icon, name, tagline, meta, primaryHref, primaryLabel, secondaryHref, sec
 		}
 		.acts {
 			flex-direction: row;
+			/* two buttons must never push past tiny viewports */
+			flex-wrap: wrap;
 			width: 100%;
 		}
 		.acts .btn {

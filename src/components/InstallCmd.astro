@@ -25,25 +25,32 @@ const { cmd, prompt = '$' } = Astro.props;
 		position: relative;
 		display: flex;
 		align-items: center;
-		gap: 0.7rem;
+		gap: 0.6rem;
 		background: var(--bg-0);
 		border: 1px solid var(--hairline);
-		border-radius: 10px;
-		padding: 0.7rem 0.75rem 0.7rem 1rem;
+		/* concentric with the copy button: outer radius ≈ button radius + gap */
+		border-radius: var(--r-md);
+		padding: 0.55rem 0.55rem 0.55rem 0.95rem;
 		font-family: var(--font-mono);
 		font-size: 0.82rem;
 		min-width: 0;
 	}
 	/* The command scrolls inside its own box with the scrollbar hidden; this fade
-	   is the only affordance that there is more text to the right. */
+	   is the only affordance that there is more text to the right. Hugs the copy
+	   button so there is no dead band before it. */
 	.ic::after {
 		content: '';
 		position: absolute;
 		inset-block: 1px;
-		right: 38px;
-		width: 26px;
+		right: 39px;
+		width: 20px;
 		pointer-events: none;
 		background: linear-gradient(90deg, transparent, var(--bg-0));
+	}
+	/* no overflow, no fade — never dim the tail of a command that fully fits
+	   (Site.astro toggles .fits after fonts settle) */
+	.ic.fits::after {
+		display: none;
 	}
 	.prompt {
 		color: var(--violet);
@@ -68,7 +75,7 @@ const { cmd, prompt = '$' } = Astro.props;
 		place-items: center;
 		width: 30px;
 		height: 30px;
-		border-radius: 7px;
+		border-radius: 6px;
 		border: 1px solid var(--hairline);
 		background: var(--bg-2);
 		color: var(--muted);

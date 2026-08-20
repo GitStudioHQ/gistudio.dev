@@ -53,6 +53,17 @@ const { title, description, og, noindex, jsonLd } = Astro.props;
 				targets.forEach((el) => io.observe(el));
 			}
 
+			// Command rows: drop the tail-fade on rows whose command fully fits.
+			const markFits = () => {
+				document.querySelectorAll<HTMLElement>('.ic').forEach((row) => {
+					const c = row.querySelector('code');
+					if (c) row.classList.toggle('fits', c.scrollWidth <= c.clientWidth + 1);
+				});
+			};
+			markFits();
+			document.fonts?.ready.then(markFits);
+			addEventListener('resize', markFits, { passive: true });
+
 			// Copy-to-clipboard for install commands.
 			document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
 				btn.addEventListener('click', async () => {
