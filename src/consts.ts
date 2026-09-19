@@ -22,16 +22,18 @@ export const EXT = {
 	product: 'the GitStudio extension',
 	route: '/gitstudio-extension',
 	id: 'gitstudio.gitstudio',
-	version: '1.0.0',
+	version: '1.12.1',
 	license: 'Apache-2.0',
 	marketplaceUrl: 'https://marketplace.visualstudio.com/items?itemName=gitstudio.gitstudio',
 	openVsxUrl: 'https://open-vsx.org/extension/gitstudio/gitstudio',
-	vsixPath: '/downloads/gitstudio-1.0.0.vsix',
-	vsixFile: 'gitstudio-1.0.0.vsix',
-	vsixSizeMb: '2.5',
-	vsixSha256: '37d43b76929ca24d75d00ccafcb1bd86b6493b106424b82c9e9fed60ce3f00d3',
-	minVsCode: '1.74',
-	commands: 77,
+	// The VSIX is the GitHub release asset, not a copy in public/: the copy
+	// sat at 1.0.0 for twelve extension releases.
+	vsixPath: 'https://github.com/GitStudioHQ/gitstudio/releases/download/ext-v1.12.1/gitstudio.vsix',
+	vsixFile: 'gitstudio.vsix',
+	vsixSizeMb: '2.6',
+	vsixSha256: 'f7ab77eb8461b0553ea13a0353a8d63174caad4431985bca460ea63ed9fbaa0a',
+	minVsCode: '1.78',
+	commands: 116,
 };
 
 /** Merge Studio — live on both registries. */
@@ -47,35 +49,40 @@ export const MERGE = {
 	marketplaceStars: 5.0,
 };
 
-const APP_DL = 'https://github.com/GitStudioHQ/gitstudio/releases/download/app-v1.0.0';
+const APP_VERSION = '2.0.0';
+const APP_DL = `https://github.com/GitStudioHQ/gitstudio/releases/download/app-v${APP_VERSION}`;
 
-/** GitStudio Desktop — v1.0.0, installers on GitHub Releases. */
+/** GitStudio Desktop — installers on GitHub Releases. */
 export const APP = {
-	version: '1.0.0',
+	version: APP_VERSION,
 	license: 'Apache-2.0',
 	releasesUrl: GITHUB_RELEASES_URL,
 	// The full artifact matrix. Every row renders as a download button and must
 	// have a matching file on the GitHub Release (see the release/build pipeline).
 	downloads: [
-		{ os: 'macOS', arch: 'Apple Silicon', format: '.dmg', url: `${APP_DL}/GitStudio-1.0.0-arm64.dmg` },
-		{ os: 'macOS', arch: 'Intel', format: '.dmg', url: `${APP_DL}/GitStudio-1.0.0-x64.dmg` },
-		{ os: 'Windows', arch: 'x64', format: '.exe', url: `${APP_DL}/GitStudio-Setup-1.0.0.exe` },
-		{ os: 'Windows', arch: 'ARM64', format: '.exe', url: `${APP_DL}/GitStudio-Setup-1.0.0-arm64.exe` },
-		{ os: 'Linux', arch: 'Debian / Ubuntu', format: '.deb', url: `${APP_DL}/GitStudio-1.0.0-amd64.deb` },
-		{ os: 'Linux', arch: 'Fedora / RHEL', format: '.rpm', url: `${APP_DL}/GitStudio-1.0.0-x86_64.rpm` },
-		{ os: 'Linux', arch: 'Universal', format: '.AppImage', url: `${APP_DL}/GitStudio-1.0.0-x86_64.AppImage` },
-		{ os: 'Linux', arch: 'Portable', format: '.tar.gz', url: `${APP_DL}/GitStudio-1.0.0-x86_64.tar.gz` },
+		{ os: 'macOS', arch: 'Apple Silicon', format: '.dmg', url: `${APP_DL}/GitStudio-${APP_VERSION}-arm64.dmg` },
+		{ os: 'macOS', arch: 'Intel', format: '.dmg', url: `${APP_DL}/GitStudio-${APP_VERSION}-x64.dmg` },
+		{ os: 'Windows', arch: 'x64', format: '.exe', url: `${APP_DL}/GitStudio-Setup-${APP_VERSION}.exe` },
+		{ os: 'Linux', arch: 'Debian / Ubuntu', format: '.deb', url: `${APP_DL}/GitStudio-${APP_VERSION}-amd64.deb` },
+		{ os: 'Linux', arch: 'Fedora / RHEL', format: '.rpm', url: `${APP_DL}/GitStudio-${APP_VERSION}-x86_64.rpm` },
+		{ os: 'Linux', arch: 'Universal', format: '.AppImage', url: `${APP_DL}/GitStudio-${APP_VERSION}-x86_64.AppImage` },
+		{ os: 'Linux', arch: 'Portable', format: '.tar.gz', url: `${APP_DL}/GitStudio-${APP_VERSION}-x64.tar.gz` },
 	],
 	// The one-line install per OS (package managers / install script). These
 	// channels must be published for the commands to resolve.
 	install: {
-		macos: 'brew install --cask gitstudio',
-		windows: 'winget install GitStudioHQ.GitStudio',
-		linux: 'curl -fsSL https://gitstudio.dev/install.sh | sh',
+		// One line each, and each one is published. `brew` needs the tap first
+		// (there is no homebrew-core formula) and Homebrew asks you to trust a
+		// third-party tap; `sh` is wrong for the installer, which is a bash
+		// script; and `winget` was advertised with no manifest behind it, so it
+		// is the PowerShell installer instead.
+		macos: 'brew tap gitstudiohq/gitstudio https://github.com/GitStudioHQ/gitstudio && brew trust gitstudiohq/gitstudio && brew install --cask gitstudio',
+		windows: 'irm https://gitstudio.dev/install.ps1 | iex',
+		linux: 'curl -fsSL https://gitstudio.dev/install.sh | bash',
 	},
 	platforms: [
 		{ os: 'macOS', arch: 'Apple Silicon & Intel', format: '.dmg' },
-		{ os: 'Windows', arch: 'x64 & ARM64', format: '.exe' },
+		{ os: 'Windows', arch: 'x64', format: '.exe' },
 		{ os: 'Linux', arch: 'x86-64', format: '.deb · .rpm · .AppImage · .tar.gz' },
 	],
 };

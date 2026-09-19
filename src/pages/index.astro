@@ -8,6 +8,7 @@ import ExtensionsFeature from '../components/ExtensionsFeature.astro';
 import appCommits from '../assets/shots/app-commits.png';
 import appPrs from '../assets/shots/app-prs.png';
 import appAssistant from '../assets/shots/app-assistant.png';
+import appBrowse from '../assets/shots/app-browse.png';
 import mergeEditor from '../assets/shots/merge-editor.png';
 import { GITHUB_ORG_URL, GITHUB_REPO_URL, GITHUB_RELEASES_URL, APP } from '../consts';
 
@@ -27,10 +28,11 @@ const jsonLd = [
 ];
 
 const workflow = [
+	{ icon: 'views', h: 'Home and Repositories', p: 'Home is a workbench: the open repository with Push and Fetch, what is waiting to push, and a Needs You card across every repository. Repositories tracks your folders and groups them by where each one lives.' },
 	{ icon: 'rebase', h: 'Interactive rebase', p: 'Reorder commits by dragging them: pick, reword, edit, squash, fixup, drop.' },
 	{ icon: 'undo', h: 'Universal undo', p: 'Every destructive operation writes a reflog snapshot first, so one command restores it. It is separate from editor undo.' },
 	{ icon: 'blame', h: 'Inline blame', p: 'Per-line authorship, plus a code-age heatmap that shades recent lines warm and old lines cool.' },
-	{ icon: 'branch', h: 'Branches and worktrees', p: 'Branches, tags, stashes, and worktrees with full operations and per-branch ahead/behind counts.' },
+	{ icon: 'branch', h: 'Branches and worktrees', p: 'A table of branches — creator, contributors, tracking state, age — with the same for remote branches, and tags that say who cut them. Stashes and worktrees with full operations.' },
 	{ icon: 'terminal', h: 'Real terminal', p: 'A real PTY, not an emulation. Every command becomes a block that records its output, exit code, and timing — scan, copy, or rerun any of them.' },
 ];
 ---
@@ -43,8 +45,9 @@ const workflow = [
 			<h1>The full Git and GitHub workflow in one native app.</h1>
 			<p class="lede center-lede">
 				A native desktop client for macOS, Windows, and Linux. It puts the full Git workflow,
-				all of GitHub, and a real terminal in one window. The AI assistant runs on your own keys,
-				or fully local. Apache-2.0, free, no account.
+				all of GitHub, and a real terminal in one window, and reads any GitHub repository
+				without cloning it. The AI assistant runs on your own keys, or fully local. Apache-2.0,
+				free, no account.
 			</p>
 			<div class="cta-row">
 				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
@@ -57,15 +60,15 @@ const workflow = [
 				<li class="chip"><span class="dot" aria-hidden="true"></span>v{APP.version}</li>
 				<li class="chip">Apache-2.0</li>
 				<li class="chip">No account</li>
-				<li class="chip">No telemetry</li>
+				<li class="chip">No usage tracking</li>
 				<li class="chip">AI off by default</li>
 			</ul>
 		</div>
 		<div class="container hero-shot">
 			<Shot
 				src={appCommits}
-				alt="GitStudio Desktop on its own repository: the Commits view with the commit graph, author avatars on the nodes, branch and tag chips, and the terminal dock"
-				caption="GitStudio Desktop 1.0, running on its own repository."
+				alt="GitStudio Desktop on its own repository: the Commits view with the commit graph, main and the app-v2.0.0 tag as chips, and change, author, date and SHA columns, with a file from the selected commit open as a diff in the panel at the bottom"
+				caption="GitStudio Desktop 2.0, running on its own repository. A file from the selected commit, open in the panel at the bottom."
 				priority
 			/>
 		</div>
@@ -86,6 +89,7 @@ const workflow = [
 					<li>Check out, cherry-pick, branch, or reset from any commit.</li>
 					<li>Search by message, author, SHA, or ref, and step through the matches.</li>
 					<li>File history, line history, and reflog recovery.</li>
+					<li>Open a file from a commit and its diff takes the panel at the bottom, full width.</li>
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
@@ -143,17 +147,26 @@ const workflow = [
 				<p class="eyebrow">04 · GitHub</p>
 				<h2>All of GitHub, inside the app.</h2>
 				<p class="lede">
-					Every GitHub surface is a native view: pull requests, issues, gists, notifications,
-					releases, Actions, organizations, and projects. Review a pull request — check it out,
-					comment inline, approve, merge — without opening a browser tab.
+					Issues and pull requests are full-width lists that open into full-page details with a
+					property rail. Review a pull request: check it out, comment on lines, and post the
+					comments with your verdict as one review. Read any GitHub repository without cloning
+					it. Every list says where a repository is — on this machine, or on GitHub. Inbox,
+					Actions, releases, projects, organizations, and gists are native views too.
 				</p>
 			</div>
 		</div>
 		<div class="container" data-reveal style="--reveal-delay:.1s">
 			<Shot
 				src={appPrs}
-				alt="A pull request open in GitStudio Desktop with checkout, approve, review, and merge actions, tabs for conversation, commits, checks, and files, and the rendered description"
-				caption="A pull request in GitStudio: checkout, review, and merge, with the description and checks alongside."
+				alt="Pull request #22 open as a full page in GitStudio Desktop: a Merged pill, the title, the rendered description, tabs for conversation, commits, checks and files, and a rail with the approving reviewer, who merged it, the branches, passing checks, and the size of the change"
+				caption="A pull request in GitStudio 2.0: the whole thread on one page, with the review, the checks, and the branches in the rail."
+			/>
+		</div>
+		<div class="container" data-reveal style="--reveal-delay:.15s;margin-top:1.6rem">
+			<Shot
+				src={appBrowse}
+				alt="GitStudio Desktop reading libgit2/libgit2 straight from GitHub: the file tree, a rail saying the repository is on GitHub and nothing is on your disk, a Clone and open button, and a top bar that still names the repository you are working in"
+				caption="Reading libgit2 on GitHub without cloning it. The top bar still names the repository Push and Fetch act on."
 			/>
 		</div>
 	</section>
@@ -165,27 +178,28 @@ const workflow = [
 				<p class="eyebrow">05 · Assistant · optional</p>
 				<h2>AI that runs on <em class="fx">your</em> own keys.</h2>
 				<p class="lede">
-					The assistant is off until you connect a model. It runs on your own API keys across 12
-					providers — 10 cloud, plus Ollama and LM Studio locally. It reads real status, diffs,
-					and history, and asks before every write. A built-in MCP server exposes the same tools
-					to other agents.
+					The assistant is off until you connect a model. It runs on your own API keys across ten
+					cloud providers, on the Claude Code, Codex or Gemini CLI you already have, or locally
+					through Ollama and LM Studio. It reads real status, diffs, and history, and asks before
+					every write. A built-in MCP server exposes the same tools to other agents.
 				</p>
 				<ul class="ticks">
 					<li>A permission control — read-only, commits, or everything — that asks before every write, with each tool call visible.</li>
 					<li>Keys live in the OS keychain. Requests go from your machine to your provider.</li>
 					<li>With Ollama or LM Studio, nothing leaves your machine.</li>
+					<li>Enter sends, every answer copies as Markdown, and the composer says which repository and branch it is working in.</li>
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
 				<Shot
 					src={appAssistant}
-					alt="The assistant in GitStudio Desktop summarizing working-tree changes in a read-only session, running a local model"
-					caption="The assistant summarizing working-tree changes in a read-only session, on a local model."
+					alt="The assistant in GitStudio Desktop answering 'What did the last three commits change?' on the gitstudio repository: the git log and git show calls it made, then one bullet per commit, with the session set to Read-only and a Qwen3-Coder model from LM Studio"
+					caption="The assistant explaining the last three commits in a read-only session, on a local model. Every tool call it made is in the transcript."
 				/>
 			</div>
 		</div>
 		<div class="container">
-			<p class="prov-note mono" data-reveal>Anthropic, OpenAI, Gemini, and 7 more cloud providers — plus local models through Ollama and LM Studio.</p>
+			<p class="prov-note mono" data-reveal>Anthropic, OpenAI, Gemini, and 7 more cloud providers — the Claude Code, Codex and Gemini CLIs you already have — and local models through Ollama and LM Studio.</p>
 		</div>
 	</section>
 
@@ -195,8 +209,8 @@ const workflow = [
 			<p class="eyebrow center" data-reveal>Platforms</p>
 			<h2 data-reveal>Native on macOS, Windows, and Linux.</h2>
 			<p class="lede" data-reveal>
-				Signed installers for every platform, with auto-update built in. v{APP.version}, Apache-2.0,
-				no account.
+				Installers for every platform, or one command in a terminal. The app checks for new
+				versions itself. v{APP.version}, Apache-2.0, no account.
 			</p>
 			<div class="os-row" data-reveal>
 				<a class="os-card" href="/download#macos">
@@ -207,7 +221,7 @@ const workflow = [
 				<a class="os-card" href="/download#windows">
 					<OsIcon name="windows" size={24} />
 					<span class="os-name">Windows</span>
-					<span class="os-meta">x64 &amp; ARM64 · .exe</span>
+					<span class="os-meta">x64 · .exe</span>
 				</a>
 				<a class="os-card" href="/download#linux">
 					<OsIcon name="linux" size={26} />
@@ -348,10 +362,12 @@ const workflow = [
 				<details>
 					<summary>Does my code or data leave my machine?</summary>
 					<p>
-						No. GitStudio has no backend. Git runs locally, GitHub calls go straight to GitHub
-						with your own sign-in, and telemetry is off by default. The assistant is off until
-						you connect a model, and with a local model through Ollama or LM Studio, nothing
-						leaves your machine.
+						Your code, no. Git runs locally, GitHub calls go straight to GitHub with your own
+						sign-in, and there is no usage tracking. The one thing the app sends is an anonymous
+						crash report when something fails: the shape of the error, scrubbed of paths, names,
+						and code. Help → Send Anonymous Crash Reports turns it off. The assistant is off
+						until you connect a model, and with a local model through Ollama or LM Studio,
+						nothing leaves your machine.
 					</p>
 				</details>
 				<details>
@@ -381,7 +397,19 @@ const workflow = [
 					<summary>Can I trust the installers?</summary>
 					<p>
 						They are built by CI from the public source and attached to the GitHub release with
-						checksums. You can verify them, or build from source yourself.
+						a SHA256SUMS.txt; the one-line installers verify against it and refuse to install on
+						a mismatch. The builds are not code-signed yet, so Gatekeeper and SmartScreen warn
+						on first launch, and the macOS install script clears the quarantine flag for you.
+						You can verify the checksums yourself, or build from source.
+					</p>
+				</details>
+				<details>
+					<summary>Does the app update itself?</summary>
+					<p>
+						It checks GitHub Releases for a new version and tells you; nothing downloads until
+						you say so. On Windows, and on Linux with the AppImage, it downloads the update and
+						restarts into it. On macOS the build is unsigned, so it downloads the new .dmg to
+						your Downloads folder and opens it — one drag to Applications.
 					</p>
 				</details>
 			</div>
@@ -394,9 +422,9 @@ const workflow = [
 			<p class="eyebrow center" data-reveal>Download</p>
 			<h2 data-reveal>Get GitStudio Desktop.</h2>
 			<p class="lede" data-reveal>
-				Native installers for macOS, Windows, and Linux. The desktop app and the GitStudio
-				extension are Apache-2.0, Merge Studio is MIT, and private repositories work exactly like
-				public ones — free, no account.
+				Native installers for macOS, Windows, and Linux, or one command in a terminal. The
+				desktop app and the GitStudio extension are Apache-2.0, Merge Studio is MIT, and private
+				repositories work exactly like public ones — free, no account.
 			</p>
 			<div class="cta-row" data-reveal>
 				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>

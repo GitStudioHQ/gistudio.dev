@@ -9,7 +9,7 @@ import { EXT, MERGE, APP, GITHUB_REPO_URL, GITHUB_RELEASES_URL, DOCS_AI_URL } fr
 
 const title = 'Download GitStudio Desktop — macOS, Windows & Linux';
 const description =
-	'Download GitStudio Desktop v1.0.0 — the free, open-source Git & GitHub client for macOS (Apple Silicon & Intel .dmg), Windows (x64 & ARM64 .exe), and Linux (.deb, .rpm, .AppImage, .tar.gz), with auto-update built in. Also available as a VS Code & Cursor extension.';
+	`Download GitStudio Desktop v${APP.version} — the free, open-source Git & GitHub client for macOS (Apple Silicon & Intel .dmg), Windows (x64 .exe), and Linux (.deb, .rpm, .AppImage, .tar.gz). One-line installers, Homebrew, SHA-256 checksums, and updates from inside the app. Also available as a VS Code & Cursor extension.`;
 
 // Group the flat installer list from consts by OS for the per-OS sections.
 const byOs = {
@@ -23,15 +23,14 @@ const dl = {
 	macArm: byOs.macOS.find((d) => d.arch === 'Apple Silicon')?.url,
 	macIntel: byOs.macOS.find((d) => d.arch === 'Intel')?.url,
 	winX64: byOs.Windows.find((d) => d.arch === 'x64')?.url,
-	winArm: byOs.Windows.find((d) => d.arch === 'ARM64')?.url,
 	linApp: byOs.Linux.find((d) => d.format === '.AppImage')?.url,
 	linDeb: byOs.Linux.find((d) => d.format === '.deb')?.url,
 };
 
 const oses = [
-	{ id: 'macos', name: 'macOS', icon: 'apple' as const, min: 'Apple Silicon & Intel · macOS 11+', cmd: APP.install.macos, dls: byOs.macOS, note: 'Unsigned builds may trip Gatekeeper — after dragging the app in, clear the quarantine flag once:', gatekeeper: 'xattr -cr /Applications/GitStudio.app' },
-	{ id: 'windows', name: 'Windows', icon: 'windows' as const, min: '64-bit · Windows 10 & 11', cmd: APP.install.windows, dls: byOs.Windows, note: 'If SmartScreen appears, choose <strong>More info → Run anyway</strong>. The NSIS installer lets you pick the install directory.', gatekeeper: null },
-	{ id: 'linux', name: 'Linux', icon: 'linux' as const, min: 'x86-64 · arm64 coming', cmd: APP.install.linux, dls: byOs.Linux, note: 'The <code>.AppImage</code> is universal — <code>chmod +x</code> and run. On Debian/Ubuntu: <code>sudo apt install ./GitStudio-*.deb</code>; on Fedora/RHEL: <code>sudo dnf install ./GitStudio-*.rpm</code>.', gatekeeper: null },
+	{ id: 'macos', name: 'macOS', icon: 'apple' as const, min: 'Apple Silicon & Intel · macOS 11+', cmd: APP.install.macos, dls: byOs.macOS, note: 'The Homebrew line taps the repo, trusts the tap, and installs; the cask clears the quarantine flag for you. Add <code>--force</code> to the last step if GitStudio.app is already in Applications. Took the <code>.dmg</code>? The build is unsigned, so after dragging the app in, clear the quarantine flag once:', gatekeeper: 'xattr -cr /Applications/GitStudio.app' },
+	{ id: 'windows', name: 'Windows', icon: 'windows' as const, min: 'x64 · Windows 10 & 11', cmd: APP.install.windows, dls: byOs.Windows, note: 'The PowerShell line fetches the installer, checks it against <code>SHA256SUMS.txt</code>, and runs it. The build is unsigned, so if SmartScreen appears choose <strong>More info → Run anyway</strong>. The installer lets you pick the directory. There is no ARM64 build.', gatekeeper: null },
+	{ id: 'linux', name: 'Linux', icon: 'linux' as const, min: 'x86-64 only', cmd: APP.install.linux, dls: byOs.Linux, note: 'The <code>curl</code> line checks the <code>.AppImage</code> against <code>SHA256SUMS.txt</code> and puts it in <code>~/.local/bin</code> with a launcher entry. Or take a package: on Debian/Ubuntu <code>sudo apt install ./GitStudio-*.deb</code>; on Fedora/RHEL <code>sudo dnf install ./GitStudio-*.rpm</code>; the <code>.tar.gz</code> unpacks anywhere.', gatekeeper: null },
 ];
 
 const jsonLd = [
@@ -61,8 +60,11 @@ const jsonLd = [
 		'@type': 'FAQPage',
 		mainEntity: [
 			{ '@type': 'Question', name: 'Which macOS build do I need — Apple Silicon or Intel?', acceptedAnswer: { '@type': 'Answer', text: 'Apple Silicon (M1 and later) uses the arm64 .dmg; older Intel Macs use the x64 .dmg. The download page detects your Mac and offers the right one, and both are always listed.' } },
-			{ '@type': 'Question', name: 'How do I get past Gatekeeper on macOS?', acceptedAnswer: { '@type': 'Answer', text: 'Drag GitStudio into Applications, then run xattr -cr /Applications/GitStudio.app once to clear the quarantine flag.' } },
-			{ '@type': 'Question', name: 'AppImage or .deb on Linux?', acceptedAnswer: { '@type': 'Answer', text: 'The .AppImage is universal — chmod +x and run it. On Debian or Ubuntu, install the .deb with sudo apt install ./GitStudio-*.deb.' } },
+			{ '@type': 'Question', name: 'How do I get past Gatekeeper on macOS?', acceptedAnswer: { '@type': 'Answer', text: 'The build is not signed with an Apple Developer ID yet. If you took the .dmg, drag GitStudio into Applications, then run xattr -cr /Applications/GitStudio.app once to clear the quarantine flag. Homebrew and the curl installer clear it for you.' } },
+			{ '@type': 'Question', name: 'AppImage, .deb, .rpm or .tar.gz on Linux?', acceptedAnswer: { '@type': 'Answer', text: 'The .AppImage is universal — chmod +x and run it, or let curl -fsSL https://gitstudio.dev/install.sh | bash place it for you. On Debian or Ubuntu install the .deb with sudo apt install ./GitStudio-*.deb; on Fedora or RHEL install the .rpm with sudo dnf install ./GitStudio-*.rpm; the .tar.gz unpacks anywhere. All Linux builds are x86-64.' } },
+			{ '@type': 'Question', name: 'Is there a Windows ARM64 or Linux arm64 build?', acceptedAnswer: { '@type': 'Answer', text: 'No. Windows is x64 only and Linux is x86-64 only. macOS has native Apple Silicon and Intel builds.' } },
+			{ '@type': 'Question', name: 'How do I install GitStudio with Homebrew?', acceptedAnswer: { '@type': 'Answer', text: 'brew tap gitstudiohq/gitstudio https://github.com/GitStudioHQ/gitstudio, then brew trust gitstudiohq/gitstudio, then brew install --cask gitstudio. Homebrew asks for the trust step on every third-party tap. Add --force if GitStudio.app is already in Applications.' } },
+			{ '@type': 'Question', name: 'Does GitStudio Desktop update itself?', acceptedAnswer: { '@type': 'Answer', text: 'It checks GitHub Releases for a newer version and asks before downloading anything. Windows and the Linux AppImage update in place and restart into the new version. On macOS the app downloads the new .dmg to your Downloads folder and opens it — one drag to Applications.' } },
 		],
 	},
 ];
@@ -74,8 +76,9 @@ const jsonLd = [
 			<p class="eyebrow center" data-reveal>Download · v{APP.version}</p>
 			<h1 data-reveal>Get GitStudio Desktop.</h1>
 			<p class="lede center" data-reveal>
-				The free, open-source Git &amp; GitHub client for macOS, Windows, and Linux — with
-				auto-update built in. Signed installers, checksums, and the whole source on GitHub.
+				The free, open-source Git &amp; GitHub client for macOS, Windows, and Linux. One line
+				to install, a checksum for every build, and the whole source on GitHub. It checks for
+				new versions on its own.
 			</p>
 		</div>
 	</section>
@@ -116,7 +119,7 @@ const jsonLd = [
 								<span class="os-min mono">{os.min}</span>
 							</div>
 						</div>
-						<InstallCmd cmd={os.cmd} />
+						<InstallCmd cmd={os.cmd} prompt={os.id === 'windows' ? '>' : '$'} />
 						<p class="or mono" aria-hidden="true"><span>or download</span></p>
 						<div class="os-dls">
 							{os.dls.map((d) => (
@@ -133,8 +136,13 @@ const jsonLd = [
 			</div>
 			<div class="center">
 				<p class="release-note" data-reveal>
-					v{APP.version} · Apache-2.0 · auto-updates · checksums &amp; older versions on
+					v{APP.version} · Apache-2.0 · <code>SHA256SUMS.txt</code> &amp; older versions on
 					the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases page</a>.
+				</p>
+				<p class="release-note" data-reveal>
+					The app checks for new versions and asks before it downloads. Windows and the Linux AppImage update in place;
+					on macOS it downloads the new <code>.dmg</code> to Downloads and opens it — one drag to Applications.
+					The one-line installers check every download against <code>SHA256SUMS.txt</code>.
 				</p>
 				<details class="verify" data-reveal>
 					<summary>Build from source instead (Node 22+)</summary>
@@ -244,17 +252,9 @@ const jsonLd = [
 		mainEl.textContent = 'Download for ' + (os === 'macos' ? 'macOS' : os === 'windows' ? 'Windows' : 'Linux');
 
 		if (os === 'windows') {
-			let wdone = false;
-			const applyWin = (arch) => {
-				if (wdone) return;
-				wdone = true;
-				if (arch === 'arm') { set(dl.winArm, 'ARM64 · .exe'); altEl.innerHTML = 'On an x64 PC? <a href="' + dl.winX64 + '">Get the x64 build</a>'; }
-				else { set(dl.winX64, 'x64 · .exe'); altEl.innerHTML = 'Windows on ARM? <a href="' + dl.winArm + '">Get the ARM64 build</a>'; }
-			};
-			if (uad && uad.getHighEntropyValues) {
-				uad.getHighEntropyValues(['architecture']).then((h) => applyWin(h.architecture === 'arm' ? 'arm' : 'x64')).catch(() => {});
-			}
-			setTimeout(() => applyWin('x64'), 300);
+			// One Windows build, x64. There is no ARM64 installer, so nothing to detect.
+			set(dl.winX64, 'x64 · .exe');
+			altEl.textContent = 'x64 only. There is no ARM64 build.';
 			return;
 		}
 		if (os === 'linux') {
@@ -375,10 +375,14 @@ const jsonLd = [
 	}
 	.os-grid {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		/* minmax(0, …): a 1fr track's floor is its min-content, and the
+		   one-line install command never wraps — with plain 1fr the Homebrew
+		   line pushed the macOS card past the page edge. */
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 1.2rem;
 	}
 	.os-col {
+		min-width: 0;
 		border: 1px solid var(--hairline);
 		border-radius: var(--r-lg);
 		background: var(--bg-2);
@@ -600,7 +604,7 @@ const jsonLd = [
 
 	@media (max-width: 860px) {
 		.os-grid {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
 		}
 		.ext-cards {
 			grid-template-columns: 1fr;

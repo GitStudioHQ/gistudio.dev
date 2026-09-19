@@ -45,7 +45,7 @@ const jsonLd = [
 		'@context': 'https://schema.org',
 		'@type': 'FAQPage',
 		mainEntity: [
-			{ '@type': 'Question', name: 'Which editors does the GitStudio extension support?', acceptedAnswer: { '@type': 'Answer', text: 'VS Code, Cursor, VSCodium, Windsurf, and code-server — any editor built on VS Code 1.74 or newer. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.' } },
+			{ '@type': 'Question', name: 'Which editors does the GitStudio extension support?', acceptedAnswer: { '@type': 'Answer', text: 'VS Code, Cursor, VSCodium, Windsurf, and code-server — any editor built on VS Code 1.78 or newer. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.' } },
 			{ '@type': 'Question', name: 'How do I install GitStudio in Cursor?', acceptedAnswer: { '@type': 'Answer', text: 'Search “GitStudio” in Cursor’s Extensions view (Cursor reads the Open VSX registry), or run cursor --install-extension gitstudio.gitstudio from a shell.' } },
 			{ '@type': 'Question', name: 'Is the GitStudio extension free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes — every feature is free on public and private repos. It is Apache-2.0 licensed and open source, with no account and telemetry off by default.' } },
 		],
@@ -77,7 +77,7 @@ const jsonLd = [
 					icon={extIcon}
 					name="GitStudio"
 					tagline="The whole Git workflow, in one extension"
-					meta={[`v${EXT.version}`, 'Apache-2.0', `${EXT.commands} commands`, 'VS Code 1.74+']}
+					meta={[`v${EXT.version}`, 'Apache-2.0', `${EXT.commands} commands`, 'VS Code 1.78+']}
 					primaryHref={EXT.marketplaceUrl}
 					primaryLabel="Install from Marketplace"
 					secondaryHref={EXT.openVsxUrl}
@@ -130,7 +130,7 @@ const jsonLd = [
 			<p class="eyebrow" data-reveal>Straight from the product</p>
 			<h2 data-reveal>The extension in use.</h2>
 			<p class="lede" data-reveal>
-				The Commit Graph panel and the sidebar views, from GitStudio {EXT.version}.
+				The Commit Graph panel and the sidebar views of the GitStudio extension.
 			</p>
 			<div class="tour-big" data-reveal>
 				<Shot
