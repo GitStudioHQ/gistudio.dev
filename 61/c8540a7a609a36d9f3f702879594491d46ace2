@@ -1,0 +1,31 @@
+src/components/DownloadSection.astro
+  s_26f5e669d3043c::t_a4bdf322883728 1-445
+public/install.ps1
+  s_26f5e669d3043c::t_9f553f1546c082 20-22,75-81
+public/install.sh
+  s_26f5e669d3043c::t_ab267d21ad6dda 12-13,124-129,136-140,155-162
+src/components/SiteNav.astro
+  s_26f5e669d3043c::t_871b0610bd1bc7 23,51,63
+src/consts.ts
+  s_26f5e669d3043c::t_5d8d8f8baeb9d9 13-14,72-83,85-86
+src/pages/download.astro
+  s_26f5e669d3043c::t_3343ccacc6b8c6 31-33,62-64,66,123-128,157,253-260,285-292,302-304,306,386-392,553,638
+src/pages/index.astro
+  s_26f5e669d3043c::t_6cad3bf464992e 8,54,207-208,372-376,403,659
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "61c8540a7a609a36d9f3f702879594491d46ace2",
+  "prompts": {},
+  "sessions": {
+    "s_26f5e669d3043c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "84d5bd8e-bf89-4d7c-9932-e410f3e06481",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
