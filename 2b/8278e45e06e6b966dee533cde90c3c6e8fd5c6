@@ -1,0 +1,33 @@
+public/install.ps1
+  s_26f5e669d3043c::t_24cdd0180c886f 1-80
+public/install.sh
+  s_26f5e669d3043c::t_94802997543789 1-152
+src/components/InstallCmd.astro
+  s_26f5e669d3043c::t_c4e32b3d6d290d 49
+src/components/SiteNav.astro
+  s_26f5e669d3043c::t_c5a45db3b61580 25
+src/consts.ts
+  s_26f5e669d3043c::t_723c516c3e2e7f 25,29-36,52-53,55,57,63-69,74-81,85
+src/pages/download.astro
+  s_26f5e669d3043c::t_98c963e31f5d4b 12,31-33,63-67,79-81,122,139,142-146,255-257,378-381,385,607
+src/pages/gitstudio-extension.astro
+  s_26f5e669d3043c::t_16dd8cf5e766c1 48,80,133
+src/pages/index.astro
+  s_26f5e669d3043c::t_768ecb3389bf12 11,31,35,48-50,63,70-71,92,150-154,161-169,181-184,190,196-197,202,212-213,224,365-370,400-412,425-427
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "2b8278e45e06e6b966dee533cde90c3c6e8fd5c6",
+  "prompts": {},
+  "sessions": {
+    "s_26f5e669d3043c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "84d5bd8e-bf89-4d7c-9932-e410f3e06481",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Anton Arnaudov <anton.arnaudov.me@gmail.com>"
+    }
+  }
+}
