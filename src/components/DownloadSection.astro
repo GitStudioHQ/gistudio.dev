@@ -1,0 +1,445 @@
+---
+// The download section of the home page: three OS columns, each led by the
+// one-line installer (it verifies the checksum and, on macOS, clears the
+// Gatekeeper flag), then the direct downloads, then the one thing to know if
+// you took the file yourself. Every URL and command comes from consts.ts, the
+// same source the /download page reads, so the two can never disagree.
+import OsIcon from './OsIcon.astro';
+import { APP, GITHUB_RELEASES_URL } from '../consts';
+
+const dl = (os: string, pick: (d: (typeof APP.downloads)[number]) => boolean) =>
+	APP.downloads.find((d) => d.os === os && pick(d))?.url ?? GITHUB_RELEASES_URL;
+
+interface Cmd {
+	label: string;
+	cmd: string;
+	prompt?: string;
+}
+interface Col {
+	id: string;
+	name: string;
+	icon: 'apple' | 'windows' | 'linux';
+	prompt: string;
+	hero: string;
+	heroLabel: string;
+	primary: { href: string; label: string; sub: string; aria: string };
+	alts: { href: string; label: string; aria: string }[];
+	also?: Cmd; // a second install route, e.g. Homebrew
+	took?: { label: string; cmd?: string; prompt?: string };
+	req: string;
+}
+
+const cols: Col[] = [
+	{
+		id: 'macos',
+		name: 'macOS',
+		icon: 'apple',
+		prompt: '$',
+		hero: APP.install.macos,
+		heroLabel: 'Copy the macOS install command',
+		primary: { href: dl('macOS', (d) => d.arch === 'Apple Silicon'), label: 'Apple Silicon', sub: '.dmg', aria: 'Download GitStudio for macOS (Apple Silicon)' },
+		alts: [{ href: dl('macOS', (d) => d.arch === 'Intel'), label: 'Intel · .dmg', aria: 'Download GitStudio for macOS (Intel)' }],
+		also: { label: 'or with Homebrew:', cmd: APP.install.macosBrew },
+		took: { label: 'grabbed the .dmg? clear Gatekeeper once:', cmd: 'xattr -d -r -s com.apple.quarantine /Applications/GitStudio.app' },
+		req: 'macOS 11 or later · Apple Silicon & Intel',
+	},
+	{
+		id: 'linux',
+		name: 'Linux',
+		icon: 'linux',
+		prompt: '$',
+		hero: APP.install.linux,
+		heroLabel: 'Copy the Linux install command',
+		primary: { href: dl('Linux', (d) => d.format === '.AppImage'), label: 'AppImage', sub: 'x86-64', aria: 'Download GitStudio for Linux (AppImage)' },
+		alts: [
+			{ href: dl('Linux', (d) => d.format === '.deb'), label: '.deb', aria: 'Download GitStudio for Debian or Ubuntu (.deb)' },
+			{ href: dl('Linux', (d) => d.format === '.rpm'), label: '.rpm', aria: 'Download GitStudio for Fedora or RHEL (.rpm)' },
+			{ href: dl('Linux', (d) => d.format === '.tar.gz'), label: '.tar.gz', aria: 'Download GitStudio for Linux (portable .tar.gz)' },
+		],
+		took: { label: 'grabbed the AppImage yourself? make it executable:', cmd: 'chmod +x GitStudio-*.AppImage' },
+		req: 'x86-64 · glibc 2.35+ (Ubuntu 22.04, Debian 12 or newer) · the AppImage needs libfuse2, the packages do not',
+	},
+	{
+		id: 'windows',
+		name: 'Windows',
+		icon: 'windows',
+		prompt: '>',
+		hero: APP.install.windows,
+		heroLabel: 'Copy the Windows install command',
+		primary: { href: dl('Windows', (d) => d.arch === 'x64'), label: 'x64', sub: '.exe installer', aria: 'Download GitStudio for Windows (x64)' },
+		alts: [],
+		also: APP.install.windowsWinget ? { label: 'or with winget:', cmd: APP.install.windowsWinget, prompt: '>' } : undefined,
+		took: { label: 'grabbed the .exe? SmartScreen will warn once — “More info” → “Run anyway”.' },
+		req: 'Windows 10 / 11 · x64',
+	},
+];
+---
+
+<section class="dl section" id="download">
+	<div class="container dl-wrap">
+		<div class="dl-head" data-reveal>
+			<p class="eyebrow center">Install · v{APP.version}</p>
+			<h2>Get GitStudio Desktop.</h2>
+			<p class="lede dl-sub">
+				macOS, Linux and Windows — free and open source. No account, no license key, nothing to
+				activate.
+			</p>
+		</div>
+
+		<div class="dl-grid" data-reveal>
+			{cols.map((c) => (
+				<div class="dl-os" id={`get-${c.id}`}>
+					<div class="dl-os-head">
+						<OsIcon name={c.icon} size={20} />
+						<h3>{c.name}</h3>
+					</div>
+
+					<div class="dl-cmd is-hero">
+						<code><span class="dl-cmd-p" aria-hidden="true">{c.prompt}</span>{c.hero}</code>
+						<button class="copy-btn" type="button" data-copy={c.hero} aria-label={c.heroLabel}>copy</button>
+					</div>
+
+					<div class="dl-sep" aria-hidden="true"><span>or download</span></div>
+
+					<a class="dl-btn dl-btn-primary" href={c.primary.href} aria-label={c.primary.aria}>
+						<svg class="dl-btn-ico" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M8 2.5v7" /><path d="M4.75 6.5 8 9.75 11.25 6.5" /><path d="M3 13h10" />
+						</svg>
+						<span class="dl-btn-label">{c.primary.label}</span>
+						<span class="dl-btn-sub">{c.primary.sub}</span>
+					</a>
+					{c.alts.length > 0 && (
+						<div class="dl-btn-alts">
+							{c.alts.map((a) => (
+								<a class="dl-btn dl-btn-alt" href={a.href} aria-label={a.aria}>{a.label}</a>
+							))}
+						</div>
+					)}
+
+					<div class="dl-tail">
+						{c.also && (
+							<div class="dl-note">
+								<p class="dl-note-label">{c.also.label}</p>
+								<div class="dl-cmd dl-cmd-mini">
+									<code><span class="dl-cmd-p" aria-hidden="true">{c.also.prompt ?? c.prompt}</span>{c.also.cmd}</code>
+									<button class="copy-btn" type="button" data-copy={c.also.cmd} aria-label={`Copy the ${c.name} ${c.also.label.replace(/^or with |:$/g, '')} command`}>copy</button>
+								</div>
+							</div>
+						)}
+						{c.took && (
+							<div class="dl-note">
+								<p class="dl-note-label">{c.took.label}</p>
+								{c.took.cmd && (
+									<div class="dl-cmd dl-cmd-mini">
+										<code><span class="dl-cmd-p" aria-hidden="true">{c.took.prompt ?? c.prompt}</span>{c.took.cmd}</code>
+										<button class="copy-btn" type="button" data-copy={c.took.cmd} aria-label={`Copy the ${c.name} unblock command`}>copy</button>
+									</div>
+								)}
+							</div>
+						)}
+						<p class="dl-req">{c.req}</p>
+					</div>
+				</div>
+			))}
+		</div>
+
+		<p class="dl-foot" data-reveal>
+			The builds are not code-signed yet — certificates are on the list. Every installer is built by
+			CI from the public repository and lands on the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">releases page</a> with <code>SHA256SUMS.txt</code> beside
+			it; the one-line installers verify against it and refuse to install on a mismatch.{' '}
+			<a href="/download">Every build, the checksums, and the extension →</a>
+		</p>
+	</div>
+</section>
+
+<script>
+	// A command wider than its box scrolls; fade its right edge so the cut looks
+	// intentional and the copy button reads as the way to get all of it.
+	const mark = () => {
+		document.querySelectorAll<HTMLElement>('.dl-cmd code').forEach((code) => {
+			code.classList.toggle('is-overflowing', code.scrollWidth > code.clientWidth + 1);
+		});
+	};
+	mark();
+	addEventListener('resize', mark, { passive: true });
+</script>
+
+<style>
+	.dl {
+		background: radial-gradient(55% 80% at 50% 0%, rgba(169, 140, 255, 0.08), transparent 70%);
+		scroll-margin-top: 80px;
+	}
+	.dl-wrap {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.dl-head {
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-bottom: 3.4rem;
+	}
+	.dl-head h2 {
+		margin: 0;
+	}
+	.dl-sub {
+		max-width: 52ch;
+		margin: 1rem auto 0;
+	}
+
+	/* three columns, hairlines between — no boxes, the commands are the objects */
+	.dl-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		width: 100%;
+		margin-bottom: 2.6rem;
+	}
+	.dl-os {
+		display: flex;
+		flex-direction: column;
+		padding: 0.25rem 1.9rem;
+		min-width: 0;
+	}
+	.dl-os > * {
+		min-width: 0;
+	}
+	.dl-os:first-child {
+		padding-left: 0;
+	}
+	.dl-os:last-child {
+		padding-right: 0;
+	}
+	.dl-os + .dl-os {
+		border-left: 1px solid var(--hairline);
+	}
+	.dl-os-head {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		color: var(--ink);
+		margin-bottom: 1.15rem;
+		--icon-hole: var(--bg-1);
+	}
+	.dl-os-head h3 {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: 1rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+	}
+
+	/* command boxes */
+	.dl-cmd {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		background: var(--bg-0);
+		border: 1px solid var(--hairline-strong);
+		border-radius: var(--r-sm);
+		padding: 0.62rem 0.6rem 0.62rem 0.8rem;
+	}
+	.dl-cmd.is-hero {
+		border-color: var(--violet-line);
+		background: linear-gradient(180deg, var(--violet-wash), var(--bg-0) 60%);
+		box-shadow: 0 8px 26px -14px rgba(169, 140, 255, 0.6);
+	}
+	.dl-cmd-mini {
+		padding: 0.42rem 0.42rem 0.42rem 0.7rem;
+	}
+	.dl-cmd code {
+		flex: 1;
+		min-width: 0;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		line-height: 1.55;
+		color: var(--ink);
+		white-space: nowrap;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.dl-cmd code::-webkit-scrollbar {
+		display: none;
+	}
+	.dl-cmd code.is-overflowing {
+		-webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+		mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+	}
+	.dl-cmd-p {
+		color: var(--violet);
+		font-weight: 700;
+		user-select: none;
+		margin-right: 0.5rem;
+	}
+	.copy-btn {
+		flex: none;
+		font-family: var(--font-mono);
+		font-size: 0.66rem;
+		letter-spacing: 0.04em;
+		padding: 0.3rem 0.55rem;
+		border-radius: 6px;
+		border: 1px solid var(--hairline-strong);
+		background: var(--bg-2);
+		color: var(--muted);
+		cursor: pointer;
+		transition: color 0.15s ease, border-color 0.15s ease;
+	}
+	.copy-btn:hover {
+		color: var(--ink);
+		border-color: var(--violet-line);
+	}
+	.copy-btn.copied {
+		color: var(--add);
+		border-color: color-mix(in srgb, var(--add) 40%, transparent);
+	}
+	.copy-btn.copied::after {
+		content: '';
+	}
+
+	.dl-sep {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin: 1.1rem 0 0.85rem;
+	}
+	.dl-sep::before,
+	.dl-sep::after {
+		content: '';
+		flex: 1;
+		height: 1px;
+		background: var(--hairline);
+	}
+	.dl-sep span {
+		font-family: var(--font-mono);
+		font-size: 0.62rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--faint);
+	}
+
+	/* download buttons */
+	.dl-btn {
+		display: inline-flex;
+		align-items: center;
+		border-radius: var(--r-sm);
+		font-family: var(--font-mono);
+		color: var(--ink);
+		transition: color 0.14s ease, border-color 0.14s ease, background 0.14s ease, transform 0.14s ease;
+	}
+	.dl-btn:hover {
+		text-decoration: none;
+	}
+	.dl-btn-primary {
+		gap: 0.6rem;
+		width: 100%;
+		padding: 0.75rem 0.85rem;
+		border: 1px solid var(--hairline-strong);
+		background: var(--bg-2);
+		font-size: 0.82rem;
+		font-weight: 700;
+	}
+	.dl-btn-primary:hover {
+		border-color: var(--violet-line);
+		background: var(--bg-3);
+		transform: translateY(-1px);
+	}
+	.dl-btn-ico {
+		color: var(--muted);
+		flex-shrink: 0;
+		transition: color 0.14s ease;
+	}
+	.dl-btn-primary:hover .dl-btn-ico {
+		color: var(--violet-hi);
+	}
+	.dl-btn-sub {
+		margin-left: auto;
+		font-size: 0.68rem;
+		font-weight: 500;
+		color: var(--faint);
+	}
+	.dl-btn-alts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin-top: 0.45rem;
+	}
+	.dl-btn-alt {
+		flex: 1 1 auto;
+		justify-content: center;
+		padding: 0.5rem 0.75rem;
+		border: 1px solid var(--hairline-strong);
+		background: var(--bg-0);
+		color: var(--muted);
+		font-size: 0.72rem;
+		font-weight: 600;
+		white-space: nowrap;
+	}
+	.dl-btn-alt:hover {
+		color: var(--ink);
+		border-color: var(--violet-line);
+	}
+
+	.dl-tail {
+		margin-top: 1.05rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+	}
+	.dl-note-label {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		line-height: 1.6;
+		color: var(--muted);
+		margin: 0 0 0.42rem;
+	}
+	.dl-req {
+		margin: 0;
+		padding-left: 2px;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		color: var(--faint);
+	}
+
+	.dl-foot {
+		text-align: center;
+		font-size: 0.85rem;
+		color: var(--muted);
+		max-width: 72ch;
+		line-height: 1.75;
+		margin: 0;
+	}
+	.dl-foot a {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		color: var(--text);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--hairline-strong);
+	}
+	.dl-foot a:hover {
+		color: var(--violet-hi);
+		text-decoration-color: var(--violet);
+	}
+	.dl-foot code {
+		color: var(--ink);
+		font-size: 0.8rem;
+	}
+
+	@media (max-width: 900px) {
+		.dl-grid {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 2.4rem;
+		}
+		.dl-os,
+		.dl-os:first-child,
+		.dl-os:last-child {
+			padding: 0;
+		}
+		.dl-os + .dl-os {
+			border-left: 0;
+			border-top: 1px solid var(--hairline);
+			padding-top: 2.2rem;
+		}
+	}
+</style>

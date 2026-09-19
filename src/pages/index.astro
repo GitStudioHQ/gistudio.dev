@@ -5,6 +5,7 @@ import OsIcon from '../components/OsIcon.astro';
 import GraphLive from '../components/GraphLive.astro';
 import Shot from '../components/Shot.astro';
 import ExtensionsFeature from '../components/ExtensionsFeature.astro';
+import DownloadSection from '../components/DownloadSection.astro';
 import appCommits from '../assets/shots/app-commits.png';
 import appPrs from '../assets/shots/app-prs.png';
 import appAssistant from '../assets/shots/app-assistant.png';
@@ -50,7 +51,7 @@ const workflow = [
 				free, no account.
 			</p>
 			<div class="cta-row">
-				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
+				<a class="btn btn-primary btn-lg" href="#download">Download for macOS, Windows &amp; Linux</a>
 				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">
 					<svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
 					View the source
@@ -203,38 +204,8 @@ const workflow = [
 		</div>
 	</section>
 
-	<!-- ============ PLATFORMS ============ -->
-	<section class="section platforms">
-		<div class="container center">
-			<p class="eyebrow center" data-reveal>Platforms</p>
-			<h2 data-reveal>Native on macOS, Windows, and Linux.</h2>
-			<p class="lede" data-reveal>
-				Installers for every platform, or one command in a terminal. The app checks for new
-				versions itself. v{APP.version}, Apache-2.0, no account.
-			</p>
-			<div class="os-row" data-reveal>
-				<a class="os-card" href="/download#macos">
-					<OsIcon name="apple" size={26} />
-					<span class="os-name">macOS</span>
-					<span class="os-meta">Apple Silicon &amp; Intel · .dmg</span>
-				</a>
-				<a class="os-card" href="/download#windows">
-					<OsIcon name="windows" size={24} />
-					<span class="os-name">Windows</span>
-					<span class="os-meta">x64 · .exe</span>
-				</a>
-				<a class="os-card" href="/download#linux">
-					<OsIcon name="linux" size={26} />
-					<span class="os-name">Linux</span>
-					<span class="os-meta">.deb · .rpm · .AppImage · .tar.gz</span>
-				</a>
-			</div>
-			<div class="cta-row centered" data-reveal>
-				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
-				<a class="btn btn-ghost btn-lg" href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">All releases</a>
-			</div>
-		</div>
-	</section>
+	<!-- ============ DOWNLOAD ============ -->
+	<DownloadSection />
 
 	<!-- ============ COMPARISON ============ -->
 	<section class="section">
@@ -398,9 +369,11 @@ const workflow = [
 					<p>
 						They are built by CI from the public source and attached to the GitHub release with
 						a SHA256SUMS.txt; the one-line installers verify against it and refuse to install on
-						a mismatch. The builds are not code-signed yet, so Gatekeeper and SmartScreen warn
-						on first launch, and the macOS install script clears the quarantine flag for you.
-						You can verify the checksums yourself, or build from source.
+						a mismatch. The builds are not code-signed yet. On Windows, SmartScreen warns on
+						first launch (More info → Run anyway). On recent macOS a quarantined copy is refused
+						as damaged, so the install script and the Homebrew cask clear the quarantine flag
+						for you; a direct .dmg needs one xattr command, shown on the download page. You can
+						verify the checksums yourself, or build from source.
 					</p>
 				</details>
 				<details>
@@ -427,7 +400,7 @@ const workflow = [
 				repositories work exactly like public ones — free, no account.
 			</p>
 			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary btn-lg" href="/download">Download for macOS, Windows &amp; Linux</a>
+				<a class="btn btn-primary btn-lg" href="#download">Download for macOS, Windows &amp; Linux</a>
 				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">View the source</a>
 			</div>
 		</div>
@@ -597,52 +570,6 @@ const workflow = [
 		padding: 0;
 	}
 
-	/* PLATFORMS */
-	.platforms {
-		background: radial-gradient(55% 80% at 50% 0%, rgba(169, 140, 255, 0.08), transparent 70%);
-	}
-	.os-row {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1rem;
-		max-width: 720px;
-		margin: 2.4rem auto 0;
-	}
-	.os-card {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.35rem;
-		padding: 1.4rem 1rem;
-		border: 1px solid var(--hairline);
-		border-radius: var(--r-lg);
-		background: var(--bg-2);
-		color: var(--ink);
-		--icon-hole: var(--bg-2);
-		transition: border-color 0.15s ease, transform 0.15s ease;
-	}
-	.os-card:hover {
-		text-decoration: none;
-		border-color: var(--violet-line);
-		transform: translateY(-2px);
-	}
-	.os-card :global(.os-icon) {
-		color: var(--ink);
-		transition: color 0.15s ease;
-	}
-	.os-card:hover :global(.os-icon) {
-		color: var(--violet-hi);
-	}
-	.os-name {
-		font-weight: 640;
-		font-size: 1.05rem;
-	}
-	.os-meta {
-		font-family: var(--font-mono);
-		font-size: 0.7rem;
-		color: var(--faint);
-	}
-
 	/* generic */
 	.fine {
 		font-size: 0.85rem;
@@ -729,8 +656,7 @@ const workflow = [
 		}
 	}
 	@media (max-width: 620px) {
-		.wf-grid,
-		.os-row {
+		.wf-grid {
 			grid-template-columns: 1fr;
 		}
 	}

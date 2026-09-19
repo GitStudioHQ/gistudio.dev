@@ -10,10 +10,8 @@ export const GITHUB_ORG_URL = 'https://github.com/GitStudioHQ';
 export const GITHUB_REPO_URL = 'https://github.com/GitStudioHQ/gitstudio';
 export const GITHUB_RELEASES_URL = 'https://github.com/GitStudioHQ/gitstudio/releases';
 
-// TODO: flip these to deep links (/blob/main/docs/ai-and-agents.md, /tree/main/brand)
-// once the full codebase lands on the public main branch — deep links 404 today.
-export const DOCS_AI_URL = GITHUB_REPO_URL;
-export const BRAND_KIT_URL = GITHUB_REPO_URL;
+export const DOCS_AI_URL = `${GITHUB_REPO_URL}/blob/main/docs/ai-and-agents.md`;
+export const BRAND_KIT_URL = `${GITHUB_REPO_URL}/tree/main/brand`;
 export const LICENSE_URL = 'https://www.apache.org/licenses/LICENSE-2.0';
 
 /** GitStudio — the flagship VS Code / Cursor extension. v1.0.0, live everywhere. */
@@ -71,13 +69,21 @@ export const APP = {
 	// The one-line install per OS (package managers / install script). These
 	// channels must be published for the commands to resolve.
 	install: {
-		// One line each, and each one is published. `brew` needs the tap first
-		// (there is no homebrew-core formula) and Homebrew asks you to trust a
-		// third-party tap; `sh` is wrong for the installer, which is a bash
-		// script; and `winget` was advertised with no manifest behind it, so it
-		// is the PowerShell installer instead.
-		macos: 'brew tap gitstudiohq/gitstudio https://github.com/GitStudioHQ/gitstudio && brew trust gitstudiohq/gitstudio && brew install --cask gitstudio',
+		// One line each, and each one is published. curl leads on macOS because
+		// install.sh verifies the checksum AND clears the quarantine flag, so the
+		// app opens on first launch; Homebrew is the second line because people
+		// ask for it. There is no homebrew-core formula; the fully-qualified
+		// name makes Homebrew tap GitStudioHQ/homebrew-gitstudio by itself, and
+		// is Homebrew's own explicit-consent path for a third-party tap, so no
+		// `brew tap` URL and no `brew trust` step.
+		// `sh` is wrong for install.sh, which is a bash script; `winget` was
+		// advertised with no manifest behind it, so Windows is the PowerShell
+		// installer instead.
+		macos: 'curl -fsSL https://gitstudio.dev/install.sh | bash',
+		macosBrew: 'brew install --cask gitstudiohq/gitstudio/gitstudio',
 		windows: 'irm https://gitstudio.dev/install.ps1 | iex',
+		// Set once the winget-pkgs manifest is merged; empty hides the line.
+		windowsWinget: '',
 		linux: 'curl -fsSL https://gitstudio.dev/install.sh | bash',
 	},
 	platforms: [
