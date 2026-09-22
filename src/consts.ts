@@ -47,7 +47,7 @@ export const MERGE = {
 	marketplaceStars: 5.0,
 };
 
-const APP_VERSION = '2.0.1';
+const APP_VERSION = '2.0.2';
 const APP_DL = `https://github.com/GitStudioHQ/gitstudio/releases/download/app-v${APP_VERSION}`;
 
 /** GitStudio Desktop — installers on GitHub Releases. */
