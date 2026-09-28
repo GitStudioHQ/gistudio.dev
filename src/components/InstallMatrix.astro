@@ -37,11 +37,15 @@ const { ext } = Astro.props;
 <style>
 	.matrix {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		/* minmax(0, …): a 1fr track's floor is its min-content, and the
+		   one-line install command never wraps, so plain 1fr pushed the cards
+		   past the edge of a phone screen. */
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 1rem;
 		margin-top: 2rem;
 	}
 	.ed {
+		min-width: 0;
 		border: 1px solid var(--hairline);
 		border-radius: var(--r-lg);
 		background: var(--bg-2);
@@ -85,7 +89,7 @@ const { ext } = Astro.props;
 	}
 	@media (max-width: 720px) {
 		.matrix {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 </style>

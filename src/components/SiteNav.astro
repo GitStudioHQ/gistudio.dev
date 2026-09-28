@@ -1,6 +1,15 @@
 ---
-import { GITHUB_REPO_URL } from '../consts';
+import { GITHUB_REPO_URL, APP } from '../consts';
 import mark from '../assets/brand/gitstudio-mark.svg';
+
+// The strip above the nav: what shipped last, in a few words. `more` is
+// dropped on a phone, so `lead` has to stand on its own.
+const minor = APP.version.split('.').slice(0, 2).join('.');
+const announce = {
+	lead: `GitStudio Desktop ${minor} is out`,
+	more: ' for macOS, Windows & Linux',
+	href: '/#download',
+};
 
 const path = Astro.url.pathname;
 const links = [
@@ -18,14 +27,14 @@ const isActive = (href: string) => {
 
 <a class="skip" href="#main">Skip to content</a>
 
-<div class="announce">
+<aside class="announce" aria-label="Announcement">
 	<div class="container">
-		<a href="/#download">
+		<a href={announce.href}>
 			<span class="pulse" aria-hidden="true"></span>
-			GitStudio Desktop 2.0 is out for macOS, Windows<span class="hide-sm"> &amp; Linux</span> <span class="arr">→</span>
+			<span>{announce.lead}<span class="hide-sm">{announce.more}</span></span> <span class="arr" aria-hidden="true">→</span>
 		</a>
 	</div>
-</div>
+</aside>
 
 <header class="nav-wrap">
 	<div class="container nav">
@@ -258,6 +267,10 @@ const isActive = (href: string) => {
 		}
 		.nav {
 			height: 58px;
+		}
+		/* with the links hidden nothing pushes the menu button right */
+		.actions {
+			margin-left: auto;
 		}
 	}
 	@media (max-width: 560px) {
