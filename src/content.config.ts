@@ -13,7 +13,13 @@ const blog = defineCollection({
 			// Transform string to Date object
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
+			// Accepted but not rendered: posts have no hero image on the page.
 			heroImage: z.optional(image()),
+			// A 1200×630 social card under public/, e.g. '/og/blog-launch.png'
+			// (scripts/og.mjs renders them). Defaults to /og/blog.png.
+			ogImage: z.string().startsWith('/').optional(),
+			// true keeps a post out of the list, the RSS feed and the build.
+			draft: z.boolean().default(false),
 		}),
 });
 

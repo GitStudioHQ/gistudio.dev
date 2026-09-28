@@ -5,7 +5,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate } = Astro.props;
+const { title, description, pubDate, updatedDate, ogImage } = Astro.props;
 
 const jsonLd = {
 	'@context': 'https://schema.org',
@@ -15,11 +15,21 @@ const jsonLd = {
 	datePublished: pubDate.toISOString(),
 	...(updatedDate && { dateModified: updatedDate.toISOString() }),
 	author: { '@type': 'Organization', name: 'GitStudio', url: 'https://gitstudio.dev/' },
+	image: new URL(ogImage ?? '/og/blog.png', Astro.site).toString(),
 	url: new URL(Astro.url.pathname, Astro.site).toString(),
 };
 ---
 
-<Site title={`${title} · GitStudio blog`} description={description} jsonLd={jsonLd} og="/og/blog.png">
+<Site
+	title={`${title} · GitStudio blog`}
+	description={description}
+	jsonLd={jsonLd}
+	og={ogImage ?? '/og/blog.png'}
+	ogAlt={title}
+	ogType="article"
+	published={pubDate.toISOString()}
+	modified={updatedDate?.toISOString()}
+>
 	<article>
 		<header class="post-head">
 			<div class="container">
