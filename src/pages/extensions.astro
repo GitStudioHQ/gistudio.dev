@@ -5,7 +5,7 @@ import Icon from '../components/Icon.astro';
 import EditorChips from '../components/EditorChips.astro';
 import extIcon from '../assets/brand/ext-icon-192.png';
 import mergeIcon from '../assets/brand/merge-icon-192.png';
-import { EXT, MERGE, EDITORS, OPENVSX_INSTALLS } from '../consts';
+import { EXT, MERGE, EDITORS, OPENVSX_DOWNLOADS } from '../consts';
 
 const title = 'GitStudio editor extensions for VS Code, Cursor & Open VSX';
 const description =
@@ -71,13 +71,13 @@ const jsonLd = [
 						<span class="ver mono">v{EXT.version}</span>
 					</div>
 					<p class="ex-copy">
-						Commit graph, blame, history, hunk &amp; line staging, three-pane merge, interactive
-						rebase, worktrees, and in-editor GitHub pull requests. {EXT.commands} commands, five
-						sidebar views, {EXT.license}.
+						Commit graph, blame, history, hunk &amp; line staging, stashes, three-pane merge with a
+						conflicts dashboard, interactive rebase, worktrees, and GitHub pull requests.
+						{EXT.commands} commands, four sidebar views and a graph panel, {EXT.license}.
 					</p>
 					<ul class="best">
 						<li>Best if you want your whole Git workflow inside the editor</li>
-						<li>{OPENVSX_INSTALLS.gitstudio}+ installs on Open VSX and counting</li>
+						<li>{OPENVSX_DOWNLOADS.gitstudio} downloads on Open VSX, and counting</li>
 					</ul>
 					<span class="link-arrow">Explore GitStudio</span>
 				</a>
@@ -92,19 +92,20 @@ const jsonLd = [
 						<span class="ver mono">v{MERGE.version}</span>
 					</div>
 					<p class="ex-copy">
-						The focused three-pane merge &amp; conflict editor that started it all: color ribbons,
-						one-click accepts, a conflicts dashboard, and a named undo history. Tiny, fast, {MERGE.license}.
+						The focused three-pane merge &amp; conflict editor that started it all: colour-coded
+						changes, one-click accepts, a conflicts dashboard with Continue and Abort, and a named
+						undo history. Just the merge editor, {MERGE.license}.
 					</p>
 					<ul class="best">
 						<li>Best if you only want a first-class merge editor</li>
-						<li>{OPENVSX_INSTALLS.mergeStudio}+ installs on Open VSX · ★ {MERGE.marketplaceStars.toFixed(1)} on the Marketplace</li>
+						<li>{OPENVSX_DOWNLOADS.mergeStudio} downloads on Open VSX · ★ {MERGE.marketplaceStars.toFixed(1)} on the Marketplace</li>
 					</ul>
 					<span class="link-arrow">See Merge Studio</span>
 				</a>
 			</div>
 			<p class="tip" data-reveal>
-				You don't need both — the GitStudio extension already includes the three-pane merge editor.
-				Merge Studio is for people who want <em>only</em> that.
+				You don't need both — the GitStudio extension already includes the same merge editor and
+				conflicts dashboard. Merge Studio is for people who want <em>only</em> that.
 			</p>
 		</div>
 	</section>
@@ -118,7 +119,7 @@ const jsonLd = [
 				A “VS Code extension” runs in every editor built on VS Code. Both extensions publish to
 				two registries so they reach all of them from one build.
 			</p>
-			<div class="table-wrap" data-reveal>
+			<div class="table-wrap" data-reveal tabindex="0" role="region" aria-label="Editors each extension installs in">
 				<table class="cmp">
 					<thead>
 						<tr>

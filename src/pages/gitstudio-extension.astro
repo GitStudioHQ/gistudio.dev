@@ -15,7 +15,7 @@ import { EXT, MERGE, GITHUB_REPO_URL } from '../consts';
 
 const title = 'GitStudio for VS Code, Cursor & VSCodium — Git client extension';
 const description =
-	'GitStudio is a free, open-source Git client extension for VS Code, Cursor, VSCodium, Windsurf, and code-server: a live commit graph, inline blame with a code-age heatmap, hunk/line staging, three-pane merge, interactive rebase with a universal Undo, worktrees, and in-editor GitHub pull requests. 77 commands, on the Marketplace and Open VSX.';
+	`GitStudio is a free, open-source Git client extension for VS Code, Cursor, VSCodium, Windsurf, and code-server: a live commit graph, inline blame with a code-age heatmap, hunk and line staging, stashes with drag and drop, a three-pane merge editor with a conflicts dashboard, interactive rebase with Undo, worktrees, and GitHub pull requests. ${EXT.commands} commands, on the Marketplace and Open VSX.`;
 
 const jsonLd = [
 	{
@@ -47,7 +47,7 @@ const jsonLd = [
 		mainEntity: [
 			{ '@type': 'Question', name: 'Which editors does the GitStudio extension support?', acceptedAnswer: { '@type': 'Answer', text: 'VS Code, Cursor, VSCodium, Windsurf, and code-server — any editor built on VS Code 1.78 or newer. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.' } },
 			{ '@type': 'Question', name: 'How do I install GitStudio in Cursor?', acceptedAnswer: { '@type': 'Answer', text: 'Search “GitStudio” in Cursor’s Extensions view (Cursor reads the Open VSX registry), or run cursor --install-extension gitstudio.gitstudio from a shell.' } },
-			{ '@type': 'Question', name: 'Is the GitStudio extension free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes — every feature is free on public and private repos. It is Apache-2.0 licensed and open source, with no account and telemetry off by default.' } },
+			{ '@type': 'Question', name: 'Is the GitStudio extension free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes — every feature is free on public and private repos. It is Apache-2.0 licensed and open source, with no account and no usage tracking. It sends anonymous crash reports when a command fails; gitstudio.errorReporting.enabled, or VS Code\'s own telemetry setting, turns them off.' } },
 		],
 	},
 ];
@@ -65,8 +65,9 @@ const jsonLd = [
 			<h1 data-reveal>The full Git workflow in VS Code and Cursor.</h1>
 			<p class="lede" data-reveal>
 				One extension that puts the full Git workflow in your editor: a commit graph, inline blame,
-				hunk and line staging, a three-pane merge editor, interactive rebase, worktrees, and GitHub
-				pull requests. {EXT.commands} commands across five sidebar views. Free and open source.
+				hunk and line staging, stashes, a three-pane merge editor, interactive rebase, worktrees, and
+				GitHub pull requests. {EXT.commands} commands, four sidebar views, and a Commit Graph panel.
+				Free and open source.
 			</p>
 			<div class="cta-row" data-reveal>
 				<a class="btn btn-primary btn-lg" href="#install">Install now</a>
@@ -77,7 +78,7 @@ const jsonLd = [
 					icon={extIcon}
 					name="GitStudio"
 					tagline="The whole Git workflow, in one extension"
-					meta={[`v${EXT.version}`, 'Apache-2.0', `${EXT.commands} commands`, 'VS Code 1.78+']}
+					meta={[`v${EXT.version}`, 'Apache-2.0', `${EXT.commands} commands`, `VS Code ${EXT.minVsCode}+`]}
 					primaryHref={EXT.marketplaceUrl}
 					primaryLabel="Install from Marketplace"
 					secondaryHref={EXT.openVsxUrl}
@@ -88,7 +89,7 @@ const jsonLd = [
 		</div>
 		<div class="container heromock" data-reveal>
 			<GraphLive />
-			<p class="live-note mono">The graph component that ships in the extension, rendering this repo's history. Scroll and click through it.</p>
+			<p class="live-note mono">GitStudio's own graph component, rendering the history of the GitStudio repository. Scroll and click through it.</p>
 		</div>
 	</section>
 
@@ -98,12 +99,12 @@ const jsonLd = [
 			<h2 data-reveal>What the extension does.</h2>
 			<div class="pillars">
 				{[
-					{ n: '01', icon: 'graph', name: 'Visualize', desc: 'Understand any repo at a glance.', items: ['Virtualized commit graph — fast at tens of thousands of commits, with colored lanes, ref chips, and keyboard navigation', 'Sidebar Commits view: compact topology, author avatars on the nodes, search by message · author · SHA · refs', 'Inline blame + full-file annotations with a code-age heatmap', 'File history, line history, revision stepping, reflog time-machine'] },
-					{ n: '02', icon: 'stage', name: 'Change', desc: 'Stage and commit with precision.', items: ['Hunk- and line-level staging from any editor or diff', 'Side-by-side and unified diffs with word-level highlighting', 'Three-pane merge editor with one-click accept ribbons — conflicts auto-open as they appear', 'Guided commit box: amend, sign-off, author override, Commit & Push'] },
-					{ n: '03', icon: 'rebase', name: 'Rewrite', desc: 'Rewrite history without losing it.', items: ['Drag-to-reorder interactive rebase: pick · reword · edit · squash · fixup · drop', 'Universal Undo — a reflog snapshot before every destructive op, one command to reverse it', 'Pushed history falls back to a safe revert; force-push uses --force-with-lease'] },
-					{ n: '04', icon: 'branch', name: 'Manage', desc: 'Branches, remotes, tags, worktrees.', items: ['Branches, remotes, tags, stashes, worktrees — five views, full operations', 'Branch compare: ahead/behind, commits between refs, changed files as native diffs', 'Live sync: push/pull from the status bar and Changes header, per-branch ↑↓ badges', 'Pull a branch without checking it out — fast-forward straight from its submenu'] },
-					{ n: '05', icon: 'pr', name: 'Collaborate', desc: 'GitHub PRs without the browser.', items: ['List, open, and check out pull requests from the sidebar', 'Review with inline comments and submit — approve, comment, request changes', 'Create and merge PRs in-editor, with the GitHub sign-in your editor already has'] },
-					{ n: '06', icon: 'sparkle', name: 'Assist', desc: 'Optional AI. Your keys.', items: ['Commit messages drafted from your staged diff — the ✨ button in the commit box', 'Explain-this-diff and change summaries on demand', "Bring your own Anthropic key, or go zero-key via GitHub Copilot's model", 'Off by default — and it never gates or breaks a Git operation'] },
+					{ n: '01', icon: 'graph', name: 'Visualize', desc: 'Understand any repo at a glance.', items: ['Virtualized commit graph — fast at tens of thousands of commits, with colored lanes, ref chips, and keyboard navigation', 'Filter the graph to one branch or a few; search by message · author · SHA · refs', 'Inline blame + full-file annotations with a code-age heatmap, and Show in Graph from the blame hover', 'File history, line history, revision stepping, reflog time-machine'] },
+					{ n: '02', icon: 'stage', name: 'Change', desc: 'Stage and commit with precision.', items: ['Hunk- and line-level staging from any editor or diff — or tick changes JetBrains-style, if you prefer', 'Stashes live in Changes, file by file: drag a stash onto your changes to apply it, drag files onto Stashes to stash exactly those', 'Side-by-side and unified diffs with word-level highlighting', 'Guided commit box: amend, sign-off, author override, Commit & Push'] },
+					{ n: '03', icon: 'rebase', name: 'Rewrite', desc: 'Rewrite history without losing it.', items: ['Drag-to-reorder interactive rebase: pick · reword · edit · squash · fixup · drop — set several commits at once', 'Select several commits: cherry-pick, revert, squash, or drop them together, or compare two', 'Universal Undo — a reflog snapshot before every destructive op, one command to reverse it; pushed history falls back to a safe revert', 'Every force push is leased with --force-with-lease'] },
+					{ n: '04', icon: 'branch', name: 'Manage', desc: 'Branches, remotes, tags, worktrees.', items: ['A branch menu you drive from the keyboard — fuzzy search, remotes grouped, Reset to remote', 'Worktrees, a row each: its changes and unpushed commits, Pull and Push, Stash & Remove', 'Branch compare: ahead/behind, commits between refs, changed files as native diffs', 'Switch Repository, for folders that hold several repositories'] },
+					{ n: '05', icon: 'pr', name: 'Collaborate', desc: 'GitHub pull requests in the editor.', items: ['A Pull Requests list: open, merged, closed, search and filters, checks and review state', 'A page for each pull request — conversation, commits, checks, files — and merge from it', 'Review in the editor and submit from the page; New pull request is one form', 'Uses the GitHub sign-in your editor already has'] },
+					{ n: '06', icon: 'sparkle', name: 'Assist', desc: 'Optional AI, on your terms.', items: ['Commit messages drafted from your staged diff — the ✨ button in the commit box', 'Explain a diff, summarize changes, review your changes before you commit', 'No key with GitHub Copilot or Cursor models; or your own Anthropic or OpenAI-compatible key (OpenRouter, Ollama, LM Studio); or the Claude Code, Codex, or Gemini CLI', 'On demand only — it never gates or breaks a Git operation'] },
 				].map((p, i) => (
 					<div class="card pillar" data-reveal style={`--reveal-delay:${(i % 2) * 0.07}s`}>
 						<div class="ph">
@@ -178,17 +179,18 @@ const jsonLd = [
 				<p class="lede">
 					Every GitStudio shortcut lives under a single conflict-free chord —
 					<span class="kbd">Ctrl+Alt+G</span> (<span class="kbd">Cmd+Alt+G</span> on macOS),
-					then a letter. In the commit box, <span class="kbd">Enter</span> commits.
-					All bindings are remappable.
+					then a letter. All bindings are remappable.
 				</p>
 			</div>
 			<div class="keys" data-reveal style="--reveal-delay:.08s">
 				{[
+					{ k: 'G', what: 'Open the branch menu' },
 					{ k: 'B', what: 'Toggle file blame' },
 					{ k: 'H', what: 'Show line history' },
 					{ k: 'D', what: 'Open changes vs HEAD' },
 					{ k: 'S', what: 'Stage selected lines' },
 					{ k: 'U', what: 'Unstage selected lines' },
+					{ k: 'T', what: 'Stage or unstage the change at this line' },
 					{ k: 'Z', what: 'Undo last Git operation' },
 				].map((k) => (
 					<div class="keyrow">
@@ -222,7 +224,7 @@ const jsonLd = [
 				<a class="card rel" href={MERGE.route} data-reveal>
 					<p class="rel-eyebrow mono">Just want conflict resolution?</p>
 					<h3>Merge Studio</h3>
-					<p>The focused three-pane merge editor on its own — tiny, fast, MIT. GitStudio already includes it; this is for people who want only that.</p>
+					<p>The same merge editor and conflicts dashboard, on their own. GitStudio already includes them; Merge Studio is for people who want only that.</p>
 					<span class="link-arrow">See Merge Studio</span>
 				</a>
 				<a class="card rel" href="/" data-reveal style="--reveal-delay:.08s">

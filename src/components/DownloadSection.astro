@@ -38,10 +38,13 @@ const cols: Col[] = [
 		hero: APP.install.macos,
 		heroLabel: 'Copy the macOS install command',
 		primary: { href: dl('macOS', (d) => d.arch === 'Apple Silicon'), label: 'Apple Silicon', sub: '.dmg', aria: 'Download GitStudio for macOS (Apple Silicon)' },
-		alts: [{ href: dl('macOS', (d) => d.arch === 'Intel'), label: 'Intel · .dmg', aria: 'Download GitStudio for macOS (Intel)' }],
+		alts: [{ href: dl('macOS', (d) => d.arch === 'Intel' && d.format === '.dmg'), label: 'Intel · .dmg', aria: 'Download GitStudio for macOS (Intel)' }],
 		also: { label: 'or with Homebrew:', cmd: APP.install.macosBrew },
-		took: { label: 'grabbed the .dmg? clear Gatekeeper once:', cmd: 'xattr -d -r -s com.apple.quarantine /Applications/GitStudio.app' },
-		req: 'macOS 11 or later · Apple Silicon & Intel',
+		// The app is ad-hoc signed, not notarized: a downloaded copy gets
+		// "Apple could not verify…" once. Open Anyway in Privacy & Security, or
+		// clear the quarantine flag before the first launch.
+		took: { label: 'grabbed the .dmg? macOS asks once: Privacy & Security → Open Anyway, or run:', cmd: 'xattr -d -r -s com.apple.quarantine /Applications/GitStudio.app' },
+		req: `${APP.requirements.macos} · Apple Silicon & Intel`,
 	},
 	{
 		id: 'linux',
@@ -57,7 +60,7 @@ const cols: Col[] = [
 			{ href: dl('Linux', (d) => d.format === '.tar.gz'), label: '.tar.gz', aria: 'Download GitStudio for Linux (portable .tar.gz)' },
 		],
 		took: { label: 'grabbed the AppImage yourself? make it executable:', cmd: 'chmod +x GitStudio-*.AppImage' },
-		req: 'x86-64 · glibc 2.35+ (Ubuntu 22.04, Debian 12 or newer) · the AppImage needs libfuse2, the packages do not',
+		req: `${APP.requirements.linux} · the AppImage needs libfuse2, the packages do not`,
 	},
 	{
 		id: 'windows',
@@ -70,7 +73,7 @@ const cols: Col[] = [
 		alts: [],
 		also: APP.install.windowsWinget ? { label: 'or with winget:', cmd: APP.install.windowsWinget, prompt: '>' } : undefined,
 		took: { label: 'grabbed the .exe? SmartScreen will warn once — “More info” → “Run anyway”.' },
-		req: 'Windows 10 / 11 · x64',
+		req: APP.requirements.windows,
 	},
 ];
 ---
@@ -95,7 +98,7 @@ const cols: Col[] = [
 					</div>
 
 					<div class="dl-cmd is-hero">
-						<code><span class="dl-cmd-p" aria-hidden="true">{c.prompt}</span>{c.hero}</code>
+						<code tabindex="0"><span class="dl-cmd-p" aria-hidden="true">{c.prompt}</span>{c.hero}</code>
 						<button class="copy-btn" type="button" data-copy={c.hero} aria-label={c.heroLabel}>copy</button>
 					</div>
 
@@ -121,7 +124,7 @@ const cols: Col[] = [
 							<div class="dl-note">
 								<p class="dl-note-label">{c.also.label}</p>
 								<div class="dl-cmd dl-cmd-mini">
-									<code><span class="dl-cmd-p" aria-hidden="true">{c.also.prompt ?? c.prompt}</span>{c.also.cmd}</code>
+									<code tabindex="0"><span class="dl-cmd-p" aria-hidden="true">{c.also.prompt ?? c.prompt}</span>{c.also.cmd}</code>
 									<button class="copy-btn" type="button" data-copy={c.also.cmd} aria-label={`Copy the ${c.name} ${c.also.label.replace(/^or with |:$/g, '')} command`}>copy</button>
 								</div>
 							</div>
@@ -131,7 +134,7 @@ const cols: Col[] = [
 								<p class="dl-note-label">{c.took.label}</p>
 								{c.took.cmd && (
 									<div class="dl-cmd dl-cmd-mini">
-										<code><span class="dl-cmd-p" aria-hidden="true">{c.took.prompt ?? c.prompt}</span>{c.took.cmd}</code>
+										<code tabindex="0"><span class="dl-cmd-p" aria-hidden="true">{c.took.prompt ?? c.prompt}</span>{c.took.cmd}</code>
 										<button class="copy-btn" type="button" data-copy={c.took.cmd} aria-label={`Copy the ${c.name} unblock command`}>copy</button>
 									</div>
 								)}
@@ -144,8 +147,8 @@ const cols: Col[] = [
 		</div>
 
 		<p class="dl-foot" data-reveal>
-			The builds are not code-signed yet — certificates are on the list. Every installer is built by
-			CI from the public repository and lands on the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">releases page</a> with <code>SHA256SUMS.txt</code> beside
+			The builds are not code-signed or notarized yet. Every installer is built by CI from the
+			public repository and lands on the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">releases page</a> with <code>SHA256SUMS.txt</code> beside
 			it; the one-line installers verify against it and refuse to install on a mismatch.{' '}
 			<a href="/download">Every build, the checksums, and the extension →</a>
 		</p>

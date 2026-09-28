@@ -15,7 +15,7 @@ import extIcon from '../assets/brand/ext-icon-192.png';
 import mergeIcon from '../assets/brand/merge-icon-192.png';
 import graphPanel from '../assets/shots/graph-panel.png';
 import mergeEditor from '../assets/shots/merge-editor.png';
-import { EXT, MERGE, EDITORS, OPENVSX_INSTALLS } from '../consts';
+import { EXT, MERGE, EDITORS, OPENVSX_DOWNLOADS } from '../consts';
 
 const editorList = EDITORS.map((e) => e.label);
 const editorsText =
@@ -69,7 +69,7 @@ const editorsText =
 					<p class="ext-meta">v{EXT.version} · {EXT.license} · {EXT.commands} commands</p>
 					<p class="ext-stat">
 						<span class="dot" aria-hidden="true"></span>
-						{OPENVSX_INSTALLS.gitstudio} installs on Open VSX
+						{OPENVSX_DOWNLOADS.gitstudio} downloads on Open VSX
 					</p>
 					<span class="ext-cta" aria-hidden="true">
 						Explore {EXT.name}<span class="arr">→</span>
@@ -111,7 +111,7 @@ const editorsText =
 					<p class="ext-meta">v{MERGE.version} · {MERGE.license}</p>
 					<p class="ext-stat">
 						<span class="dot" aria-hidden="true"></span>
-						{OPENVSX_INSTALLS.mergeStudio} installs on Open VSX
+						{OPENVSX_DOWNLOADS.mergeStudio} downloads on Open VSX
 					</p>
 					<span class="ext-cta" aria-hidden="true">
 						See {MERGE.name}<span class="arr">→</span>
