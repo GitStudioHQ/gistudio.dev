@@ -21,7 +21,7 @@ const MARK = readFileSync(join(ROOT, 'src/assets/brand/gitstudio-mark.svg'), 'ut
 // `em` wraps the one word set in the serif italic, the site's signature device.
 const CARDS = {
 	og: {
-		title: 'The full Git and GitHub workflow in one native <em>app.</em>',
+		title: 'The full Git and GitHub workflow in one desktop <em>app.</em>',
 		sub: 'Free and open source, for macOS, Windows &amp; Linux.',
 		foot: ['Apache-2.0', 'No account'],
 		shot: 'src/assets/shots/app-commits.png',
