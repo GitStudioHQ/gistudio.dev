@@ -214,7 +214,7 @@ const workflow = [
 				</p>
 				<ul class="ticks">
 					<li>A permission control — read-only, commits, or everything — that asks before every write, with each tool call visible.</li>
-					<li>Your keys stay on your machine, encrypted in GitStudio's own store. Requests go from your machine to your provider.</li>
+					<li>Requests go from your machine to your provider. Keys stay on your machine, encrypted in GitStudio's own store rather than the OS keychain — the trade-off is in the FAQ.</li>
 					<li>With Ollama or LM Studio, nothing leaves your machine.</li>
 					<li>Enter sends, every answer copies as Markdown, and the composer says which repository and branch it is working in.</li>
 				</ul>
@@ -364,12 +364,15 @@ const workflow = [
 					<p>
 						Your code, no. Git runs locally, GitHub calls go straight to GitHub with your own
 						sign-in, and there is no usage tracking and no analytics. What the app does send: a
-						check for new versions to GitHub Releases, avatar lookups on Gravatar (by a hash of
-						each commit author's email), and an anonymous crash report when something fails —
-						the shape of the error, scrubbed of paths, names, and code. Crash reports are on by
-						default; Help → Send Anonymous Crash Reports turns them off. The assistant is off
-						until you connect a model, and with a local model through Ollama or LM Studio,
-						nothing leaves your machine.
+						check for new versions to GitHub Releases; avatar lookups on Gravatar, which the
+						commit graph makes with an MD5 hash of each commit author's email; and an anonymous
+						crash report when something fails — the shape of the error with a random install
+						id, scrubbed of paths, emails, remotes, and code, sent to gitstudio.dev and filed in
+						a private tracker. Crash reports are on by default: Help → Send Anonymous Crash
+						Reports turns them off. The GitStudio extension sends the same reports unless you
+						set <code>gitstudio.errorReporting.enabled</code> to false or turn off VS Code's
+						telemetry; Merge Studio sends none. The assistant is off until you connect a model,
+						and with a local model through Ollama or LM Studio, nothing leaves your machine.
 					</p>
 				</details>
 				<details>
@@ -385,6 +388,17 @@ const workflow = [
 					<p>
 						No. There is no GitStudio account. You sign in to GitHub with your own credentials
 						only when you use the GitHub features.
+					</p>
+				</details>
+				<details>
+					<summary>Where are my API keys stored?</summary>
+					<p>
+						On your machine, in GitStudio's own encrypted store — not your OS keychain, so there
+						is never a system password prompt. Each key is an AES-256-GCM file readable only by
+						your user, and nothing is written in clear text. The trade-off, plainly: the device
+						key that decrypts them is stored next to them, so a copied backup or synced folder
+						is useless on its own, but any program already running as you could read them. That
+						is weaker than a keychain that asks you to unlock it.
 					</p>
 				</details>
 				<details>
@@ -422,7 +436,8 @@ const workflow = [
 					<p>
 						{APP.requirements.macos} on Apple Silicon or Intel; {APP.requirements.windows};
 						and Linux on {APP.requirements.linux}. There is no Windows ARM64 or Linux arm64
-						build yet.
+						build yet. GitStudio runs the Git already on your computer and does not bundle one;
+						the <a href="/download#questions">download page</a> says where to get it.
 					</p>
 				</details>
 			</div>

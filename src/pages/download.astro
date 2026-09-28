@@ -39,10 +39,11 @@ const faqs = [
 	{ q: 'Which macOS build do I need — Apple Silicon or Intel?', a: 'Apple Silicon (M1 and later) uses the arm64 .dmg; older Intel Macs use the x64 .dmg. The download page tries to detect your Mac; Safari hides the chip, so when it cannot tell, both builds are offered side by side, and both are always listed below.' },
 	{ q: 'How do I get past Gatekeeper on macOS?', a: 'The build is ad-hoc signed but not signed with an Apple Developer ID or notarized yet, so macOS says it could not verify GitStudio the first time. The curl installer and the Homebrew cask both clear the quarantine flag for you. If you took the .dmg, click Done on that message and then Open Anyway in System Settings → Privacy & Security; or drag GitStudio into Applications and, before the first launch, run xattr -d -r -s com.apple.quarantine /Applications/GitStudio.app once.' },
 	{ q: 'AppImage, .deb, .rpm or .tar.gz on Linux?', a: 'The .AppImage runs anywhere with libfuse2 installed (sudo apt install libfuse2, or libfuse2t64 on Ubuntu 24.04) — chmod +x and run it, or let curl -fsSL https://gitstudio.dev/install.sh | bash place it for you. On Debian or Ubuntu, sudo apt install ./GitStudio-*.deb; on Fedora or RHEL, sudo dnf install ./GitStudio-*.rpm; the .tar.gz unpacks anywhere. The packages need no FUSE.' },
+	{ q: 'Do I need Git installed?', a: 'Yes. GitStudio runs the Git already on your computer and does not bundle one. On macOS, run xcode-select --install for Apple\'s command line tools, or brew install git. On Windows, install Git for Windows from git-scm.com. On Linux, install your distribution\'s git package (sudo apt install git, sudo dnf install git). git-scm.com/downloads has every option.' },
 	{ q: 'Is there a Windows ARM64 or Linux arm64 build?', a: 'No. Windows is x64 only and Linux is x86-64 only. macOS has native Apple Silicon and Intel builds.' },
 	{ q: 'How do I install GitStudio with Homebrew?', a: 'brew install --cask gitstudiohq/gitstudio/gitstudio — one line. Homebrew taps GitStudioHQ/homebrew-gitstudio by name (there is no homebrew-core formula), and the fully-qualified name is how Homebrew takes your consent for a third-party tap, so there is no brew trust step. The cask clears the macOS quarantine flag after installing. Add --force if GitStudio.app is already in Applications.' },
 	{ q: 'Does GitStudio Desktop update itself?', a: 'It checks GitHub Releases for a newer version and asks before downloading anything; the question stays until you answer it. Windows and the Linux AppImage update in place and restart into the new version. On macOS the app downloads the new .dmg to your Downloads folder and opens it — one drag to Applications. If you are on 2.2.0, install 2.2.1 or later once by hand; from then on updates ask for themselves.' },
-	{ q: 'What are the system requirements?', a: `macOS: ${APP.requirements.macos}, Apple Silicon or Intel. Windows: ${APP.requirements.windows}. Linux: ${APP.requirements.linux}.` },
+	{ q: 'What are the system requirements?', a: `macOS: ${APP.requirements.macos}, Apple Silicon or Intel. Windows: ${APP.requirements.windows}. Linux: ${APP.requirements.linux}. On every platform, Git itself must be installed; GitStudio does not bundle it.` },
 ];
 
 const jsonLd = [
@@ -145,6 +146,12 @@ const jsonLd = [
 					</div>
 				))}
 			</div>
+			<p class="git-note" data-reveal>
+				<strong>You need Git installed.</strong> GitStudio runs the Git already on your computer
+				and does not bundle one: <code>xcode-select --install</code> on macOS (or
+				<code>brew install git</code>), <a href="https://git-scm.com/downloads/win" target="_blank" rel="noopener">Git for Windows</a>,
+				or your Linux distribution's <code>git</code> package.
+			</p>
 			<div class="center">
 				<p class="release-note" data-reveal>
 					v{APP.version} · Apache-2.0 · <code>SHA256SUMS.txt</code> &amp; older versions on
@@ -525,6 +532,17 @@ const jsonLd = [
 	}
 	.os-col :global(.ic) {
 		width: 100%;
+	}
+	.git-note {
+		margin: 1.6rem auto 0;
+		max-width: 72ch;
+		text-align: center;
+		font-size: 0.9rem;
+		color: var(--muted);
+		line-height: 1.7;
+	}
+	.git-note strong {
+		color: var(--ink);
 	}
 	.release-note {
 		margin: 2.2rem 0 0;
