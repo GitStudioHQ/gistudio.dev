@@ -631,6 +631,8 @@ html.no-js [data-reveal] {
 	font-size: 1.0625rem;
 	line-height: 1.75;
 	color: var(--text);
+	/* a long link or identifier breaks instead of widening a phone screen */
+	overflow-wrap: break-word;
 }
 
 .prose h1,
