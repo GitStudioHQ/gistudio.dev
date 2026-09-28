@@ -1,0 +1,92 @@
+---
+// "Support GitStudio" — one quiet band near the end of the home page. It asks
+// once, says why, and gets out of the way: no counters, no pop-ups, nothing
+// that follows you down the page. The footer carries the same two links on
+// every other page.
+import Icon from './Icon.astro';
+import { SUPPORT } from '../consts';
+---
+
+<section class="support section" aria-labelledby="support-title">
+	<div class="container">
+		<div class="support-card" data-reveal>
+			<div class="support-copy">
+				<p class="eyebrow">Support GitStudio</p>
+				<h2 id="support-title">Free and open source. If it saves you time…</h2>
+				<p class="support-lede">
+					GitStudio has no paid tier, no account, and no ads, and it is built in the open. A
+					sponsorship or a coffee pays for the time that goes into it, and keeps it free for
+					everyone.
+				</p>
+			</div>
+			<div class="support-actions">
+				<a class="btn btn-ghost support-btn" href={SUPPORT.sponsorUrl} target="_blank" rel="noopener">
+					<Icon name="heart" size={17} />
+					Sponsor on GitHub
+				</a>
+				<a class="btn btn-ghost support-btn" href={SUPPORT.coffeeUrl} target="_blank" rel="noopener">
+					<Icon name="coffee" size={17} />
+					Buy me a coffee
+				</a>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.support {
+		padding-block: clamp(56px, 7vw, 88px);
+	}
+	.support-card {
+		display: grid;
+		grid-template-columns: minmax(0, 1.5fr) auto;
+		align-items: center;
+		gap: clamp(1.5rem, 4vw, 3rem);
+		padding: clamp(1.5rem, 3.5vw, 2.4rem) clamp(1.4rem, 4vw, 2.8rem);
+		border: 1px solid var(--hairline-strong);
+		border-radius: var(--r-lg);
+		background:
+			radial-gradient(90% 140% at 0% 0%, var(--violet-wash), transparent 60%),
+			linear-gradient(180deg, var(--bg-2), var(--bg-1) 140%);
+	}
+	.support-copy h2 {
+		font-size: clamp(1.4rem, 1.1rem + 1.2vw, 1.9rem);
+		margin-bottom: 0.6rem;
+	}
+	.support-copy .eyebrow {
+		margin-bottom: 0.8rem;
+	}
+	.support-lede {
+		margin: 0;
+		color: var(--muted);
+		font-size: var(--fs-1);
+		line-height: 1.65;
+		max-width: 58ch;
+	}
+	.support-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+	}
+	.support-btn {
+		justify-content: flex-start;
+		min-width: 13.5rem;
+	}
+	.support-btn :global(.gs-icon) {
+		color: var(--violet-hi);
+	}
+	@media (max-width: 760px) {
+		.support-card {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.support-actions {
+			flex-direction: row;
+			flex-wrap: wrap;
+		}
+		.support-btn {
+			min-width: 0;
+			flex: 1 1 12rem;
+			justify-content: center;
+		}
+	}
+</style>

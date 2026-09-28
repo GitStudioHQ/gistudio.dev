@@ -14,6 +14,12 @@ export const DOCS_AI_URL = `${GITHUB_REPO_URL}/blob/main/docs/ai-and-agents.md`;
 export const BRAND_KIT_URL = `${GITHUB_REPO_URL}/tree/main/brand`;
 export const LICENSE_URL = 'https://www.apache.org/licenses/LICENSE-2.0';
 
+/** Ways to support the project. Shown in the footer of every page and near the end of the home page. */
+export const SUPPORT = {
+	sponsorUrl: 'https://github.com/sponsors/antonarnaudov',
+	coffeeUrl: 'https://checkout.revolut.com/pay/7a6070ab-99ba-4170-a125-c5911b1a5c1d',
+};
+
 /** GitStudio — the flagship VS Code / Cursor extension. v1.0.0, live everywhere. */
 export const EXT = {
 	name: 'GitStudio',
