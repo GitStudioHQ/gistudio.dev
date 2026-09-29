@@ -2,7 +2,6 @@
 import Site from '../layouts/Site.astro';
 import Icon from '../components/Icon.astro';
 import GraphLive from '../components/GraphLive.astro';
-import HeroGraph from '../components/HeroGraph.astro';
 import Shot from '../components/Shot.astro';
 import ExtensionsFeature from '../components/ExtensionsFeature.astro';
 import DownloadSection from '../components/DownloadSection.astro';
@@ -52,7 +51,24 @@ const workflow = [
 <Site title={title} description={description} jsonLd={jsonLd}>
 	<!-- ============ HERO ============ -->
 	<section class="hero">
-		<HeroGraph />
+		<svg class="hero-graph" viewBox="0 0 1200 520" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+			<g class="lanes">
+				<path pathLength="1" d="M150 24 V 496" />
+				<path pathLength="1" d="M150 150 C 150 212, 300 208, 300 272 V 470" />
+				<path pathLength="1" d="M300 352 C 300 414, 150 410, 150 458" />
+				<path pathLength="1" d="M412 60 V 300 C 412 360, 300 356, 300 396" />
+				<path pathLength="1" d="M1050 24 V 496" />
+				<path pathLength="1" d="M1050 168 C 1050 230, 900 226, 900 290 V 470" />
+				<path pathLength="1" d="M900 360 C 900 422, 1050 418, 1050 466" />
+				<path pathLength="1" d="M788 78 V 318 C 788 378, 900 374, 900 408" />
+			</g>
+			<g class="nodes">
+				<circle r="4" cx="150" cy="150" /><circle r="4" cx="300" cy="272" />
+				<circle r="4" cx="412" cy="60" /><circle r="4" cx="150" cy="458" />
+				<circle r="4" cx="1050" cy="168" /><circle r="4" cx="900" cy="290" />
+				<circle r="4" cx="788" cy="78" />
+			</g>
+		</svg>
 		<div class="container">
 			<p class="eyebrow center hero-eyebrow">GitStudio Desktop <span data-live="app.minor">{stats.app.minor}</span><span class="hide-xs"> · macOS, Windows, Linux</span></p>
 			<h1>The full Git and GitHub workflow in one desktop app.</h1>
@@ -496,6 +512,67 @@ const workflow = [
 	}
 	.hero > * {
 		position: relative;
+	}
+	/* the brand's own vocabulary: sparse lanes drawing themselves, masked to keep
+	   a clear text column, fading down so the real live graph at 01 takes over. */
+	/* higher specificity than `.hero > *` so it stays absolute (behind content) */
+	.hero > .hero-graph {
+		position: absolute;
+		inset: -6% 0 auto;
+		width: 100%;
+		/* the hero is shorter than when this graph was drawn (two-line headline),
+		   so the box is taller in % to keep the same drawn size: ~1050px on a
+		   laptop, as it was. */
+		height: 83%;
+		pointer-events: none;
+		z-index: 0;
+		/* the third layer keeps the headline and lede clear: the headline is
+		   two wide lines now, and a lane ran straight through it */
+		mask-image:
+			radial-gradient(58% 62% at 50% 20%, transparent, #000 76%),
+			linear-gradient(180deg, #000 55%, transparent),
+			radial-gradient(640px 220px at 50% 360px, transparent 76%, #000);
+		-webkit-mask-image:
+			radial-gradient(58% 62% at 50% 20%, transparent, #000 76%),
+			linear-gradient(180deg, #000 55%, transparent),
+			radial-gradient(640px 220px at 50% 360px, transparent 76%, #000);
+		-webkit-mask-composite: source-in;
+		mask-composite: intersect;
+	}
+	.hero-graph path {
+		fill: none;
+		stroke: var(--violet);
+		stroke-width: 1.5;
+		opacity: 0.32;
+		stroke-dasharray: 1;
+		stroke-dashoffset: 1;
+		animation: lane-draw 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+	}
+	.hero-graph path:nth-child(2) { animation-delay: 0.12s; }
+	.hero-graph path:nth-child(3) { animation-delay: 0.22s; }
+	.hero-graph path:nth-child(4) { animation-delay: 0.32s; }
+	.hero-graph path:nth-child(5) { animation-delay: 0.06s; }
+	.hero-graph path:nth-child(6) { animation-delay: 0.18s; }
+	.hero-graph path:nth-child(7) { animation-delay: 0.28s; }
+	.hero-graph path:nth-child(8) { animation-delay: 0.38s; }
+	.hero-graph circle {
+		fill: var(--violet);
+		opacity: 0;
+		filter: drop-shadow(0 0 6px rgba(169, 140, 255, 0.9));
+		animation: node-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+	}
+	.hero-graph .nodes circle:nth-child(odd) { animation-delay: 0.9s; }
+	.hero-graph .nodes circle:nth-child(even) { animation-delay: 1.05s; }
+	@keyframes lane-draw {
+		to { stroke-dashoffset: 0; }
+	}
+	@keyframes node-pop {
+		from { opacity: 0; transform: scale(0.2); }
+		to { opacity: 0.85; transform: none; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero-graph path { stroke-dashoffset: 0; animation: none; }
+		.hero-graph circle { opacity: 0.85; animation: none; }
 	}
 	.hero-eyebrow {
 		justify-content: center;

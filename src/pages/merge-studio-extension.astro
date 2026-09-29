@@ -1,12 +1,11 @@
 ---
 import Site from '../layouts/Site.astro';
-import Shot from '../components/Shot.astro';
+import ProductWindow from '../components/ProductWindow.astro';
 import mergeEditor from '../assets/shots/merge-editor.png';
 import diffView from '../assets/shots/diff-view.png';
 import conflictsDialog from '../assets/shots/conflicts-dialog.png';
 import Icon from '../components/Icon.astro';
-import ListingCard from '../components/ListingCard.astro';
-import EditorChips from '../components/EditorChips.astro';
+import ExtHeroMeta from '../components/ExtHeroMeta.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
 import mergeIcon from '../assets/brand/merge-studio-icon.png';
 import { MERGE } from '../consts';
@@ -73,13 +72,7 @@ const jsonLd = [
 				<a href="/extensions">Extensions</a> <span aria-hidden="true">/</span>
 				<span>Merge Studio</span>
 			</nav>
-			<div class="statusline" data-reveal>
-				<span class="badge live">● Live</span>
-				<span class="chip">v<span data-live="ms.version">{stats.ms.version}</span></span>
-				<span class="chip">★ <span data-live="ms.rating">{stats.text['ms.rating']}</span> on the Marketplace</span>
-				<span class="chip"><span data-live="ms.downloads">{stats.text['ms.downloads']}</span> Open VSX downloads</span>
-				<span class="chip">{MERGE.license}</span>
-			</div>
+			<p class="eyebrow" data-reveal>Merge Studio extension</p>
 			<h1 data-reveal>A three-pane editor for merge conflicts.</h1>
 			<p class="lede" data-reveal>
 				Yours, the result, and theirs, side by side, every change coloured by the decision it
@@ -87,33 +80,27 @@ const jsonLd = [
 				a named undo history lets you step back through every decision you make.
 			</p>
 			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary btn-lg" href="#install">Install now</a>
-				<a class="btn btn-ghost btn-lg" href={MERGE.openVsxUrl} target="_blank" rel="noopener">Open VSX — Cursor &amp; friends</a>
+				<a class="btn btn-primary btn-lg" href={MERGE.marketplaceUrl} target="_blank" rel="noopener">Install from Marketplace</a>
+				<a class="btn btn-ghost btn-lg" href={MERGE.openVsxUrl} target="_blank" rel="noopener">Open VSX</a>
 			</div>
-			<div class="listing-wrap" data-reveal style="--reveal-delay:.06s">
-				<ListingCard
+			<div data-reveal style="--reveal-delay:.06s">
+				<ExtHeroMeta
 					icon={mergeIcon}
-					name="Merge Studio"
-					tagline="Three-way merge & conflict editor"
-					meta={[
-						{ live: 'ms.version', text: stats.ms.version, before: 'v' },
-						MERGE.license,
-						{ live: 'ms.minVsCode', text: stats.ms.minVsCode, before: 'VS Code ', after: '+' },
-						'Cursor · VSCodium · Windsurf',
+					facts={[
+						{ live: 'ms.version', text: stats.ms.version, pre: 'v' },
+						{ live: 'ms.installs', text: stats.text['ms.installs'], post: ' installs', title: 'Installs from the VS Code Marketplace' },
+						{ live: 'ms.downloads', text: stats.text['ms.downloads'], post: ' downloads', title: 'Downloads from Open VSX' },
+						{ live: 'ms.rating', text: stats.text['ms.rating'], pre: '★ ', title: 'Rating on the VS Code Marketplace' },
+						{ text: MERGE.license },
+						{ text: 'Source on GitHub', href: MERGE.repoUrl },
 					]}
-					primaryHref={MERGE.marketplaceUrl}
-					primaryLabel="Install from Marketplace"
-					secondaryHref={MERGE.openVsxUrl}
-					secondaryLabel="Open VSX"
-					stars={stats.ms.rating}
-					starsLive="ms.rating"
 				/>
 			</div>
-			<EditorChips class="hero-editors" data-reveal />
 		</div>
 		<div class="container heromock" data-reveal>
-			<Shot
+			<ProductWindow
 				src={mergeEditor}
+				minScale={0.85}
 				alt="Merge Studio's real three-pane editor: yours, result and theirs panes in Monaco with conflict ribbons, per-hunk accept controls, and the apply toolbar"
 				caption="The real editor, mid-merge — 4 changes, 3 conflicts, every ribbon live."
 				priority
@@ -127,7 +114,7 @@ const jsonLd = [
 			<h2 data-reveal>What Merge Studio does.</h2>
 			<div class="grid">
 				{feats.map((f, i) => (
-					<div class="card" data-reveal style={`--reveal-delay:${(i % 3) * 0.07}s`}>
+					<div class="feat" data-reveal style={`--reveal-delay:${(i % 3) * 0.07}s`}>
 						<div class="ch"><span class="icon-tile"><Icon name={f.icon as any} /></span><h3>{f.h}</h3></div>
 						<p>{f.p}</p>
 					</div>
@@ -136,7 +123,7 @@ const jsonLd = [
 		</div>
 	</section>
 
-	<section class="section">
+	<section class="section clip-x">
 		<div class="container feature">
 			<div class="f-copy" data-reveal>
 				<p class="eyebrow">Mid-merge control</p>
@@ -154,8 +141,9 @@ const jsonLd = [
 				</ul>
 			</div>
 			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
-				<Shot
+				<ProductWindow
 					src={conflictsDialog}
+					bleed
 					alt="Merge Studio's conflicts dialog listing every conflicted file with per-file resolve actions"
 					caption="The real conflicts dialog — every file tracked, nothing lives in your head."
 				/>
@@ -174,9 +162,10 @@ const jsonLd = [
 				</p>
 			</div>
 		</div>
-		<div class="container" data-reveal style="--reveal-delay:.1s">
-			<Shot
+		<div class="container wide-shot" data-reveal style="--reveal-delay:.1s">
+			<ProductWindow
 				src={diffView}
+				maxHeight={600}
 				alt="Merge Studio's side-by-side diff with intra-line word highlighting"
 				caption="The real side-by-side diff — intra-line precision."
 			/>
@@ -254,13 +243,6 @@ const jsonLd = [
 	.crumbs a {
 		color: var(--muted);
 	}
-	.statusline {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.55rem;
-		margin-bottom: 1.4rem;
-	}
 	.hero h1 {
 		max-width: 18ch;
 	}
@@ -273,12 +255,25 @@ const jsonLd = [
 	.cta-row.centered {
 		justify-content: center;
 	}
-	.listing-wrap {
-		margin-top: 2rem;
-		max-width: 720px;
+	/* the extension cards' surface: no outline, a faint inner edge, depth */
+	.feat {
+		border-radius: 20px;
+		padding: 1.6rem 1.65rem 1.7rem;
+		background: linear-gradient(180deg, #13131f, #0f0f19);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.045),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+			0 24px 50px -36px rgba(0, 0, 0, 0.9);
 	}
-	.hero-editors {
-		margin-top: 1.6rem;
+	.feat p {
+		margin: 0;
+		color: var(--muted);
+		font-size: var(--fs-1);
+		line-height: 1.6;
+	}
+	/* the conflicts dialog runs at its natural size off the right edge */
+	.clip-x {
+		overflow-x: clip;
 	}
 	.ch {
 		display: flex;
@@ -289,10 +284,15 @@ const jsonLd = [
 	.ch h3 {
 		margin: 0;
 	}
+	/* the editor and the diff get the width of the capture itself (1240 px
+	   at 1:1), a little wider than the text column */
+	.heromock,
+	.wide-shot {
+		max-width: 1304px;
+	}
 	.heromock {
-		margin-top: 3.2rem;
+		margin-top: 3.4rem;
 		padding-bottom: clamp(48px, 7vw, 80px);
-		max-width: 980px;
 	}
 	.grid {
 		display: grid;
@@ -305,7 +305,7 @@ const jsonLd = [
 	}
 	.feature {
 		display: grid;
-		grid-template-columns: 0.95fr 1.05fr;
+		grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
 		gap: clamp(2rem, 5vw, 4.5rem);
 		align-items: center;
 	}

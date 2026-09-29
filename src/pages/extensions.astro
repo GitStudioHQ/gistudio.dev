@@ -1,15 +1,11 @@
 ---
 import Site from '../layouts/Site.astro';
-import { Image } from 'astro:assets';
 import Icon from '../components/Icon.astro';
 import EditorChips from '../components/EditorChips.astro';
-import extIcon from '../assets/brand/gitstudio-icon.png';
-import mergeIcon from '../assets/brand/merge-studio-icon.png';
+import ExtensionCards from '../components/ExtensionCards.astro';
 import { EXT, MERGE, EDITORS } from '../consts';
-import { getStats } from '../lib/stats';
 
-// Versions and counts: build time + data-live on view (src/lib/stats.ts).
-const stats = await getStats();
+// The cards carry the live versions and counts (ExtensionCards.astro).
 
 const title = 'GitStudio editor extensions for VS Code, Cursor & Open VSX';
 const description =
@@ -64,48 +60,8 @@ const jsonLd = [
 		<div class="container">
 			<p class="eyebrow" data-reveal>Two focused choices</p>
 			<h2 data-reveal>Which one do you need?</h2>
-			<div class="cards">
-				<a class="card ex-card" href={EXT.route} data-reveal>
-					<div class="ex-head">
-						<Image src={extIcon} alt="" width="112" height="112" class="ex-icon" />
-						<div>
-							<h3>GitStudio</h3>
-							<p class="ex-tag">The whole Git workflow</p>
-						</div>
-						<span class="ver mono">v<span data-live="ext.version">{stats.ext.version}</span></span>
-					</div>
-					<p class="ex-copy">
-						Commit graph, blame, history, hunk &amp; line staging, stashes, three-pane merge with a
-						conflicts dashboard, interactive rebase, worktrees, and GitHub pull requests.{' '}
-						<span data-live="ext.commands">{stats.ext.commands}</span> commands, four sidebar views and a graph panel, {EXT.license}.
-					</p>
-					<ul class="best">
-						<li>Best if you want your whole Git workflow inside the editor</li>
-						<li><span data-live="ext.downloads">{stats.text['ext.downloads']}</span> downloads on Open VSX, and counting</li>
-					</ul>
-					<span class="link-arrow">Explore GitStudio</span>
-				</a>
-
-				<a class="card ex-card" href={MERGE.route} data-reveal style="--reveal-delay:.08s">
-					<div class="ex-head">
-						<Image src={mergeIcon} alt="" width="112" height="112" class="ex-icon" />
-						<div>
-							<h3>Merge Studio</h3>
-							<p class="ex-tag">Just conflict resolution</p>
-						</div>
-						<span class="ver mono">v<span data-live="ms.version">{stats.ms.version}</span></span>
-					</div>
-					<p class="ex-copy">
-						The focused three-pane merge &amp; conflict editor that started it all: colour-coded
-						changes, one-click accepts, a conflicts dashboard with Continue and Abort, and a named
-						undo history. Just the merge editor, {MERGE.license}.
-					</p>
-					<ul class="best">
-						<li>Best if you only want a first-class merge editor</li>
-						<li><span data-live="ms.downloads">{stats.text['ms.downloads']}</span> downloads on Open VSX · ★ <span data-live="ms.rating">{stats.text['ms.rating']}</span> on the Marketplace</li>
-					</ul>
-					<span class="link-arrow">See Merge Studio</span>
-				</a>
+			<div class="cards-wrap">
+				<ExtensionCards />
 			</div>
 			<p class="tip" data-reveal>
 				You don't need both — the GitStudio extension already includes the same merge editor and
@@ -208,78 +164,8 @@ const jsonLd = [
 	.hero-editors {
 		margin-top: 1.8rem;
 	}
-	.cards {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1.2rem;
+	.cards-wrap {
 		margin-top: 2.4rem;
-	}
-	.ex-card {
-		display: flex;
-		flex-direction: column;
-		gap: 0.9rem;
-		color: inherit;
-	}
-	.ex-card:hover {
-		text-decoration: none;
-		transform: translateY(-3px);
-	}
-	.ex-head {
-		display: flex;
-		align-items: center;
-		gap: 0.85rem;
-	}
-	:global(.ex-icon) {
-		width: 54px;
-		height: 54px;
-		border-radius: 13px;
-		flex: none;
-		box-shadow: 0 0 0 1px rgba(226, 223, 245, 0.1), 0 10px 24px -12px rgba(0, 0, 0, 0.8);
-	}
-	.ex-head h3 {
-		margin: 0;
-		font-size: 1.2rem;
-	}
-	.ex-tag {
-		margin: 0.15rem 0 0;
-		font-size: 0.82rem;
-		color: var(--muted);
-	}
-	.ex-head .ver {
-		margin-left: auto;
-		align-self: flex-start;
-		font-size: 0.72rem;
-		color: var(--faint);
-	}
-	.ex-copy {
-		margin: 0;
-		color: var(--muted);
-		font-size: var(--fs-1);
-	}
-	.best {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.45rem;
-		flex: 1;
-	}
-	.best li {
-		position: relative;
-		padding-left: 1.4rem;
-		font-size: 0.86rem;
-		color: var(--text);
-	}
-	.best li::before {
-		content: '';
-		position: absolute;
-		left: 0;
-		top: 0.5em;
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-		background: var(--violet);
 	}
 	.tip {
 		margin: 1.8rem 0 0;
@@ -347,7 +233,6 @@ const jsonLd = [
 		margin-top: 2rem;
 	}
 	@media (max-width: 860px) {
-		.cards,
 		.reg-explain {
 			grid-template-columns: 1fr;
 		}

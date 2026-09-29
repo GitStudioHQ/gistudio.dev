@@ -1,0 +1,278 @@
+---
+// ExtensionCards — the two extension cards, GitStudio and Merge Studio, of
+// exactly the same build. Used on the home page (ExtensionsFeature.astro)
+// and on /extensions.
+//
+//   icon + name, one sentence, one quiet line of live facts, one link —
+//   and below them the product itself, a real capture at its natural pixel
+//   scale, in a window that runs off the card's bottom-right corner.
+//
+// The captures are crops of the full-resolution (2×) screenshots, shown 1:1
+// (1520 × 920 px source → 760 × 460 CSS px), never scaled up: GitStudio's own
+// history in GitStudio Desktop (real commits by Anton Arnaudov), and Merge
+// Studio's three-pane editor on its built-in sample. No invented people.
+//
+// Nothing is marked with a line: no top rule, no side bar, no coloured
+// border. Hover lifts the card and warms its glow.
+//
+// Versions and counts are read at build time (src/lib/stats.ts) and kept
+// current on view through their data-live keys (LiveStats.astro).
+import { Image } from 'astro:assets';
+import gsIcon from '../assets/brand/gitstudio-icon.png';
+import msIcon from '../assets/brand/merge-studio-icon.png';
+import gsShot from '../assets/shots/ext-card-graph.png';
+import msShot from '../assets/shots/ms-card-merge.png';
+import { EXT, MERGE } from '../consts';
+import { getStats } from '../lib/stats';
+
+interface Props {
+	/** Heading level of the card names (h3 under a section h2 by default). */
+	level?: 'h2' | 'h3';
+}
+const { level = 'h3' } = Astro.props;
+const H = level;
+
+const stats = await getStats();
+const t = stats.text;
+
+const cards = [
+	{
+		name: EXT.name,
+		route: EXT.route,
+		icon: gsIcon,
+		pitch: 'The full Git workflow in your editor: a commit graph, inline blame, staging, rebase, and pull requests.',
+		shot: gsShot,
+		alt: 'GitStudio’s commit graph on its own repository: commits by Anton Arnaudov with their avatars on the lane, the ci/codecov and main branch chips, a change bar for each commit, and three commits selected together.',
+		version: { text: t['ext.version'], live: 'ext.version' },
+		installs: { text: t['ext.installs'], live: 'ext.installs' },
+		downloads: { text: t['ext.downloads'], live: 'ext.downloads' },
+	},
+	{
+		name: MERGE.name,
+		route: MERGE.route,
+		icon: msIcon,
+		pitch: 'The three-pane merge editor and the conflicts dashboard on their own, with a named undo history.',
+		shot: msShot,
+		alt: 'Merge Studio’s three-pane merge editor on its built-in sample: the Apply non-conflicting changes toolbar, the Yours pane of authorizeRequest.ts on feature/auth-hardening with its conflicts marked, and the Result pane beside it.',
+		version: { text: t['ms.version'], live: 'ms.version' },
+		installs: { text: t['ms.installs'], live: 'ms.installs' },
+		downloads: { text: t['ms.downloads'], live: 'ms.downloads' },
+	},
+];
+---
+
+<div class="xc-grid">
+	{cards.map((c, i) => (
+		<article class="xc" data-reveal style={`--reveal-delay:${i * 0.08}s`}>
+			<div class="xc-text">
+				<div class="xc-id">
+					<Image class="xc-icon" src={c.icon} alt="" width={40} height={40} densities={[1, 2, 3]} />
+					<H class="xc-name">
+						<a class="xc-link" href={c.route}>{c.name}</a>
+					</H>
+				</div>
+				<p class="xc-pitch">{c.pitch}</p>
+				<p class="xc-facts">
+					<span>v<span data-live={c.version.live}>{c.version.text}</span></span>
+					<span class="sep" aria-hidden="true">·</span>
+					<span title="Installs from the VS Code Marketplace"><span data-live={c.installs.live}>{c.installs.text}</span> installs</span>
+					<span class="sep" aria-hidden="true">·</span>
+					<span title="Downloads from Open VSX"><span data-live={c.downloads.live}>{c.downloads.text}</span> downloads</span>
+				</p>
+				<span class="xc-cta" aria-hidden="true">Explore {c.name}<span class="arr">→</span></span>
+			</div>
+			<div class="xc-shot">
+				<div class="xc-window">
+					<Image src={c.shot} alt={c.alt} widths={[760, 1520]} sizes="760px" loading="lazy" />
+				</div>
+			</div>
+		</article>
+	))}
+</div>
+
+<style>
+	.xc-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: clamp(16px, 2.2vw, 24px);
+	}
+
+	/* ---------- the card ---------- */
+	.xc {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		overflow: hidden;
+		border-radius: 22px;
+		/* a surface, not an outline: the faintest inner edge, a violet light
+		   under the capture, depth from a soft shadow */
+		background:
+			radial-gradient(90% 70% at 50% 100%, rgba(169, 140, 255, 0.1), transparent 70%),
+			linear-gradient(180deg, #13131f, #0f0f19);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.05),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.035),
+			0 30px 60px -40px rgba(0, 0, 0, 0.9);
+		transition: box-shadow 0.3s ease, transform 0.3s ease;
+	}
+	.xc:hover {
+		transform: translateY(-3px);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.07),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+			0 30px 80px -36px rgba(169, 140, 255, 0.4);
+	}
+	.xc:has(.xc-link:focus-visible) {
+		box-shadow:
+			inset 0 0 0 1px rgba(169, 140, 255, 0.45),
+			0 0 0 4px rgba(169, 140, 255, 0.18),
+			0 30px 80px -36px rgba(169, 140, 255, 0.4);
+	}
+
+	.xc-text {
+		flex: 1;
+		padding: clamp(24px, 3vw, 36px) clamp(24px, 3vw, 36px) 0;
+	}
+	.xc-id {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+	.xc-icon {
+		width: 40px;
+		height: 40px;
+		border-radius: 10px;
+		flex: none;
+	}
+	.xc-name {
+		margin: 0;
+		font-size: 1.3rem;
+		letter-spacing: -0.015em;
+		line-height: 1.2;
+	}
+	.xc-link {
+		color: var(--ink);
+		text-decoration: none;
+	}
+	.xc-link:hover {
+		text-decoration: none;
+	}
+	.xc-link:focus-visible {
+		outline: none;
+	}
+	/* the whole card is the link */
+	.xc-link::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+		border-radius: inherit;
+	}
+	.xc-pitch {
+		margin: 14px 0 0;
+		max-width: 46ch;
+		color: var(--muted);
+		font-size: var(--fs-1);
+		line-height: 1.6;
+	}
+	.xc-facts {
+		margin: 16px 0 0;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: 8px;
+		row-gap: 2px;
+		font-size: 0.8125rem;
+		color: var(--faint);
+		font-variant-numeric: tabular-nums;
+	}
+	.xc-facts span span {
+		color: var(--text);
+	}
+	.xc-facts .sep {
+		color: rgba(226, 223, 245, 0.25);
+	}
+	.xc-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: 22px;
+		font-size: 0.9rem;
+		font-weight: 550;
+		color: var(--violet-hi);
+	}
+	.xc-cta .arr {
+		transition: transform 0.25s ease;
+	}
+	.xc:hover .xc-cta .arr {
+		transform: translateX(3px);
+	}
+
+	/* ---------- the product, at 1:1 ---------- */
+	.xc-shot {
+		position: relative;
+		margin-top: clamp(28px, 3.4vw, 40px);
+		padding-left: clamp(24px, 3vw, 36px);
+		height: clamp(250px, 26vw, 316px);
+	}
+	.xc-window {
+		position: relative;
+		height: 100%;
+		overflow: hidden;
+		border-radius: 12px 0 0 0;
+		background: #13131e;
+		box-shadow:
+			0 0 0 1px rgba(255, 255, 255, 0.07),
+			0 -12px 50px -18px rgba(169, 140, 255, 0.28),
+			0 20px 40px rgba(0, 0, 0, 0.45);
+		transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+	.xc:hover .xc-window {
+		transform: translateY(-4px);
+	}
+	.xc-window img {
+		display: block;
+		width: 760px;
+		max-width: none;
+		height: auto;
+	}
+	/* the capture settles into the card where it is cut, not at a hard edge */
+	.xc-shot::after {
+		content: '';
+		position: absolute;
+		inset: auto 0 0;
+		height: 64px;
+		background: linear-gradient(180deg, transparent, rgba(12, 12, 20, 0.55));
+		pointer-events: none;
+	}
+
+	@media (max-width: 760px) {
+		.xc-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.xc-shot {
+			height: 240px;
+		}
+	}
+	/* if the facts wrap, no separator is left hanging at a line end */
+	@media (max-width: 380px) {
+		.xc-facts {
+			column-gap: 14px;
+		}
+		.xc-facts .sep {
+			display: none;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.xc,
+		.xc-window,
+		.xc-cta .arr {
+			transition: none;
+		}
+		.xc:hover,
+		.xc:hover .xc-window {
+			transform: none;
+		}
+	}
+</style>

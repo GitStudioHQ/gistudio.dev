@@ -1,0 +1,98 @@
+---
+// ExtHeroMeta — the quiet line under an extension page's install buttons:
+// the product icon, then its live facts as one line of text (version,
+// installs, downloads, and whatever else the page passes), then where it runs.
+// Replaces the stacked listing card, pill row and editor chips: the same
+// facts, said once, without a box around each.
+//
+// Facts with a `live` key carry data-live and keep current on view
+// (LiveStats.astro); their build-time text is the fallback.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import { EDITORS } from '../consts';
+
+type Fact = { text: string; live?: string; pre?: string; post?: string; title?: string; href?: string };
+interface Props {
+	icon: ImageMetadata;
+	facts: Fact[];
+}
+const { icon, facts } = Astro.props;
+
+const editorList = EDITORS.map((e) => e.label);
+const editorsText = editorList.slice(0, -1).join(', ') + ', and ' + editorList[editorList.length - 1];
+---
+
+<div class="xm">
+	<Image class="xm-icon" src={icon} alt="" width={36} height={36} densities={[1, 2, 3]} />
+	<div class="xm-text">
+		<p class="xm-facts">
+			{facts.map((f, i) => (
+				<>
+					{i > 0 && <span class="sep" aria-hidden="true">·</span>}
+					{f.href ? (
+						<a href={f.href} target="_blank" rel="noopener">{f.text}</a>
+					) : (
+						<span title={f.title}>{f.pre}{f.live ? <b data-live={f.live}>{f.text}</b> : <b>{f.text}</b>}{f.post}</span>
+					)}
+				</>
+			))}
+		</p>
+		<p class="xm-editors">Runs in {editorsText}.</p>
+	</div>
+</div>
+
+<style>
+	.xm {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		margin-top: 1.8rem;
+	}
+	.xm-icon {
+		width: 36px;
+		height: 36px;
+		border-radius: 9px;
+		flex: none;
+	}
+	.xm-text {
+		min-width: 0;
+	}
+	.xm-facts,
+	.xm-editors {
+		margin: 0;
+		font-size: 0.8125rem;
+		line-height: 1.55;
+	}
+	.xm-facts {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: 8px;
+		color: var(--faint);
+		font-variant-numeric: tabular-nums;
+	}
+	.xm-facts b {
+		font-weight: 500;
+		color: var(--text);
+	}
+	.xm-facts a {
+		color: var(--violet-hi);
+	}
+	.xm-facts .sep {
+		color: rgba(226, 223, 245, 0.25);
+	}
+	.xm-editors {
+		color: var(--faint);
+	}
+	/* on a phone the facts wrap: no separator left hanging at a line end */
+	@media (max-width: 560px) {
+		.xm {
+			align-items: flex-start;
+		}
+		.xm-facts {
+			column-gap: 14px;
+		}
+		.xm-facts .sep {
+			display: none;
+		}
+	}
+</style>

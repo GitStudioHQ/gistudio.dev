@@ -1,13 +1,10 @@
 ---
 import Site from '../layouts/Site.astro';
-import Shot from '../components/Shot.astro';
-import graphPanel from '../assets/shots/graph-panel.png';
+import ProductWindow from '../components/ProductWindow.astro';
 import changesView from '../assets/shots/changes-view.png';
-import commitsRail from '../assets/shots/commits-rail.png';
 import branchDialog from '../assets/shots/branch-dialog.png';
 import Icon from '../components/Icon.astro';
-import ListingCard from '../components/ListingCard.astro';
-import EditorChips from '../components/EditorChips.astro';
+import ExtHeroMeta from '../components/ExtHeroMeta.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
 import extIcon from '../assets/brand/gitstudio-icon.png';
 import GraphLive from '../components/GraphLive.astro';
@@ -66,7 +63,7 @@ const jsonLd = [
 				<a href="/extensions">Extensions</a> <span aria-hidden="true">/</span>
 				<span>GitStudio</span>
 			</nav>
-			<p class="eyebrow" data-reveal>GitStudio extension · VS Code &amp; Cursor · v<span data-live="ext.version">{stats.ext.version}</span></p>
+			<p class="eyebrow" data-reveal>GitStudio extension</p>
 			<h1 data-reveal>The full Git workflow in VS Code and Cursor.</h1>
 			<p class="lede" data-reveal>
 				One extension that puts the full Git workflow in your editor: a commit graph, inline blame,
@@ -75,27 +72,21 @@ const jsonLd = [
 				Free and open source.
 			</p>
 			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary btn-lg" href="#install">Install now</a>
-				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">View source</a>
+				<a class="btn btn-primary btn-lg" href={EXT.marketplaceUrl} target="_blank" rel="noopener">Install from Marketplace</a>
+				<a class="btn btn-ghost btn-lg" href={EXT.openVsxUrl} target="_blank" rel="noopener">Open VSX</a>
 			</div>
-			<div class="listing-wrap" data-reveal style="--reveal-delay:.06s">
-				<ListingCard
+			<div data-reveal style="--reveal-delay:.06s">
+				<ExtHeroMeta
 					icon={extIcon}
-					name="GitStudio"
-					tagline="The whole Git workflow, in one extension"
-					meta={[
-						{ live: 'ext.version', text: stats.ext.version, before: 'v' },
-						'Apache-2.0',
-						{ live: 'ext.commands', text: stats.ext.commands, after: ' commands' },
-						{ live: 'ext.minVsCode', text: stats.ext.minVsCode, before: 'VS Code ', after: '+' },
+					facts={[
+						{ live: 'ext.version', text: stats.ext.version, pre: 'v' },
+						{ live: 'ext.installs', text: stats.text['ext.installs'], post: ' installs', title: 'Installs from the VS Code Marketplace' },
+						{ live: 'ext.downloads', text: stats.text['ext.downloads'], post: ' downloads', title: 'Downloads from Open VSX' },
+						{ text: EXT.license },
+						{ text: 'Source on GitHub', href: GITHUB_REPO_URL },
 					]}
-					primaryHref={EXT.marketplaceUrl}
-					primaryLabel="Install from Marketplace"
-					secondaryHref={EXT.openVsxUrl}
-					secondaryLabel="Open VSX"
 				/>
 			</div>
-			<EditorChips class="hero-editors" data-reveal />
 		</div>
 		<div class="container heromock" data-reveal>
 			<GraphLive />
@@ -116,14 +107,13 @@ const jsonLd = [
 					{ n: '05', icon: 'pr', name: 'Collaborate', desc: 'GitHub pull requests in the editor.', items: ['A Pull Requests list: open, merged, closed, search and filters, checks and review state', 'A page for each pull request — conversation, commits, checks, files — and merge from it', 'Review in the editor and submit from the page; New pull request is one form', 'Uses the GitHub sign-in your editor already has'] },
 					{ n: '06', icon: 'sparkle', name: 'Assist', desc: 'Optional AI, on your terms.', items: ['Commit messages drafted from your staged diff — the ✨ button in the commit box', 'Explain a diff, summarize changes, review your changes before you commit', 'No key with GitHub Copilot or Cursor models; or your own Anthropic or OpenAI-compatible key (OpenRouter, Ollama, LM Studio); or the Claude Code, Codex, or Gemini CLI', 'On demand only — it never gates or breaks a Git operation'] },
 				].map((p, i) => (
-					<div class="card pillar" data-reveal style={`--reveal-delay:${(i % 2) * 0.07}s`}>
+					<div class="pillar" data-reveal style={`--reveal-delay:${(i % 2) * 0.07}s`}>
 						<div class="ph">
 							<span class="icon-tile"><Icon name={p.icon as any} /></span>
 							<div class="pht">
 								<h3>{p.name}</h3>
 								<span class="pd">{p.desc}</span>
 							</div>
-							<span class="pn">{p.n}</span>
 						</div>
 						<ul>
 							{p.items.map((it) => (
@@ -138,27 +128,28 @@ const jsonLd = [
 
 	<section class="section">
 		<div class="container">
-			<p class="eyebrow" data-reveal>Straight from the product</p>
-			<h2 data-reveal>The extension in use.</h2>
-			<p class="lede" data-reveal>
-				The Commit Graph panel and the sidebar views of the GitStudio extension.
-			</p>
-			<div class="tour-big" data-reveal>
-				<Shot
-					src={graphPanel}
-					alt="The full GitStudio Commit Graph panel: colored branch lanes, ref chips, author avatars riding the commit nodes, changes bars, and commit details"
-					caption="The full Commit Graph panel — lanes, chips, avatars on nodes, per-commit changes."
-				/>
-			</div>
 			<div class="tour">
-				<div data-reveal>
-					<Shot src={changesView} crop="680/1000" alt="The Changes view: staged and unstaged groups, the guided commit box, and live Push/Pull buttons" caption="Changes — guided commit box, instant staging" />
+				<div class="tour-copy" data-reveal>
+					<p class="eyebrow">In the sidebar</p>
+					<h2>The extension in use.</h2>
+					<p class="lede">
+						The Changes view, with staged and unstaged files, the guided commit box and live Push
+						and Pull; and the branch menu, where every action on a branch is a keystroke away.
+					</p>
 				</div>
-				<div data-reveal style="--reveal-delay:.08s">
-					<Shot src={commitsRail} crop="660/1000" alt="The Commits sidebar view: compact two-line rows, topology rail, mini author avatars, scoped search" caption="Commits — the sidebar-native rail" />
-				</div>
-				<div data-reveal style="--reveal-delay:.16s">
-					<Shot src={branchDialog} crop="680/1000" alt="The branch dialog: per-branch ahead/behind badges, in-place fetch, pull without checkout" caption="Branches — ↑↓ badges, fetch in place" />
+				<div class="tour-shots" data-reveal style="--reveal-delay:.08s">
+					<ProductWindow
+						src={changesView}
+						maxHeight={520}
+						alt="The GitStudio Changes view: the commit message box with Amend and Sign-off, Commit 2 and Push, and the changed files grouped as staged and unstaged"
+						caption="Changes"
+					/>
+					<ProductWindow
+						src={branchDialog}
+						maxHeight={520}
+						alt="The GitStudio branch menu on fix/live-sync: Checkout, Pull 7 into the branch, New Branch, Compare with main, Merge, Rebase, New Worktree, Rename, Copy Branch Name and Delete"
+						caption="Branches"
+					/>
 				</div>
 			</div>
 		</div>
@@ -273,13 +264,6 @@ const jsonLd = [
 		flex-wrap: wrap;
 		margin-top: 2rem;
 	}
-	.listing-wrap {
-		margin-top: 2rem;
-		max-width: 720px;
-	}
-	.hero-editors {
-		margin-top: 1.6rem;
-	}
 	.live-note {
 		margin-top: 0.8rem;
 		font-size: 0.7rem;
@@ -299,6 +283,16 @@ const jsonLd = [
 		gap: 1.1rem;
 		margin-top: 2.4rem;
 	}
+	/* the extension cards' surface: no outline, a faint inner edge, depth */
+	.pillar {
+		border-radius: 20px;
+		padding: 1.7rem 1.75rem 1.8rem;
+		background: linear-gradient(180deg, #13131f, #0f0f19);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.045),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+			0 24px 50px -36px rgba(0, 0, 0, 0.9);
+	}
 	.pillar .ph {
 		display: flex;
 		align-items: center;
@@ -313,12 +307,6 @@ const jsonLd = [
 	}
 	.pillar h3 {
 		margin: 0;
-	}
-	.pn {
-		margin-left: auto;
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		color: var(--violet);
 	}
 	.pd {
 		color: var(--faint);
@@ -351,14 +339,24 @@ const jsonLd = [
 		opacity: 0.7;
 	}
 
-	.tour-big {
-		margin-top: 2.4rem;
-	}
+	/* copy on the left, the two sidebar views at their natural size */
 	.tour {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1.3rem;
-		margin-top: 1.3rem;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: clamp(2rem, 5vw, 4.5rem);
+		align-items: center;
+	}
+	.tour-copy .lede {
+		max-width: 44ch;
+	}
+	.tour-shots {
+		display: grid;
+		grid-template-columns: repeat(2, 340px);
+		gap: 20px;
+		align-items: start;
+	}
+	.tour-shots > :last-child {
+		margin-top: 56px;
 	}
 	.f-copy.narrow {
 		max-width: 760px;
@@ -441,6 +439,15 @@ const jsonLd = [
 		.tour,
 		.rel-grid {
 			grid-template-columns: 1fr;
+		}
+	}
+	@media (max-width: 760px) {
+		.tour-shots {
+			grid-template-columns: minmax(0, 340px);
+			justify-content: center;
+		}
+		.tour-shots > :last-child {
+			margin-top: 0;
 		}
 	}
 </style>
