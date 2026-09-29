@@ -8,6 +8,8 @@
 //
 //   minScale  how far it may shrink before it starts cropping instead
 //             (1 = always 1:1; 0.85 lets a wide editor fit a laptop column).
+//             On phones (≤760px) it always scales to fit: a sliver of a
+//             window would only show text cut mid-word.
 //   maxHeight crop the bottom at this many CSS px, fading into the page.
 //   bleed     the frame keeps its natural width and runs past its column to
 //             the edge of the page (the section must clip overflow-x).
@@ -79,6 +81,13 @@ const style = [`--pw-w:${w}px`, `--pw-min:${minScale}`, maxHeight ? `--pw-h:${ma
 	}
 	.pw--right .pw-frame :global(img) {
 		margin-left: auto;
+	}
+	/* on a phone a crop of a full window would slice its text mid-word at
+	   the frame's edge: the whole window, scaled down, reads better */
+	@media (max-width: 760px) {
+		.pw-frame :global(img) {
+			min-width: 0;
+		}
 	}
 	/* cut at the bottom: the capture settles into the page, no hard edge */
 	.pw--cropped .pw-frame::after {

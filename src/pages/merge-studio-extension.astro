@@ -1,9 +1,10 @@
 ---
 import Site from '../layouts/Site.astro';
 import ProductWindow from '../components/ProductWindow.astro';
-import mergeEditor from '../assets/shots/merge-editor.png';
-import diffView from '../assets/shots/diff-view.png';
-import conflictsDialog from '../assets/shots/conflicts-dialog.png';
+import mergeEditor from '../assets/shots/ms-merge-editor.png';
+import diffView from '../assets/shots/ms-diff.png';
+// a crop of the capture ms-dashboard: the editor area, down to Continue Merge
+import conflictsDialog from '../assets/shots/ms-dashboard.png';
 import Icon from '../components/Icon.astro';
 import ExtHeroMeta from '../components/ExtHeroMeta.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
@@ -101,8 +102,8 @@ const jsonLd = [
 			<ProductWindow
 				src={mergeEditor}
 				minScale={0.85}
-				alt="Merge Studio's real three-pane editor: yours, result and theirs panes in Monaco with conflict ribbons, per-hunk accept controls, and the apply toolbar"
-				caption="The real editor, mid-merge — 4 changes, 3 conflicts, every ribbon live."
+				alt="Merge Studio's three-way merge editor in VS Code on its sample conflict: yours, the result and theirs side by side"
+				caption="The real editor, mid-rebase — 9 changes, 3 conflicts, every ribbon live."
 				priority
 			/>
 		</div>
@@ -123,9 +124,9 @@ const jsonLd = [
 		</div>
 	</section>
 
-	<section class="section clip-x">
-		<div class="container feature">
-			<div class="f-copy" data-reveal>
+	<section class="section">
+		<div class="container">
+			<div class="f-copy narrow" data-reveal>
 				<p class="eyebrow">Mid-merge control</p>
 				<h2>A dashboard that tracks every conflict.</h2>
 				<p class="lede">
@@ -140,14 +141,14 @@ const jsonLd = [
 					<li>Binary and deleted-on-one-side files get the choices that make sense: keep yours, keep theirs, or delete</li>
 				</ul>
 			</div>
-			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
-				<ProductWindow
-					src={conflictsDialog}
-					bleed
-					alt="Merge Studio's conflicts dialog listing every conflicted file with per-file resolve actions"
-					caption="The real conflicts dialog — every file tracked, nothing lives in your head."
-				/>
-			</div>
+		</div>
+		<div class="container wide-shot" data-reveal style="--reveal-delay:.1s">
+			<ProductWindow
+				src={conflictsDialog}
+				minScale={0.9}
+				alt="Merge Studio's conflict dashboard in VS Code: four conflicted files, each with one-click accept buttons and a merge button"
+				caption="A real merge stopped on four files: each one a click from done, and Continue Merge waits for the last."
+			/>
 		</div>
 	</section>
 
@@ -165,8 +166,8 @@ const jsonLd = [
 		<div class="container wide-shot" data-reveal style="--reveal-delay:.1s">
 			<ProductWindow
 				src={diffView}
-				maxHeight={600}
-				alt="Merge Studio's side-by-side diff with intra-line word highlighting"
+				maxHeight={700}
+				alt="Merge Studio's side-by-side diff in VS Code comparing two versions of a file"
 				caption="The real side-by-side diff — intra-line precision."
 			/>
 		</div>
@@ -271,10 +272,6 @@ const jsonLd = [
 		font-size: var(--fs-1);
 		line-height: 1.6;
 	}
-	/* the conflicts dialog runs at its natural size off the right edge */
-	.clip-x {
-		overflow-x: clip;
-	}
 	.ch {
 		display: flex;
 		align-items: center;
@@ -284,11 +281,18 @@ const jsonLd = [
 	.ch h3 {
 		margin: 0;
 	}
-	/* the editor and the diff get the width of the capture itself (1240 px
-	   at 1:1), a little wider than the text column */
+	/* the editor, the dashboard and the diff get the width of the capture
+	   itself (1280 px at 1:1), a little wider than the text column */
 	.heromock,
 	.wide-shot {
 		max-width: 1304px;
+	}
+	.wide-shot {
+		margin-top: clamp(2rem, 4vw, 3rem);
+	}
+	/* a capture narrower than the row sits in its middle */
+	.wide-shot :global(.pw-frame) {
+		margin-inline: auto;
 	}
 	.heromock {
 		margin-top: 3.4rem;
@@ -302,15 +306,6 @@ const jsonLd = [
 	}
 	.f-copy.narrow {
 		max-width: 760px;
-	}
-	.feature {
-		display: grid;
-		grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-		gap: clamp(2rem, 5vw, 4.5rem);
-		align-items: center;
-	}
-	.feature > * {
-		min-width: 0;
 	}
 	.ticks {
 		list-style: none;
@@ -361,8 +356,7 @@ const jsonLd = [
 		.grid {
 			grid-template-columns: 1fr 1fr;
 		}
-		.origin,
-		.feature {
+		.origin {
 			grid-template-columns: 1fr;
 		}
 	}

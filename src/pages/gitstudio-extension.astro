@@ -3,6 +3,8 @@ import Site from '../layouts/Site.astro';
 import ProductWindow from '../components/ProductWindow.astro';
 import changesView from '../assets/shots/changes-view.png';
 import branchDialog from '../assets/shots/branch-dialog.png';
+import extBlame from '../assets/shots/ext-blame.png';
+import extLineHistory from '../assets/shots/ext-line-history.png';
 import Icon from '../components/Icon.astro';
 import ExtHeroMeta from '../components/ExtHeroMeta.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
@@ -170,6 +172,24 @@ const jsonLd = [
 				</p>
 			</div>
 		</div>
+		<div class="container wide-shot shot-stack">
+			<div data-reveal style="--reveal-delay:.08s">
+				<ProductWindow
+					src={extBlame}
+					minScale={0.84}
+					alt="GitStudio's full-file blame in VS Code: a date and author for every line, shaded by age"
+					caption="Full-file blame on syncStatus.ts: a date and an author on every line, the gutter shaded by age, and inline blame on the current line."
+				/>
+			</div>
+			<div data-reveal style="--reveal-delay:.08s">
+				<ProductWindow
+					src={extLineHistory}
+					minScale={0.84}
+					alt="GitStudio's Line History in VS Code listing the commits that changed the selected lines"
+					caption="Line History for lines 13–36 of the same file: the three commits that shaped them."
+				/>
+			</div>
+		</div>
 	</section>
 
 	<section class="section">
@@ -270,6 +290,20 @@ const jsonLd = [
 		letter-spacing: 0.04em;
 		color: var(--faint);
 		text-align: center;
+	}
+	/* blame and line history: full windows, at the capture's own width
+	   (1280 px at 1:1) or a little under it */
+	.wide-shot {
+		max-width: 1344px;
+		margin-top: clamp(2rem, 4vw, 3rem);
+	}
+	.wide-shot :global(.pw-frame) {
+		margin-inline: auto;
+	}
+	.shot-stack {
+		display: flex;
+		flex-direction: column;
+		gap: clamp(2rem, 4vw, 3rem);
 	}
 	.heromock {
 		margin-top: 3.2rem;
