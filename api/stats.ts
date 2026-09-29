@@ -41,5 +41,12 @@ export default async function handler(req: Req, res: Res): Promise<void> {
 	const whole = Object.values(stats.live).every(Boolean);
 	res.setHeader('Cache-Control', `s-maxage=${whole ? 900 : 120}, stale-while-revalidate=86400`);
 	res.setHeader('Access-Control-Allow-Origin', '*');
+	// RFC 8631: where this API is described, for machines and for people.
+	res.setHeader(
+		'Link',
+		'</openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", ' +
+			'</docs/stats-api.md>; rel="service-doc"; type="text/markdown", ' +
+			'</.well-known/api-catalog>; rel="api-catalog"',
+	);
 	res.status(200).json(stats);
 }

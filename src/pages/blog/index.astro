@@ -10,9 +10,25 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 const title = 'The GitStudio blog — shipping developer tools in the open';
 const description =
 	'War stories and field guides from building GitStudio: publishing to the VS Code Marketplace and Open VSX, fighting content filters, and the messy reality of shipping developer tools.';
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Blog',
+	name: 'The GitStudio blog',
+	description,
+	url: 'https://gitstudio.dev/blog/',
+	publisher: { '@type': 'Organization', name: 'GitStudio', url: 'https://gitstudio.dev/' },
+	blogPost: posts.map((post) => ({
+		'@type': 'BlogPosting',
+		headline: post.data.title,
+		url: `https://gitstudio.dev/blog/${post.id}/`,
+		datePublished: post.data.pubDate.toISOString(),
+		...(post.data.updatedDate && { dateModified: post.data.updatedDate.toISOString() }),
+	})),
+};
 ---
 
-<Site title={title} description={description} og="/og/blog.png">
+<Site title={title} description={description} og="/og/blog.png" jsonLd={jsonLd}>
 	<section class="head">
 		<div class="container">
 			<p class="eyebrow" data-reveal>The blog</p>

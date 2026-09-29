@@ -6,6 +6,7 @@ import BaseHead from '../components/BaseHead.astro';
 import SiteNav from '../components/SiteNav.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import LiveStats from '../components/LiveStats.astro';
+import WebMcp from '../components/WebMcp.astro';
 
 interface Props {
 	title: string;
@@ -46,6 +47,7 @@ const { title, description, og, ogAlt, ogType, published, modified, noindex, jso
 		</main>
 		<SiteFooter />
 		<LiveStats />
+		<WebMcp />
 
 		<script>
 			// Scroll reveals — skipped entirely for reduced-motion users.

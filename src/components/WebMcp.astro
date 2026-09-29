@@ -1,0 +1,187 @@
+---
+// WebMCP (https://webmachinelearning.github.io/webmcp/): two read-only tools a
+// browser agent can call on any page of the site. Registered on page load only
+// where the browser has the API (document.modelContext, or navigator.modelContext
+// in older Chrome builds); everywhere else this does nothing and never throws.
+//
+// get_latest_versions      the newest versions and release links, from /api/stats
+// get_install_instructions how to install on one platform or editor
+//
+// The build-time stats ride along as JSON so the tools still answer when
+// /api/stats cannot be reached (offline, `astro preview`).
+import { getStats } from '../lib/stats';
+
+const s = await getStats();
+const fallback = {
+	fetchedAt: s.fetchedAt,
+	ext: { version: s.ext.version, vsix: s.ext.vsix },
+	ms: { version: s.ms.version, vsix: s.ms.vsix },
+	app: { version: s.app.version, releaseUrl: s.app.releaseUrl, sumsUrl: s.app.sumsUrl, installers: s.app.installers },
+};
+---
+
+<script type="application/json" id="gs-webmcp-stats" set:html={JSON.stringify(fallback)} />
+
+<script>
+	import { APP, EDITORS, EXT, MERGE, installCmd, registryUrl } from '../consts';
+
+	type Installer = { os: string; arch: string; format: string; url: string };
+	type Facts = {
+		fetchedAt?: string;
+		ext: { version: string; vsix?: { url?: string } };
+		ms: { version: string; vsix?: { url?: string } };
+		app: { version: string; releaseUrl: string; sumsUrl: string; installers: Installer[] };
+	};
+	type Tool = {
+		name: string;
+		title: string;
+		description: string;
+		inputSchema: object;
+		annotations: { readOnlyHint: boolean };
+		execute: (input: Record<string, unknown>) => Promise<unknown>;
+	};
+	type ModelContextLike = { registerTool?: (tool: Tool, options?: { signal?: AbortSignal }) => unknown };
+
+	const modern = (document as unknown as { modelContext?: ModelContextLike }).modelContext;
+	const legacy = (navigator as unknown as { modelContext?: ModelContextLike }).modelContext;
+	const mc = modern ?? legacy;
+
+	function buildFacts(): Facts | null {
+		try {
+			return JSON.parse(document.getElementById('gs-webmcp-stats')?.textContent ?? 'null');
+		} catch {
+			return null;
+		}
+	}
+
+	async function facts(): Promise<{ facts: Facts | null; live: boolean }> {
+		try {
+			const r = await fetch('/api/stats', { headers: { accept: 'application/json' } });
+			if (r.ok && (r.headers.get('content-type') ?? '').includes('json')) return { facts: await r.json(), live: true };
+		} catch {
+			/* offline or no API: fall back to the build's numbers */
+		}
+		return { facts: buildFacts(), live: false };
+	}
+
+	// The spec's execute() may return any value; the older navigator API wanted MCP content blocks.
+	const answer = (value: unknown) => {
+		const text = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+		return modern ? text : { content: [{ type: 'text', text }] };
+	};
+
+	const PLATFORMS = ['macos', 'windows', 'linux', ...EDITORS.map((e) => e.key)] as const;
+
+	function installText(platform: string, product: string, f: Facts | null): string {
+		const app = f?.app;
+		const inst = (os: string) =>
+			(app?.installers ?? [])
+				.filter((i) => i.os === os)
+				.map((i) => `- ${i.arch} ${i.format}: ${i.url}`)
+				.join('\n');
+		const gitNote =
+			'GitStudio uses the Git already installed on the computer; install Git first if `git --version` fails.';
+		if (platform === 'macos') {
+			return [
+				`GitStudio Desktop ${app?.version ?? APP.version} for macOS (${APP.requirements.macos}).`,
+				`One line (verifies the checksum, installs to /Applications, clears the quarantine flag):\n  ${APP.install.macos}`,
+				`Homebrew:\n  ${APP.install.macosBrew}`,
+				`Installers:\n${inst('macOS')}`,
+				`A .dmg or .zip downloaded by hand is not notarized: click Done, then Open Anyway in System Settings > Privacy & Security, or run once: xattr -d -r -s com.apple.quarantine /Applications/GitStudio.app`,
+				gitNote,
+			].join('\n\n');
+		}
+		if (platform === 'windows') {
+			return [
+				`GitStudio Desktop ${app?.version ?? APP.version} for Windows (${APP.requirements.windows}).`,
+				`PowerShell (verifies the checksum and runs the installer, per-user):\n  ${APP.install.windows}`,
+				`Installer:\n${inst('Windows')}`,
+				'The build is unsigned: if SmartScreen appears, choose More info > Run anyway.',
+				gitNote,
+			].join('\n\n');
+		}
+		if (platform === 'linux') {
+			return [
+				`GitStudio Desktop ${app?.version ?? APP.version} for Linux (${APP.requirements.linux}).`,
+				`One line (verifies the checksum, installs the AppImage under ~/.local, no sudo):\n  ${APP.install.linux}`,
+				`Packages and archives:\n${inst('Linux')}`,
+				'AppImages need libfuse2; the .deb and .rpm do not (sudo apt install ./GitStudio-*.deb, sudo dnf install ./GitStudio-*.rpm).',
+				gitNote,
+			].join('\n\n');
+		}
+		const editor = EDITORS.find((e) => e.key === platform);
+		if (!editor) return `Unknown platform "${platform}". Use one of: ${PLATFORMS.join(', ')}.`;
+		const exts = product === 'merge-studio' ? [MERGE] : product === 'gitstudio' ? [EXT] : [EXT, MERGE];
+		return [
+			`${editor.label} installs from ${editor.registry === 'Marketplace' ? 'the Visual Studio Marketplace' : 'Open VSX'}.`,
+			...exts.map((x) => {
+				const version = x === EXT ? f?.ext.version : f?.ms.version;
+				return `${x.name} ${version ?? x.version} (${x.id}):\n  ${installCmd(editor.cli, x.id)}\n  Listing: ${registryUrl(editor.key, x)}`;
+			}),
+			gitNote,
+		].join('\n\n');
+	}
+
+	const tools: Tool[] = [
+		{
+			name: 'get_latest_versions',
+			title: 'Latest GitStudio versions',
+			description:
+				'Get the newest released versions of GitStudio Desktop, the GitStudio extension and the Merge Studio extension, with the release page, checksums file and VSIX links.',
+			inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+			annotations: { readOnlyHint: true },
+			async execute() {
+				const { facts: f, live } = await facts();
+				if (!f) return answer('The version information could not be loaded. See https://github.com/GitStudioHQ/gitstudio/releases');
+				return answer({
+					source: live ? 'https://gitstudio.dev/api/stats' : 'build-time snapshot of https://gitstudio.dev/api/stats',
+					asOf: f.fetchedAt,
+					desktop: { name: 'GitStudio Desktop', version: f.app.version, releaseUrl: f.app.releaseUrl, checksums: f.app.sumsUrl },
+					gitstudioExtension: { id: EXT.id, version: f.ext.version, vsix: f.ext.vsix?.url, marketplace: EXT.marketplaceUrl, openVsx: EXT.openVsxUrl },
+					mergeStudioExtension: { id: MERGE.id, version: f.ms.version, vsix: f.ms.vsix?.url, marketplace: MERGE.marketplaceUrl, openVsx: MERGE.openVsxUrl },
+				});
+			},
+		},
+		{
+			name: 'get_install_instructions',
+			title: 'How to install GitStudio',
+			description:
+				'Get install instructions for GitStudio. For macos, windows or linux: the GitStudio Desktop app (one-line installer, Homebrew, direct installers). For an editor (vscode, cursor, vscodium, windsurf, code-server): the GitStudio and Merge Studio extensions.',
+			inputSchema: {
+				type: 'object',
+				properties: {
+					platform: {
+						type: 'string',
+						enum: [...PLATFORMS],
+						description: 'An operating system for the desktop app, or an editor for the extensions.',
+					},
+					product: {
+						type: 'string',
+						enum: ['gitstudio', 'merge-studio', 'both'],
+						description: 'Editors only: which extension. Defaults to both.',
+					},
+				},
+				required: ['platform'],
+				additionalProperties: false,
+			},
+			annotations: { readOnlyHint: true },
+			async execute(input) {
+				const platform = String(input?.platform ?? '').toLowerCase();
+				const product = String(input?.product ?? 'both').toLowerCase();
+				const { facts: f } = await facts();
+				return answer(installText(platform, product, f));
+			},
+		},
+	];
+
+	if (mc && typeof mc.registerTool === 'function') {
+		for (const tool of tools) {
+			try {
+				// Returns a Promise in the current spec; nothing in older builds.
+				Promise.resolve(mc.registerTool(tool)).catch(() => {});
+			} catch {
+				/* a browser that rejects the shape: the page works without it */
+			}
+		}
+	}
+</script>

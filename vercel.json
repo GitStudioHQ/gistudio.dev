@@ -1,8 +1,117 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "redirects": [
-    { "source": "/desktop", "destination": "/", "permanent": true },
-    { "source": "/extension", "destination": "/gitstudio-extension", "permanent": true },
-    { "source": "/merge-studio", "destination": "/merge-studio-extension", "permanent": true }
+  "routes": [
+    {
+      "src": "^/desktop/?$",
+      "headers": {
+        "Location": "/"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/extension/?$",
+      "headers": {
+        "Location": "/gitstudio-extension"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/merge-studio/?$",
+      "headers": {
+        "Location": "/merge-studio-extension"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/\\.well-known/api-catalog$",
+      "headers": {
+        "Content-Type": "application/linkset+json; profile=\"https://www.rfc-editor.org/info/rfc9727\"",
+        "Access-Control-Allow-Origin": "*",
+        "Link": "</.well-known/api-catalog>; rel=\"api-catalog\""
+      },
+      "continue": true
+    },
+    {
+      "src": "^/\\.well-known/ai-catalog\\.json$",
+      "headers": {
+        "Content-Type": "application/ai-catalog+json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/\\.well-known/agent-skills/.*",
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/\\.well-known/agent-skills/[^/]+/SKILL\\.md$",
+      "headers": {
+        "Content-Type": "text/markdown; charset=utf-8"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/openapi\\.json$",
+      "headers": {
+        "Content-Type": "application/vnd.oai.openapi+json; charset=utf-8",
+        "Access-Control-Allow-Origin": "*"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/(llms|llms-full)\\.txt$",
+      "headers": {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Access-Control-Allow-Origin": "*"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/$",
+      "headers": {
+        "Link": "</.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/ai-catalog.json>; rel=\"ai-catalog\"; type=\"application/ai-catalog+json\", </.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\", </llms.txt>; rel=\"describedby\"; type=\"text/plain\", </sitemap-index.xml>; rel=\"sitemap\"; type=\"application/xml\", </index.md>; rel=\"alternate\"; type=\"text/markdown\"",
+        "Vary": "Accept"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/(?!api(?:/|$))((?:[^/.]+/)*[^/.]+)/?$",
+      "headers": {
+        "Link": "</.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/ai-catalog.json>; rel=\"ai-catalog\"; type=\"application/ai-catalog+json\", </.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\", </llms.txt>; rel=\"describedby\"; type=\"text/plain\", </sitemap-index.xml>; rel=\"sitemap\"; type=\"application/xml\", </$1.md>; rel=\"alternate\"; type=\"text/markdown\"",
+        "Vary": "Accept"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/$",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": "(.*)text/markdown(.*)"
+        }
+      ],
+      "dest": "/index.md",
+      "headers": {
+        "Vary": "Accept"
+      }
+    },
+    {
+      "src": "^/(?!api(?:/|$))((?:[^/.]+/)*[^/.]+)/?$",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": "(.*)text/markdown(.*)"
+        }
+      ],
+      "dest": "/$1.md",
+      "headers": {
+        "Vary": "Accept"
+      }
+    }
   ]
 }

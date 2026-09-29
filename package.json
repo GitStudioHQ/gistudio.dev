@@ -14,7 +14,8 @@
     "stats": "node scripts/stats.mjs",
     "test:stats": "node scripts/stats.mjs --test",
     "og": "node scripts/og.mjs",
-    "favicons": "node scripts/favicons.mjs"
+    "favicons": "node scripts/favicons.mjs",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.0",
@@ -25,6 +26,11 @@
   },
   "devDependencies": {
     "lucide-static": "^1.25.0",
-    "simple-icons": "^16.26.0"
+    "rehype-parse": "^9.0.1",
+    "rehype-remark": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-stringify": "^11.0.0",
+    "simple-icons": "^16.26.0",
+    "unified": "^11.0.5"
   }
 }

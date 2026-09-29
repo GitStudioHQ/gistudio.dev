@@ -1,0 +1,81 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "GitStudio",
+    "identifier": "gitstudio.dev",
+    "documentationUrl": "https://gitstudio.dev/llms.txt",
+    "logoUrl": "https://gitstudio.dev/icon-512.png"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:gitstudio.dev:skill:install-gitstudio",
+      "displayName": "Install GitStudio",
+      "type": "application/agent-skills+md",
+      "url": "https://gitstudio.dev/.well-known/agent-skills/install-gitstudio/SKILL.md",
+      "description": "Install GitStudio Desktop on macOS, Windows or Linux, or the GitStudio and Merge Studio extensions in VS Code, Cursor, VSCodium, Windsurf or code-server.",
+      "tags": [
+        "git",
+        "install",
+        "vscode",
+        "cursor",
+        "desktop"
+      ],
+      "representativeQueries": [
+        "how do I install GitStudio on macOS",
+        "install the GitStudio extension in Cursor",
+        "install Merge Studio in VS Code",
+        "download GitStudio for Linux"
+      ]
+    },
+    {
+      "identifier": "urn:air:gitstudio.dev:skill:gitstudio-mcp",
+      "displayName": "Connect an agent to GitStudio's MCP server",
+      "type": "application/agent-skills+md",
+      "url": "https://gitstudio.dev/.well-known/agent-skills/gitstudio-mcp/SKILL.md",
+      "description": "Set up GitStudio's local stdio MCP server, shipped with the desktop app, so Claude Desktop, Cursor, VS Code or Windsurf can use read-only (and opt-in write) Git tools on a repository.",
+      "tags": [
+        "mcp",
+        "git",
+        "agents"
+      ],
+      "representativeQueries": [
+        "connect Claude Desktop to my git repository with GitStudio",
+        "set up the GitStudio MCP server in Cursor",
+        "give an AI agent read-only git tools"
+      ]
+    },
+    {
+      "identifier": "urn:air:gitstudio.dev:api:stats",
+      "displayName": "GitStudio stats API",
+      "type": "application/linkset+json",
+      "url": "https://gitstudio.dev/.well-known/api-catalog",
+      "description": "Public, read-only JSON API with the newest GitStudio versions, install and download counts, and installer URLs. No authentication.",
+      "tags": [
+        "api",
+        "versions",
+        "downloads"
+      ],
+      "representativeQueries": [
+        "what is the latest version of GitStudio",
+        "GitStudio download URL for Windows",
+        "how many installs does the GitStudio extension have"
+      ]
+    },
+    {
+      "identifier": "urn:air:gitstudio.dev:docs:llms-txt",
+      "displayName": "GitStudio llms.txt",
+      "type": "text/plain",
+      "url": "https://gitstudio.dev/llms.txt",
+      "description": "What GitStudio, Merge Studio and GitStudio Desktop are, how to install them, and links to every page as Markdown.",
+      "tags": [
+        "docs",
+        "llms.txt"
+      ],
+      "representativeQueries": [
+        "what is GitStudio",
+        "is GitStudio free and open source",
+        "GitStudio vs GitKraken"
+      ]
+    }
+  ]
+}

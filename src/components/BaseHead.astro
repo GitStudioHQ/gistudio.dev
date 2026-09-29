@@ -30,6 +30,10 @@ const {
 	noindex = false,
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// The page's Markdown twin, written after the build by integrations/agent-ready.mjs:
+// / → /index.md, /download/ → /download.md, /blog/<slug>/ → /blog/<slug>.md
+const path = Astro.url.pathname.replace(/\/+$/, '');
+const markdownURL = new URL(path ? `${path}.md` : '/index.md', Astro.site);
 const ogURL = new URL(og, Astro.site);
 ---
 
@@ -44,6 +48,7 @@ const ogURL = new URL(og, Astro.site);
 <link rel="manifest" href="/site.webmanifest" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="alternate" type="application/rss+xml" title={`${SITE_TITLE} blog`} href={new URL('rss.xml', Astro.site)} />
+<link rel="ai-catalog" href="/.well-known/ai-catalog.json" type="application/ai-catalog+json" />
 <meta name="generator" content={Astro.generator} />
 
 <Font cssVariable="--font-sans" preload />
@@ -53,6 +58,7 @@ const ogURL = new URL(og, Astro.site);
 <!-- Canonical URL: an indexable page names itself; a noindex page (404) names nothing. -->
 {!noindex && <link rel="canonical" href={canonicalURL} />}
 {noindex && <meta name="robots" content="noindex,nofollow" />}
+{!noindex && <link rel="alternate" type="text/markdown" href={markdownURL} />}
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>

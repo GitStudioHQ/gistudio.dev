@@ -1,0 +1,28 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://gitstudio.dev/.well-known/api-catalog",
+      "item": [
+        {
+          "href": "https://gitstudio.dev/api/stats",
+          "title": "GitStudio stats API"
+        }
+      ]
+    },
+    {
+      "anchor": "https://gitstudio.dev/api/stats",
+      "service-desc": [
+        {
+          "href": "https://gitstudio.dev/openapi.json",
+          "type": "application/vnd.oai.openapi+json;version=3.1"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://gitstudio.dev/docs/stats-api.md",
+          "type": "text/markdown"
+        }
+      ]
+    }
+  ]
+}
