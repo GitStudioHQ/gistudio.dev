@@ -365,7 +365,9 @@ const workflow = [
 						Your code, no. Git runs locally, GitHub calls go straight to GitHub with your own
 						sign-in, and there is no usage tracking and no analytics. What the app does send: a
 						check for new versions to GitHub Releases; avatar lookups on Gravatar, which the
-						commit graph makes with an MD5 hash of each commit author's email; and an anonymous
+						commit graph makes with an MD5 hash of each commit author's email (Settings ▸
+						Appearance turns them off, and so does <code>gitstudio.avatars.gravatar</code> in the
+						extension); and an anonymous
 						crash report when something fails — the shape of the error with a random install
 						id, scrubbed of paths, emails, remotes, and code, sent to gitstudio.dev and filed in
 						a private tracker. Crash reports are on by default: Help → Send Anonymous Crash
@@ -373,6 +375,8 @@ const workflow = [
 						set <code>gitstudio.errorReporting.enabled</code> to false or turn off VS Code's
 						telemetry; Merge Studio sends none. The assistant is off until you connect a model,
 						and with a local model through Ollama or LM Studio, nothing leaves your machine.
+						Every connection, in full: the <a href="https://github.com/GitStudioHQ/gitstudio/blob/main/apps/desktop/PRIVACY.md">desktop app's</a>
+						and the <a href="https://github.com/GitStudioHQ/gitstudio/blob/main/apps/extension/PRIVACY.md">extension's</a> privacy notes.
 					</p>
 				</details>
 				<details>
