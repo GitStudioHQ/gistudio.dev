@@ -5,19 +5,24 @@
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 
+/** A chip; `live` makes its value a data-live fact (src/lib/stats.ts keys), with `before`/`after` as fixed text around it. */
+type Meta = string | { live: string; text: string | number; before?: string; after?: string };
+
 interface Props {
 	icon: ImageMetadata;
 	name: string;
 	tagline: string;
-	meta: string[];
+	meta: Meta[];
 	primaryHref: string;
 	primaryLabel: string;
 	secondaryHref?: string;
 	secondaryLabel?: string;
 	stars?: number;
+	/** data-live key for the star rating, e.g. "ms.rating". */
+	starsLive?: string;
 }
 
-const { icon, name, tagline, meta, primaryHref, primaryLabel, secondaryHref, secondaryLabel, stars } = Astro.props;
+const { icon, name, tagline, meta, primaryHref, primaryLabel, secondaryHref, secondaryLabel, stars, starsLive } = Astro.props;
 ---
 
 <div class="listing">
@@ -27,7 +32,7 @@ const { icon, name, tagline, meta, primaryHref, primaryLabel, secondaryHref, sec
 			{name}
 			{stars && (
 				<span class="stars" aria-label={`${stars.toFixed(1)} out of 5 stars on the VS Code Marketplace`}>
-					{'★'.repeat(Math.round(stars))} <b>{stars.toFixed(1)}</b>
+					{'★'.repeat(Math.round(stars))} <b data-live={starsLive}>{stars.toFixed(1)}</b>
 				</span>
 			)}
 		</p>
@@ -39,7 +44,13 @@ const { icon, name, tagline, meta, primaryHref, primaryLabel, secondaryHref, sec
 			<span class="tagline">{tagline}</span>
 		</p>
 		<p class="meta">
-			{meta.map((m) => <span class="chip">{m}</span>)}
+			{meta.map((m) =>
+				typeof m === 'string' ? (
+					<span class="chip">{m}</span>
+				) : (
+					<span class="chip">{m.before}<span data-live={m.live}>{m.text}</span>{m.after}</span>
+				),
+			)}
 		</p>
 	</div>
 	<div class="acts">

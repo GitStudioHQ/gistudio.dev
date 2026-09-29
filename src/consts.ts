@@ -1,6 +1,11 @@
-// Single source of truth for site-wide data: product versions, links, and
-// distribution channels. Update HERE when a release ships — every page reads
-// from this file.
+// Site-wide data: product versions, links, and distribution channels.
+//
+// Versions, counts, command counts, VSIX/installer URLs and sizes are
+// SUPERSEDED at build time by src/lib/stats.ts, which reads them from GitHub
+// Releases, Open VSX and the VS Code Marketplace (and api/stats.ts serves the
+// same JSON to the page at view time). The values here are only its FALLBACK
+// when a source is down, so they no longer need a hand edit per release —
+// refresh them now and then so a fallback build is never far behind.
 
 export const SITE_TITLE = 'GitStudio';
 export const SITE_DESCRIPTION =
@@ -59,7 +64,7 @@ export const MERGE = {
 	openVsxUrl: 'https://open-vsx.org/extension/gitstudio/merge-studio',
 	minVsCode: '1.82',
 	vsixSizeMb: '3.2',
-	// Average rating on the Marketplace (3 ratings, checked 2026-09-28).
+	// Average rating on the Marketplace (3 ratings, checked 2026-09-29).
 	marketplaceStars: 5.0,
 };
 
@@ -148,8 +153,26 @@ export const registryUrl = (
 ) => (editorKey === 'vscode' ? ext.marketplaceUrl : ext.openVsxUrl);
 
 /**
- * Open VSX download counts, rounded down (open-vsx.org/api/gitstudio/<name>,
- * downloadCount, checked 2026-09-28: 8,354 and 2,376). Open VSX counts
- * downloads, so the pages say "downloads", not "installs".
+ * Hand-checked counts, the fallback for src/lib/stats.ts (checked 2026-09-29).
+ * Marketplace: extensionquery statistics `install` / `averagerating` /
+ * `ratingcount`. Open VSX: open-vsx.org/api/gitstudio/<name> `downloadCount`
+ * — Open VSX counts every VSIX download (updates included), so pages say
+ * "downloads" for it and "installs" only for the Marketplace number.
+ * app.downloads: download_count summed over every installer on every app-v*
+ * GitHub release. A fallback count is printed with a trailing "+".
  */
-export const OPENVSX_DOWNLOADS = { gitstudio: '8,300+', mergeStudio: '2,300+' };
+export const FALLBACK_COUNTS = {
+	ext: { marketplaceInstalls: 531, openVsxDownloads: 8738, rating: 5.0, ratingCount: 2 },
+	ms: { marketplaceInstalls: 576, openVsxDownloads: 2810, ratingCount: 3, commands: 13 },
+	app: { downloads: 466 },
+};
+
+/**
+ * @deprecated Read `stats.text['ext.downloads']` / `['ms.downloads']` from
+ * src/lib/stats.ts (live at build time and at view time). Kept so pages not
+ * yet moved over still build; derived from the fallback, rounded down.
+ */
+export const OPENVSX_DOWNLOADS = {
+	gitstudio: `${(Math.floor(FALLBACK_COUNTS.ext.openVsxDownloads / 100) * 100).toLocaleString('en-US')}+`,
+	mergeStudio: `${(Math.floor(FALLBACK_COUNTS.ms.openVsxDownloads / 100) * 100).toLocaleString('en-US')}+`,
+};

@@ -9,13 +9,18 @@ import Icon from '../components/Icon.astro';
 import ListingCard from '../components/ListingCard.astro';
 import EditorChips from '../components/EditorChips.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
-import extIcon from '../assets/brand/ext-icon-192.png';
+import extIcon from '../assets/brand/gitstudio-icon.png';
 import GraphLive from '../components/GraphLive.astro';
 import { EXT, MERGE, GITHUB_REPO_URL } from '../consts';
+import { getStats } from '../lib/stats';
+
+// Version, command count and minimum VS Code are read at build time (and
+// refreshed on view through data-live) — see src/lib/stats.ts.
+const stats = await getStats();
 
 const title = 'GitStudio for VS Code, Cursor & VSCodium — Git client extension';
 const description =
-	`GitStudio is a free, open-source Git client extension for VS Code, Cursor, VSCodium, Windsurf, and code-server: a live commit graph, inline blame with a code-age heatmap, hunk and line staging, stashes with drag and drop, a three-pane merge editor with a conflicts dashboard, interactive rebase with Undo, worktrees, and GitHub pull requests. ${EXT.commands} commands, on the Marketplace and Open VSX.`;
+	`GitStudio is a free, open-source Git client extension for VS Code, Cursor, VSCodium, Windsurf, and code-server: a live commit graph, inline blame with a code-age heatmap, hunk and line staging, stashes with drag and drop, a three-pane merge editor with a conflicts dashboard, interactive rebase with Undo, worktrees, and GitHub pull requests. ${stats.ext.commands} commands, on the Marketplace and Open VSX.`;
 
 const jsonLd = [
 	{
@@ -28,7 +33,7 @@ const jsonLd = [
 		sameAs: [EXT.marketplaceUrl, EXT.openVsxUrl],
 		applicationCategory: 'DeveloperApplication',
 		operatingSystem: 'VS Code, Cursor, VSCodium, Windsurf, code-server',
-		softwareVersion: EXT.version,
+		softwareVersion: stats.ext.version,
 		license: 'https://www.apache.org/licenses/LICENSE-2.0',
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 	},
@@ -45,7 +50,7 @@ const jsonLd = [
 		'@context': 'https://schema.org',
 		'@type': 'FAQPage',
 		mainEntity: [
-			{ '@type': 'Question', name: 'Which editors does the GitStudio extension support?', acceptedAnswer: { '@type': 'Answer', text: 'VS Code, Cursor, VSCodium, Windsurf, and code-server — any editor built on VS Code 1.78 or newer. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.' } },
+			{ '@type': 'Question', name: 'Which editors does the GitStudio extension support?', acceptedAnswer: { '@type': 'Answer', text: `VS Code, Cursor, VSCodium, Windsurf, and code-server — any editor built on VS Code ${stats.ext.minVsCode} or newer. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.` } },
 			{ '@type': 'Question', name: 'How do I install GitStudio in Cursor?', acceptedAnswer: { '@type': 'Answer', text: 'Search “GitStudio” in Cursor’s Extensions view (Cursor reads the Open VSX registry), or run cursor --install-extension gitstudio.gitstudio from a shell.' } },
 			{ '@type': 'Question', name: 'Is the GitStudio extension free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes — every feature is free on public and private repos. It is Apache-2.0 licensed and open source, with no account and no usage tracking. It sends anonymous crash reports when a command fails; gitstudio.errorReporting.enabled, or VS Code\'s own telemetry setting, turns them off.' } },
 		],
@@ -61,12 +66,12 @@ const jsonLd = [
 				<a href="/extensions">Extensions</a> <span aria-hidden="true">/</span>
 				<span>GitStudio</span>
 			</nav>
-			<p class="eyebrow" data-reveal>GitStudio extension · VS Code &amp; Cursor · v{EXT.version}</p>
+			<p class="eyebrow" data-reveal>GitStudio extension · VS Code &amp; Cursor · v<span data-live="ext.version">{stats.ext.version}</span></p>
 			<h1 data-reveal>The full Git workflow in VS Code and Cursor.</h1>
 			<p class="lede" data-reveal>
 				One extension that puts the full Git workflow in your editor: a commit graph, inline blame,
 				hunk and line staging, stashes, a three-pane merge editor, interactive rebase, worktrees, and
-				GitHub pull requests. {EXT.commands} commands, four sidebar views, and a Commit Graph panel.
+				GitHub pull requests. <span data-live="ext.commands">{stats.ext.commands}</span> commands, four sidebar views, and a Commit Graph panel.
 				Free and open source.
 			</p>
 			<div class="cta-row" data-reveal>
@@ -78,7 +83,12 @@ const jsonLd = [
 					icon={extIcon}
 					name="GitStudio"
 					tagline="The whole Git workflow, in one extension"
-					meta={[`v${EXT.version}`, 'Apache-2.0', `${EXT.commands} commands`, `VS Code ${EXT.minVsCode}+`]}
+					meta={[
+						{ live: 'ext.version', text: stats.ext.version, before: 'v' },
+						'Apache-2.0',
+						{ live: 'ext.commands', text: stats.ext.commands, after: ' commands' },
+						{ live: 'ext.minVsCode', text: stats.ext.minVsCode, before: 'VS Code ', after: '+' },
+					]}
 					primaryHref={EXT.marketplaceUrl}
 					primaryLabel="Install from Marketplace"
 					secondaryHref={EXT.openVsxUrl}
@@ -209,7 +219,7 @@ const jsonLd = [
 			<h2 data-reveal>Install for your editor.</h2>
 			<p class="lede" data-reveal>
 				Search <strong>“GitStudio”</strong> in your editor's Extensions view, or grab the exact
-				command below. Requires VS Code {EXT.minVsCode}+ (or any editor built on it) and git on
+				command below. Requires VS Code <span data-live="ext.minVsCode">{stats.ext.minVsCode}</span>+ (or any editor built on it) and git on
 				your PATH. Prefer an artifact? The <a href="/download#extension">download page</a> has the
 				VSIX with a SHA-256.
 			</p>

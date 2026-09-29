@@ -8,8 +8,13 @@ import Icon from '../components/Icon.astro';
 import ListingCard from '../components/ListingCard.astro';
 import EditorChips from '../components/EditorChips.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
-import mergeIcon from '../assets/brand/merge-icon-192.png';
-import { MERGE, OPENVSX_DOWNLOADS } from '../consts';
+import mergeIcon from '../assets/brand/merge-studio-icon.png';
+import { MERGE } from '../consts';
+import { getStats } from '../lib/stats';
+
+// Version, rating, download count and minimum VS Code are read at build time
+// (and refreshed on view through data-live) — see src/lib/stats.ts.
+const stats = await getStats();
 
 const title = 'Merge Studio — 3-way merge & conflict editor for VS Code & Cursor';
 const description =
@@ -35,7 +40,7 @@ const jsonLd = [
 		sameAs: [MERGE.marketplaceUrl, MERGE.openVsxUrl],
 		applicationCategory: 'DeveloperApplication',
 		operatingSystem: 'VS Code, Cursor, VSCodium, Windsurf, code-server',
-		softwareVersion: MERGE.version,
+		softwareVersion: stats.ms.version,
 		license: MERGE.licenseUrl,
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 	},
@@ -70,9 +75,9 @@ const jsonLd = [
 			</nav>
 			<div class="statusline" data-reveal>
 				<span class="badge live">● Live</span>
-				<span class="chip">v{MERGE.version}</span>
-				<span class="chip">★ {MERGE.marketplaceStars.toFixed(1)} on the Marketplace</span>
-				<span class="chip">{OPENVSX_DOWNLOADS.mergeStudio} Open VSX downloads</span>
+				<span class="chip">v<span data-live="ms.version">{stats.ms.version}</span></span>
+				<span class="chip">★ <span data-live="ms.rating">{stats.text['ms.rating']}</span> on the Marketplace</span>
+				<span class="chip"><span data-live="ms.downloads">{stats.text['ms.downloads']}</span> Open VSX downloads</span>
 				<span class="chip">{MERGE.license}</span>
 			</div>
 			<h1 data-reveal>A three-pane editor for merge conflicts.</h1>
@@ -90,12 +95,18 @@ const jsonLd = [
 					icon={mergeIcon}
 					name="Merge Studio"
 					tagline="Three-way merge & conflict editor"
-					meta={[`v${MERGE.version}`, MERGE.license, `VS Code ${MERGE.minVsCode}+`, 'Cursor · VSCodium · Windsurf']}
+					meta={[
+						{ live: 'ms.version', text: stats.ms.version, before: 'v' },
+						MERGE.license,
+						{ live: 'ms.minVsCode', text: stats.ms.minVsCode, before: 'VS Code ', after: '+' },
+						'Cursor · VSCodium · Windsurf',
+					]}
 					primaryHref={MERGE.marketplaceUrl}
 					primaryLabel="Install from Marketplace"
 					secondaryHref={MERGE.openVsxUrl}
 					secondaryLabel="Open VSX"
-					stars={5}
+					stars={stats.ms.rating}
+					starsLive="ms.rating"
 				/>
 			</div>
 			<EditorChips class="hero-editors" data-reveal />
@@ -179,7 +190,7 @@ const jsonLd = [
 			<h2 data-reveal>Install for your editor.</h2>
 			<p class="lede" data-reveal>
 				Search <strong>“Merge Studio”</strong> in your editor's Extensions view, or grab the
-				command below. Requires VS Code {MERGE.minVsCode} or newer, or any editor built on it.
+				command below. Requires VS Code <span data-live="ms.minVsCode">{stats.ms.minVsCode}</span> or newer, or any editor built on it.
 			</p>
 			<InstallMatrix ext={MERGE} />
 		</div>
