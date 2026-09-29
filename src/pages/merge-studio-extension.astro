@@ -1,27 +1,32 @@
 ---
 import Site from '../layouts/Site.astro';
-import Shot from '../components/Shot.astro';
-import mergeEditor from '../assets/shots/merge-editor.png';
-import diffView from '../assets/shots/diff-view.png';
-import conflictsDialog from '../assets/shots/conflicts-dialog.png';
+import ProductWindow from '../components/ProductWindow.astro';
+import mergeEditor from '../assets/shots/ms-merge-editor.png';
+import diffView from '../assets/shots/ms-diff.png';
+// a crop of the capture ms-dashboard: the editor area, down to Continue Merge
+import conflictsDialog from '../assets/shots/ms-dashboard.png';
 import Icon from '../components/Icon.astro';
-import ListingCard from '../components/ListingCard.astro';
-import EditorChips from '../components/EditorChips.astro';
+import ExtHeroMeta from '../components/ExtHeroMeta.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
-import mergeIcon from '../assets/brand/merge-icon-192.png';
-import { EXT, MERGE, OPENVSX_INSTALLS } from '../consts';
+import mergeIcon from '../assets/brand/merge-studio-icon.png';
+import { MERGE } from '../consts';
+import { getStats } from '../lib/stats';
+
+// Version, rating, download count and minimum VS Code are read at build time
+// (and refreshed on view through data-live) — see src/lib/stats.ts.
+const stats = await getStats();
 
 const title = 'Merge Studio — 3-way merge & conflict editor for VS Code & Cursor';
 const description =
-	'Merge Studio is a free, open-source three-pane merge & conflict editor for VS Code, Cursor, VSCodium, Windsurf, and code-server: color ribbons, one-click accepts, a conflicts dashboard, a named undo history, and precise side-by-side diffs. Live on the VS Code Marketplace and Open VSX.';
+	'Merge Studio is a free, open-source three-pane merge & conflict editor for VS Code, Cursor, VSCodium, Windsurf, and code-server: colour-coded changes with a legend, one-click accepts, a conflicts dashboard with Continue, Skip and Abort, a named undo history, and a side-by-side diff. Live on the VS Code Marketplace and Open VSX.';
 
 const feats = [
-	{ icon: 'merge', h: 'Three panes, zero guessing', p: 'Yours, result, theirs — side by side with color ribbons and one-click accept arrows connecting them. You always see where a change came from and where it lands.' },
-	{ icon: 'views', h: 'A conflicts dashboard', p: 'Every conflicted file tracked automatically, with per-file resolution actions. No hunting through the file tree while a merge is half-done.' },
-	{ icon: 'undo', h: 'Undo that remembers names', p: 'A named undo/redo history for the whole resolution session. Step back through decisions, not keystrokes.' },
-	{ icon: 'compare', h: 'A precise diff', p: 'Side-by-side comparison with intra-line highlighting, change navigation, and a large-file fallback that keeps huge merges workable.' },
-	{ icon: 'worktree', h: 'JetBrains hand-off', p: 'One click opens the same conflict in an installed JetBrains IDE — IntelliJ, WebStorm, PyCharm, GoLand, Rider, CLion, PhpStorm, RubyMine, DataGrip — for a second opinion.' },
-	{ icon: 'zap', h: 'Tiny and focused', p: 'Merge Studio does one job. It starts fast, stays out of your way, and works in VS Code, Cursor, VSCodium, Windsurf, and code-server. MIT licensed.' },
+	{ icon: 'merge', h: 'Three panes, zero guessing', p: 'Yours on the left, the file you will commit in the middle, theirs on the right, joined by ribbons you click to take a change. You always see where a change came from and where it lands.' },
+	{ icon: 'views', h: 'A conflicts dashboard', p: 'Every conflicted file with Accept Yours, Accept Theirs, and Merge…, and Continue, Skip, and Abort for the merge, rebase, or cherry-pick itself. It says which side is which, and which commit is being replayed.' },
+	{ icon: 'undo', h: 'Undo that remembers names', p: 'A named undo/redo history for the whole resolution session. Step back through decisions, not keystrokes, or hold Undo on a resolved file to get its conflict back.' },
+	{ icon: 'compare', h: 'A precise diff', p: 'Compare two files, or a file with its last commit, side by side with the changed words highlighted. Stage a file one change at a time with ticks.' },
+	{ icon: 'rebase', h: 'Rebases that make sense', p: 'Git swaps ours and theirs during a rebase. Merge Studio does not: Yours is always your own commit, on the left, and the header says which branch is landing where.' },
+	{ icon: 'zap', h: 'Focused', p: 'Merge Studio does one job and stays out of your way, in VS Code, Cursor, VSCodium, Windsurf, and code-server. Run Open Sample Merge to try it without touching a repository.' },
 ];
 
 const jsonLd = [
@@ -35,8 +40,8 @@ const jsonLd = [
 		sameAs: [MERGE.marketplaceUrl, MERGE.openVsxUrl],
 		applicationCategory: 'DeveloperApplication',
 		operatingSystem: 'VS Code, Cursor, VSCodium, Windsurf, code-server',
-		softwareVersion: MERGE.version,
-		license: 'https://opensource.org/licenses/MIT',
+		softwareVersion: stats.ms.version,
+		license: MERGE.licenseUrl,
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 	},
 	{
@@ -53,8 +58,8 @@ const jsonLd = [
 		'@type': 'FAQPage',
 		mainEntity: [
 			{ '@type': 'Question', name: 'Which editors does Merge Studio support?', acceptedAnswer: { '@type': 'Answer', text: 'VS Code, Cursor, VSCodium, Windsurf, and code-server. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.' } },
-			{ '@type': 'Question', name: 'Do I need Merge Studio if I have the GitStudio extension?', acceptedAnswer: { '@type': 'Answer', text: 'No — the GitStudio extension already includes the same three-pane merge editor. Merge Studio is the standalone option for people who want only conflict resolution.' } },
-			{ '@type': 'Question', name: 'Is Merge Studio free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Merge Studio is MIT-licensed, open source, and free on public and private repos, with no account.' } },
+			{ '@type': 'Question', name: 'Do I need Merge Studio if I have the GitStudio extension?', acceptedAnswer: { '@type': 'Answer', text: 'No — the GitStudio extension already includes the same merge editor and conflicts dashboard. With both installed, GitStudio opens conflicts and Merge Studio stays quiet. Merge Studio is the standalone option for people who want only conflict resolution.' } },
+			{ '@type': 'Question', name: 'Is Merge Studio free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Merge Studio is open source and free on public and private repos, with no account. Its own files are MIT-licensed; the merge packages it shares with GitStudio are Apache-2.0.' } },
 		],
 	},
 ];
@@ -68,43 +73,37 @@ const jsonLd = [
 				<a href="/extensions">Extensions</a> <span aria-hidden="true">/</span>
 				<span>Merge Studio</span>
 			</nav>
-			<div class="statusline" data-reveal>
-				<span class="badge live">● Live</span>
-				<span class="chip">v{MERGE.version}</span>
-				<span class="chip">★ {MERGE.marketplaceStars.toFixed(1)} on the Marketplace</span>
-				<span class="chip">{OPENVSX_INSTALLS.mergeStudio}+ Open VSX installs</span>
-				<span class="chip">MIT</span>
-			</div>
+			<p class="eyebrow" data-reveal>Merge Studio extension</p>
 			<h1 data-reveal>A three-pane editor for merge conflicts.</h1>
 			<p class="lede" data-reveal>
-				Yours, result, and theirs, side by side, with color ribbons and one-click accepts. A
-				conflict opens the editor automatically, and a named undo history lets you step back through
-				every decision you make.
+				Yours, the result, and theirs, side by side, every change coloured by the decision it
+				needs. When a merge or rebase stops on conflicts, the dashboard opens with every file, and
+				a named undo history lets you step back through every decision you make.
 			</p>
 			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary btn-lg" href="#install">Install now</a>
-				<a class="btn btn-ghost btn-lg" href={MERGE.openVsxUrl} target="_blank" rel="noopener">Open VSX — Cursor &amp; friends</a>
+				<a class="btn btn-primary btn-lg" href={MERGE.marketplaceUrl} target="_blank" rel="noopener">Install from Marketplace</a>
+				<a class="btn btn-ghost btn-lg" href={MERGE.openVsxUrl} target="_blank" rel="noopener">Open VSX</a>
 			</div>
-			<div class="listing-wrap" data-reveal style="--reveal-delay:.06s">
-				<ListingCard
+			<div data-reveal style="--reveal-delay:.06s">
+				<ExtHeroMeta
 					icon={mergeIcon}
-					name="Merge Studio"
-					tagline="Three-way merge & conflict editor"
-					meta={[`v${MERGE.version}`, 'MIT', 'VS Code · Cursor · VSCodium · Windsurf']}
-					primaryHref={MERGE.marketplaceUrl}
-					primaryLabel="Install from Marketplace"
-					secondaryHref={MERGE.openVsxUrl}
-					secondaryLabel="Open VSX"
-					stars={5}
+					facts={[
+						{ live: 'ms.version', text: stats.ms.version, pre: 'v' },
+						{ live: 'ms.installs', text: stats.text['ms.installs'], post: ' installs', title: 'Installs from the VS Code Marketplace' },
+						{ live: 'ms.downloads', text: stats.text['ms.downloads'], post: ' downloads', title: 'Downloads from Open VSX' },
+						{ live: 'ms.rating', text: stats.text['ms.rating'], pre: '★ ', title: 'Rating on the VS Code Marketplace' },
+						{ text: MERGE.license },
+						{ text: 'Source on GitHub', href: MERGE.repoUrl },
+					]}
 				/>
 			</div>
-			<EditorChips class="hero-editors" data-reveal />
 		</div>
 		<div class="container heromock" data-reveal>
-			<Shot
+			<ProductWindow
 				src={mergeEditor}
-				alt="Merge Studio's real three-pane editor: yours, result and theirs panes in Monaco with conflict ribbons, per-hunk accept controls, and the apply toolbar"
-				caption="The real editor, mid-merge — 4 changes, 3 conflicts, every ribbon live."
+				minScale={0.85}
+				alt="Merge Studio's three-way merge editor in VS Code on its sample conflict: yours, the result and theirs side by side"
+				caption="The real editor, mid-rebase — 9 changes, 3 conflicts, every ribbon live."
 				priority
 			/>
 		</div>
@@ -116,7 +115,7 @@ const jsonLd = [
 			<h2 data-reveal>What Merge Studio does.</h2>
 			<div class="grid">
 				{feats.map((f, i) => (
-					<div class="card" data-reveal style={`--reveal-delay:${(i % 3) * 0.07}s`}>
+					<div class="feat" data-reveal style={`--reveal-delay:${(i % 3) * 0.07}s`}>
 						<div class="ch"><span class="icon-tile"><Icon name={f.icon as any} /></span><h3>{f.h}</h3></div>
 						<p>{f.p}</p>
 					</div>
@@ -126,8 +125,8 @@ const jsonLd = [
 	</section>
 
 	<section class="section">
-		<div class="container feature">
-			<div class="f-copy" data-reveal>
+		<div class="container">
+			<div class="f-copy narrow" data-reveal>
 				<p class="eyebrow">Mid-merge control</p>
 				<h2>A dashboard that tracks every conflict.</h2>
 				<p class="lede">
@@ -137,18 +136,19 @@ const jsonLd = [
 					ship or continue, always knowing exactly where you stand.
 				</p>
 				<ul class="ticks">
-					<li>Conflicts auto-open as they appear — no hunting through the file tree</li>
-					<li>Step back through decisions, not keystrokes</li>
-					<li>Large files fall back to a mode that keeps huge merges workable</li>
+					<li>Opens the moment a merge, rebase, cherry-pick, revert, git am, or stash pop stops on conflicts</li>
+					<li>Continue says why when it can't run yet, and Abort and Skip ask first</li>
+					<li>Binary and deleted-on-one-side files get the choices that make sense: keep yours, keep theirs, or delete</li>
 				</ul>
 			</div>
-			<div class="f-visual" data-reveal style="--reveal-delay:.1s">
-				<Shot
-					src={conflictsDialog}
-					alt="Merge Studio's conflicts dialog listing every conflicted file with per-file resolve actions"
-					caption="The real conflicts dialog — every file tracked, nothing lives in your head."
-				/>
-			</div>
+		</div>
+		<div class="container wide-shot" data-reveal style="--reveal-delay:.1s">
+			<ProductWindow
+				src={conflictsDialog}
+				minScale={0.9}
+				alt="Merge Studio's conflict dashboard in VS Code: four conflicted files, each with one-click accept buttons and a merge button"
+				caption="A real merge stopped on four files: each one a click from done, and Continue Merge waits for the last."
+			/>
 		</div>
 	</section>
 
@@ -163,10 +163,11 @@ const jsonLd = [
 				</p>
 			</div>
 		</div>
-		<div class="container" data-reveal style="--reveal-delay:.1s">
-			<Shot
+		<div class="container wide-shot" data-reveal style="--reveal-delay:.1s">
+			<ProductWindow
 				src={diffView}
-				alt="Merge Studio's side-by-side diff with intra-line word highlighting"
+				maxHeight={700}
+				alt="Merge Studio's side-by-side diff in VS Code comparing two versions of a file"
 				caption="The real side-by-side diff — intra-line precision."
 			/>
 		</div>
@@ -179,7 +180,7 @@ const jsonLd = [
 			<h2 data-reveal>Install for your editor.</h2>
 			<p class="lede" data-reveal>
 				Search <strong>“Merge Studio”</strong> in your editor's Extensions view, or grab the
-				command below. It's tiny — a few hundred KB — and MIT licensed.
+				command below. Requires VS Code <span data-live="ms.minVsCode">{stats.ms.minVsCode}</span> or newer, or any editor built on it.
 			</p>
 			<InstallMatrix ext={MERGE} />
 		</div>
@@ -193,22 +194,22 @@ const jsonLd = [
 				<p class="lede">
 					Merge Studio came first — a single, obsessive answer to the worst five minutes of any
 					workday. Its pure, unit-tested merge engine grew
-					into <code>@gitstudio/engine</code>, the core that now powers the whole suite: the same
-					three-pane editor ships in the <a href="/gitstudio-extension">GitStudio extension</a> and
-					in <a href="/">GitStudio Desktop</a>. The products stay separate on purpose —
+					into <code>@gitstudio/engine</code>, the core that now powers the whole suite. Since
+					1.0, Merge Studio is built on the same merge editor and conflicts dashboard as
+					the <a href="/gitstudio-extension">GitStudio extension</a> and <a href="/">GitStudio Desktop</a>,
+					so a fix in one reaches both. The products stay separate on purpose —
 					<strong>they share an engine, not a listing.</strong>
 				</p>
 			</div>
 			<div class="card which" data-reveal style="--reveal-delay:.08s">
 				<h3>Which one should I install?</h3>
 				<p>
-					<strong>Just want better merges?</strong> Merge Studio. It's tiny and does exactly
-					that.
+					<strong>Just want better merges?</strong> Merge Studio. It does exactly that.
 				</p>
 				<p>
 					<strong>Want the whole workflow</strong> — graph, blame, staging, rebase, PRs, and
 					the same three-pane merge? <a href="/gitstudio-extension">The GitStudio extension</a>.
-					You don't need both; GitStudio includes the merge editor.
+					You don't need both; GitStudio includes the merge editor and the dashboard.
 				</p>
 			</div>
 		</div>
@@ -243,13 +244,6 @@ const jsonLd = [
 	.crumbs a {
 		color: var(--muted);
 	}
-	.statusline {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.55rem;
-		margin-bottom: 1.4rem;
-	}
 	.hero h1 {
 		max-width: 18ch;
 	}
@@ -262,12 +256,21 @@ const jsonLd = [
 	.cta-row.centered {
 		justify-content: center;
 	}
-	.listing-wrap {
-		margin-top: 2rem;
-		max-width: 720px;
+	/* the extension cards' surface: no outline, a faint inner edge, depth */
+	.feat {
+		border-radius: 20px;
+		padding: 1.6rem 1.65rem 1.7rem;
+		background: linear-gradient(180deg, #13131f, #0f0f19);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.045),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+			0 24px 50px -36px rgba(0, 0, 0, 0.9);
 	}
-	.hero-editors {
-		margin-top: 1.6rem;
+	.feat p {
+		margin: 0;
+		color: var(--muted);
+		font-size: var(--fs-1);
+		line-height: 1.6;
 	}
 	.ch {
 		display: flex;
@@ -278,10 +281,22 @@ const jsonLd = [
 	.ch h3 {
 		margin: 0;
 	}
+	/* the editor, the dashboard and the diff get the width of the capture
+	   itself (1280 px at 1:1), a little wider than the text column */
+	.heromock,
+	.wide-shot {
+		max-width: 1304px;
+	}
+	.wide-shot {
+		margin-top: clamp(2rem, 4vw, 3rem);
+	}
+	/* a capture narrower than the row sits in its middle */
+	.wide-shot :global(.pw-frame) {
+		margin-inline: auto;
+	}
 	.heromock {
-		margin-top: 3.2rem;
+		margin-top: 3.4rem;
 		padding-bottom: clamp(48px, 7vw, 80px);
-		max-width: 980px;
 	}
 	.grid {
 		display: grid;
@@ -291,15 +306,6 @@ const jsonLd = [
 	}
 	.f-copy.narrow {
 		max-width: 760px;
-	}
-	.feature {
-		display: grid;
-		grid-template-columns: 0.95fr 1.05fr;
-		gap: clamp(2rem, 5vw, 4.5rem);
-		align-items: center;
-	}
-	.feature > * {
-		min-width: 0;
 	}
 	.ticks {
 		list-style: none;
@@ -350,8 +356,7 @@ const jsonLd = [
 		.grid {
 			grid-template-columns: 1fr 1fr;
 		}
-		.origin,
-		.feature {
+		.origin {
 			grid-template-columns: 1fr;
 		}
 	}

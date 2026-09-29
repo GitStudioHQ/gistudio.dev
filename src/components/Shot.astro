@@ -25,6 +25,7 @@ const { src, alt, caption, class: className, priority = false, crop } = Astro.pr
 			widths={[720, 1080, 1600, 2200]}
 			sizes="(max-width: 760px) 94vw, (max-width: 1240px) 88vw, 1120px"
 			loading={priority ? 'eager' : 'lazy'}
+			fetchpriority={priority ? 'high' : 'auto'}
 			class:list={[{ cropped: !!crop }]}
 		/>
 	</div>

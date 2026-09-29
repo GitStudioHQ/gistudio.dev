@@ -1,11 +1,11 @@
 ---
 import Site from '../layouts/Site.astro';
-import { Image } from 'astro:assets';
 import Icon from '../components/Icon.astro';
 import EditorChips from '../components/EditorChips.astro';
-import extIcon from '../assets/brand/ext-icon-192.png';
-import mergeIcon from '../assets/brand/merge-icon-192.png';
-import { EXT, MERGE, EDITORS, OPENVSX_INSTALLS } from '../consts';
+import ExtensionCards from '../components/ExtensionCards.astro';
+import { EXT, MERGE, EDITORS } from '../consts';
+
+// The cards carry the live versions and counts (ExtensionCards.astro).
 
 const title = 'GitStudio editor extensions for VS Code, Cursor & Open VSX';
 const description =
@@ -60,51 +60,12 @@ const jsonLd = [
 		<div class="container">
 			<p class="eyebrow" data-reveal>Two focused choices</p>
 			<h2 data-reveal>Which one do you need?</h2>
-			<div class="cards">
-				<a class="card ex-card" href={EXT.route} data-reveal>
-					<div class="ex-head">
-						<Image src={extIcon} alt="" width="112" height="112" class="ex-icon" />
-						<div>
-							<h3>GitStudio</h3>
-							<p class="ex-tag">The whole Git workflow</p>
-						</div>
-						<span class="ver mono">v{EXT.version}</span>
-					</div>
-					<p class="ex-copy">
-						Commit graph, blame, history, hunk &amp; line staging, three-pane merge, interactive
-						rebase, worktrees, and in-editor GitHub pull requests. {EXT.commands} commands, five
-						sidebar views, {EXT.license}.
-					</p>
-					<ul class="best">
-						<li>Best if you want your whole Git workflow inside the editor</li>
-						<li>{OPENVSX_INSTALLS.gitstudio}+ installs on Open VSX and counting</li>
-					</ul>
-					<span class="link-arrow">Explore GitStudio</span>
-				</a>
-
-				<a class="card ex-card" href={MERGE.route} data-reveal style="--reveal-delay:.08s">
-					<div class="ex-head">
-						<Image src={mergeIcon} alt="" width="112" height="112" class="ex-icon" />
-						<div>
-							<h3>Merge Studio</h3>
-							<p class="ex-tag">Just conflict resolution</p>
-						</div>
-						<span class="ver mono">v{MERGE.version}</span>
-					</div>
-					<p class="ex-copy">
-						The focused three-pane merge &amp; conflict editor that started it all: color ribbons,
-						one-click accepts, a conflicts dashboard, and a named undo history. Tiny, fast, {MERGE.license}.
-					</p>
-					<ul class="best">
-						<li>Best if you only want a first-class merge editor</li>
-						<li>{OPENVSX_INSTALLS.mergeStudio}+ installs on Open VSX · ★ {MERGE.marketplaceStars.toFixed(1)} on the Marketplace</li>
-					</ul>
-					<span class="link-arrow">See Merge Studio</span>
-				</a>
+			<div class="cards-wrap">
+				<ExtensionCards />
 			</div>
 			<p class="tip" data-reveal>
-				You don't need both — the GitStudio extension already includes the three-pane merge editor.
-				Merge Studio is for people who want <em>only</em> that.
+				You don't need both — the GitStudio extension already includes the same merge editor and
+				conflicts dashboard. Merge Studio is for people who want <em>only</em> that.
 			</p>
 		</div>
 	</section>
@@ -118,7 +79,7 @@ const jsonLd = [
 				A “VS Code extension” runs in every editor built on VS Code. Both extensions publish to
 				two registries so they reach all of them from one build.
 			</p>
-			<div class="table-wrap" data-reveal>
+			<div class="table-wrap" data-reveal tabindex="0" role="region" aria-label="Editors each extension installs in">
 				<table class="cmp">
 					<thead>
 						<tr>
@@ -170,8 +131,8 @@ const jsonLd = [
 			<p class="eyebrow center" data-reveal>Part of GitStudio</p>
 			<h2 data-reveal>There's a desktop app, too.</h2>
 			<p class="lede" data-reveal>
-				The extensions share their engine with GitStudio Desktop — the native macOS / Windows /
-				Linux client with a built-in terminal, the full GitHub client, and an AI assistant that runs
+				The extensions share their engine with GitStudio Desktop — the desktop app for macOS, Windows and
+				Linux, with a built-in terminal, the full GitHub client, and an AI assistant that runs
 				on your own keys.
 			</p>
 			<div class="cta-row" data-reveal>
@@ -203,78 +164,8 @@ const jsonLd = [
 	.hero-editors {
 		margin-top: 1.8rem;
 	}
-	.cards {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1.2rem;
+	.cards-wrap {
 		margin-top: 2.4rem;
-	}
-	.ex-card {
-		display: flex;
-		flex-direction: column;
-		gap: 0.9rem;
-		color: inherit;
-	}
-	.ex-card:hover {
-		text-decoration: none;
-		transform: translateY(-3px);
-	}
-	.ex-head {
-		display: flex;
-		align-items: center;
-		gap: 0.85rem;
-	}
-	:global(.ex-icon) {
-		width: 54px;
-		height: 54px;
-		border-radius: 13px;
-		flex: none;
-		box-shadow: 0 0 0 1px rgba(226, 223, 245, 0.1), 0 10px 24px -12px rgba(0, 0, 0, 0.8);
-	}
-	.ex-head h3 {
-		margin: 0;
-		font-size: 1.2rem;
-	}
-	.ex-tag {
-		margin: 0.15rem 0 0;
-		font-size: 0.82rem;
-		color: var(--muted);
-	}
-	.ex-head .ver {
-		margin-left: auto;
-		align-self: flex-start;
-		font-size: 0.72rem;
-		color: var(--faint);
-	}
-	.ex-copy {
-		margin: 0;
-		color: var(--muted);
-		font-size: var(--fs-1);
-	}
-	.best {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.45rem;
-		flex: 1;
-	}
-	.best li {
-		position: relative;
-		padding-left: 1.4rem;
-		font-size: 0.86rem;
-		color: var(--text);
-	}
-	.best li::before {
-		content: '';
-		position: absolute;
-		left: 0;
-		top: 0.5em;
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-		background: var(--violet);
 	}
 	.tip {
 		margin: 1.8rem 0 0;
@@ -342,7 +233,6 @@ const jsonLd = [
 		margin-top: 2rem;
 	}
 	@media (max-width: 860px) {
-		.cards,
 		.reg-explain {
 			grid-template-columns: 1fr;
 		}

@@ -37,7 +37,7 @@ Your `package.json` essentials:
 ```
 Your **extension id** is `publisher.name`. It is **permanent** once published — choose deliberately.
 
-*(Want a ready-made, publish-configured starter with the whole pipeline built in? Fork [vscode-extension-starter](https://github.com/antonarnaudov/vscode-extension-starter) and skip the boilerplate.)*
+*(Want a ready-made, publish-configured starter with the whole pipeline built in? Fork [vscode-extension-starter](https://github.com/GitStudioHQ/vscode-extension-starter) and skip the boilerplate.)*
 
 ---
 
@@ -139,7 +139,7 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-A tag-triggered workflow builds, publishes to **both** registries, and attaches the `.vsix` to a GitHub Release. A copy-paste `release.yml` (with publish steps guarded so it skips — not fails — before the secrets exist) is in the [starter repo](https://github.com/antonarnaudov/vscode-extension-starter).
+A tag-triggered workflow builds, publishes to **both** registries, and attaches the `.vsix` to a GitHub Release. A copy-paste `release.yml` (with publish steps guarded so it skips — not fails — before the secrets exist) is in the [starter repo](https://github.com/GitStudioHQ/vscode-extension-starter).
 
 > You can't reuse a version number. After `0.1.0`, the next release is `0.1.1`+, even to fix a README typo on the live listing.
 

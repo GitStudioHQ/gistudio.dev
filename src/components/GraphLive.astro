@@ -14,7 +14,7 @@ interface Props {
 const { skeletonRows = 9 } = Astro.props;
 ---
 
-<WindowFrame title="Commit Graph — the shipping component, live" class="graph-live">
+<WindowFrame title="Commit Graph — the real component, live" class="graph-live">
 	<div class="live-host" data-graph-live>
 		<div class="boot" aria-hidden="true">
 			{Array.from({ length: skeletonRows }).map(() => (
@@ -24,7 +24,7 @@ const { skeletonRows = 9 } = Astro.props;
 				</div>
 			))}
 		</div>
-		<noscript><p class="nojs">Enable JavaScript to drive the live commit graph — the real component from the extension, rendering this repo's history.</p></noscript>
+		<noscript><p class="nojs">Enable JavaScript to drive the live commit graph — GitStudio's own graph component, rendering the GitStudio repository's history.</p></noscript>
 	</div>
 </WindowFrame>
 
@@ -59,22 +59,32 @@ const { skeletonRows = 9 } = Astro.props;
 			try {
 				// Embed sizing: the element is tuned for wide IDE panels. Seed its
 				// own persisted column prefs (only when the visitor hasn't set
-				// any) — hide the stats column (no host answers requestStats
-				// here) and slim the fixed tracks so subjects keep real width.
+				// any, or they were seeded by an older version of this page) and
+				// slim the fixed tracks so subjects keep real width.
+				// The element hides a column by collapsing its track and hiding
+				// the header, but in this embed the row cells stay: a hidden
+				// column in the middle drew its text over its neighbour (the
+				// author's name over the dates, "Aul 14"). Only trailing columns
+				// hide cleanly. So: wide shows every column, the stats column
+				// squeezed to its minimum (no host answers requestStats here);
+				// narrow keeps graph, refs and subject and hides everything after.
 				const narrow = host.getBoundingClientRect().width < 620;
+				const SEED = '2';
 				try {
-					if (!localStorage.getItem('gitstudio.graph.cols.widths')) {
+					const stale = localStorage.getItem('gitstudio.site.graphSeed') !== SEED;
+					if (stale || !localStorage.getItem('gitstudio.graph.cols.widths')) {
 						localStorage.setItem(
 							'gitstudio.graph.cols.widths',
-							JSON.stringify(narrow ? { refs: 110, date: 60 } : { refs: 150, author: 112, date: 72 }),
+							JSON.stringify(narrow ? { refs: 110 } : { refs: 150, changes: 1, author: 112, date: 72 }),
 						);
 					}
-					if (!localStorage.getItem('gitstudio.graph.cols.hidden')) {
+					if (stale || !localStorage.getItem('gitstudio.graph.cols.hidden')) {
 						localStorage.setItem(
 							'gitstudio.graph.cols.hidden',
-							JSON.stringify(narrow ? ['changes', 'sha', 'author'] : ['changes']),
+							JSON.stringify(narrow ? ['changes', 'author', 'date', 'sha'] : []),
 						);
 					}
+					localStorage.setItem('gitstudio.site.graphSeed', SEED);
 				} catch {
 					/* storage unavailable — defaults still render, just tighter */
 				}

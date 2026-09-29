@@ -9,7 +9,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check:links": "node scripts/check-links.mjs",
+    "stats": "node scripts/stats.mjs",
+    "test:stats": "node scripts/stats.mjs --test",
+    "og": "node scripts/og.mjs",
+    "favicons": "node scripts/favicons.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.0",

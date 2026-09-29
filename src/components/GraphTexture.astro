@@ -1,0 +1,149 @@
+---
+// GraphTexture — the hero's commit graph, carried down the rest of the page
+// as a faint texture: one lane in each side gutter, a branch leaving it and
+// merging back now and then, a commit dot here and there. Wraps the page's
+// sections (it is the positioning box); the lanes sit behind everything.
+//
+// It lives in the gutters only (the space outside the 1140px content
+// column), so it never runs behind text and never costs body text contrast.
+// Where the gutters are too narrow for it (below 1360px wide) it is off.
+//
+// The drawing is one seamless 200 × 2400 tile, repeated down the page as a
+// background image: the left gutter gets it as drawn, the right gutter gets
+// it mirrored and shifted by half a tile so the two sides never line up.
+//
+// Motion: now and then a faint light drifts down one of the two trunks —
+// always on a straight run of its lane — near where the reader is. Nothing
+// moves with prefers-reduced-motion, or when the texture is off.
+const TILE_W = 200;
+const TILE_H = 2400;
+const T = 100; // the trunk's x in the tile
+
+// lanes: the trunk, a branch out towards the page edge that merges back, one
+// in towards the content that merges back, and a branch that is still open
+const lanes = [
+	`M${T} 0 V ${TILE_H}`,
+	`M${T} 260 C ${T} 320, 52 316, 52 376 V 820 C 52 880, ${T} 876, ${T} 936`,
+	`M${T} 1180 C ${T} 1240, 150 1236, 150 1296 V 1560 C 150 1620, ${T} 1616, ${T} 1676`,
+	`M${T} 1880 C ${T} 1940, 44 1936, 44 1996 V 2170`,
+];
+const nodes: [number, number][] = [
+	[T, 110], [T, 260], [52, 470], [52, 660], [T, 936],
+	[T, 1060], [T, 1180], [150, 1390], [T, 1676],
+	[T, 1790], [T, 1880], [44, 2080], [44, 2170], [T, 2290],
+];
+const svg = (mirror: boolean) => {
+	const tx = mirror ? ` transform="translate(${TILE_W} 0) scale(-1 1)"` : '';
+	return (
+		`<svg xmlns="http://www.w3.org/2000/svg" width="${TILE_W}" height="${TILE_H}" viewBox="0 0 ${TILE_W} ${TILE_H}">` +
+		`<g${tx}>` +
+		`<g fill="none" stroke="#a98cff" stroke-opacity=".15" stroke-width="1">${lanes.map((d) => `<path d="${d}"/>`).join('')}</g>` +
+		`<g fill="#a98cff" fill-opacity=".34">${nodes.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3"/>`).join('')}</g>` +
+		`</g></svg>`
+	);
+};
+const uri = (mirror: boolean) => `url("data:image/svg+xml,${encodeURIComponent(svg(mirror))}")`;
+---
+
+<div class="gt-host">
+	<div class="gt" aria-hidden="true">
+		<div class="gt-side gt-left" style={`--tile:${uri(false)}`}><span class="gt-light"></span></div>
+		<div class="gt-side gt-right" style={`--tile:${uri(true)}`}><span class="gt-light"></span></div>
+	</div>
+	<slot />
+</div>
+
+<style define:vars={{ tileW: `${TILE_W}px`, tileH: `${TILE_H}px`, trunk: `${T}px` }}>
+	.gt-host {
+		position: relative;
+	}
+	.gt {
+		display: none;
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		overflow: clip;
+		pointer-events: none;
+		/* comes in under the hero, goes out before the footer */
+		mask-image: linear-gradient(180deg, transparent, #000 420px, #000 calc(100% - 520px), transparent);
+		-webkit-mask-image: linear-gradient(180deg, transparent, #000 420px, #000 calc(100% - 520px), transparent);
+	}
+	@media (min-width: 1360px) {
+		.gt {
+			display: block;
+		}
+	}
+	.gt-side {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: var(--tileW);
+		background-image: var(--tile);
+		background-repeat: repeat-y;
+		background-size: var(--tileW) var(--tileH);
+		/* the trunk sits in the middle of the gutter: the gutter is the margin
+		   outside the container plus the container's own padding */
+		--gutter: calc((100% - var(--container)) / 2 + var(--pad));
+	}
+	.gt-left {
+		left: calc(var(--gutter) / 2 - var(--trunk));
+	}
+	.gt-right {
+		right: calc(var(--gutter) / 2 - var(--trunk));
+		background-position: 0 calc(var(--tileH) / -2);
+	}
+	/* a small light and its tail, travelling down the trunk (see the script) */
+	.gt-light {
+		position: absolute;
+		top: 0;
+		left: calc(var(--trunk) - 1px);
+		width: 2px;
+		height: 90px;
+		border-radius: 2px;
+		opacity: 0;
+		background: linear-gradient(180deg, rgba(169, 140, 255, 0), rgba(195, 174, 255, 0.55));
+	}
+	.gt-light::after {
+		content: '';
+		position: absolute;
+		left: -1.5px;
+		bottom: -2px;
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: #d6c8ff;
+		box-shadow: 0 0 8px 2px rgba(169, 140, 255, 0.6);
+	}
+</style>
+
+<script>
+	// Now and then, a light drifts down one trunk near the reader. Calm by
+	// design: one at a time, ~7 s each, a pause of several seconds between.
+	const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+	const host = document.querySelector<HTMLElement>('.gt');
+	const lights = Array.from(document.querySelectorAll<HTMLElement>('.gt-light'));
+	let side = 0;
+	const TRAVEL = 560;
+	const run = () => {
+		const wait = 6000 + Math.random() * 5000;
+		setTimeout(run, wait);
+		if (!host || reduced.matches || document.hidden) return;
+		if (getComputedStyle(host).display === 'none') return;
+		const r = host.getBoundingClientRect();
+		const vh = window.innerHeight;
+		// start somewhere in the upper half of the viewport, in texture coordinates
+		const start = -r.top + vh * (0.08 + Math.random() * 0.4);
+		if (start < 420 || start + TRAVEL > r.height - 520) return; // only where the lanes are fully drawn
+		const el = lights[side++ % lights.length];
+		el.animate(
+			[
+				{ transform: `translateY(${start}px)`, opacity: 0 },
+				{ opacity: 0.9, offset: 0.18 },
+				{ opacity: 0.9, offset: 0.75 },
+				{ transform: `translateY(${start + TRAVEL}px)`, opacity: 0 },
+			],
+			{ duration: 7000, easing: 'linear', fill: 'none' },
+		);
+	};
+	if (host && lights.length) setTimeout(run, 2500);
+</script>

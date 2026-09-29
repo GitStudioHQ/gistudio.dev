@@ -4,9 +4,30 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 
+/**
+ * A Markdown task list renders disabled checkboxes with no accessible name.
+ * Name each one after its state; the item's own text follows it.
+ * @returns {(tree: any) => void}
+ */
+const rehypeTaskListLabels = () => (tree) => {
+	/** @param {any} node */
+	const walk = (node) => {
+		if (node.type === 'element' && node.tagName === 'input' && node.properties?.type === 'checkbox') {
+			node.properties.ariaLabel = node.properties.checked ? 'Done' : 'To do';
+		}
+		for (const child of node.children ?? []) walk(child);
+	};
+	walk(tree);
+};
+
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://gitstudio.dev',
+	markdown: {
+		// github-dark's comments are 3.0:1 on its background; -default's pass AA.
+		shikiConfig: { theme: 'github-dark-default' },
+		rehypePlugins: [rehypeTaskListLabels],
+	},
 	integrations: [
 		mdx(),
 		sitemap({

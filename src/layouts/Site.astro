@@ -5,24 +5,38 @@
 import BaseHead from '../components/BaseHead.astro';
 import SiteNav from '../components/SiteNav.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import LiveStats from '../components/LiveStats.astro';
 
 interface Props {
 	title: string;
 	description: string;
 	og?: string;
+	ogAlt?: string;
+	ogType?: 'website' | 'article';
+	published?: string;
+	modified?: string;
 	noindex?: boolean;
 	/** Optional JSON-LD structured data, rendered into the head. */
 	jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { title, description, og, noindex, jsonLd } = Astro.props;
+const { title, description, og, ogAlt, ogType, published, modified, noindex, jsonLd } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en" class="no-js">
 	<head>
 		<script is:inline>document.documentElement.classList.remove('no-js');</script>
-		<BaseHead title={title} description={description} og={og} noindex={noindex} />
+		<BaseHead
+			title={title}
+			description={description}
+			og={og}
+			ogAlt={ogAlt}
+			ogType={ogType}
+			published={published}
+			modified={modified}
+			noindex={noindex}
+		/>
 		{jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 	</head>
 	<body>
@@ -31,6 +45,7 @@ const { title, description, og, noindex, jsonLd } = Astro.props;
 			<slot />
 		</main>
 		<SiteFooter />
+		<LiveStats />
 
 		<script>
 			// Scroll reveals — skipped entirely for reduced-motion users.

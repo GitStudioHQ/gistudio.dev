@@ -1,0 +1,170 @@
+---
+// HeroGraph — the hero's commit graph drawing itself: sparse lanes in the
+// brand violet, the July design's geometry unchanged.
+//
+// Everything moves along the lanes. Each lane is drawn from its start by a
+// small light travelling at the tip of the stroke; a branch grows out of its
+// parent at the moment the parent's light passes the fork; a commit dot
+// lights up at the moment the first light reaches it. Nothing enters from
+// outside its line. The timing is computed at build time from the path
+// geometry (src/lib/graphMotif.ts), so this is CSS only — no script.
+//
+// prefers-reduced-motion: the finished drawing, still.
+import { choreograph } from '../lib/graphMotif';
+
+// viewBox 0 0 1200 520. Left half, then its mirror on the right.
+const lanes = [
+	{ d: 'M150 24 V 496', at: 0.15 },
+	{ d: 'M150 150 C 150 212, 300 208, 300 272 V 470' },
+	{ d: 'M300 352 C 300 414, 150 410, 150 458' },
+	{ d: 'M412 60 V 300 C 412 360, 300 356, 300 396', at: 0.4 },
+	{ d: 'M1050 24 V 496', at: 0.28 },
+	{ d: 'M1050 168 C 1050 230, 900 226, 900 290 V 470' },
+	{ d: 'M900 360 C 900 422, 1050 418, 1050 466' },
+	{ d: 'M788 78 V 318 C 788 378, 900 374, 900 408', at: 0.55 },
+];
+const nodes = [
+	{ x: 150, y: 150 },
+	{ x: 300, y: 272 },
+	{ x: 412, y: 60 },
+	{ x: 150, y: 458 },
+	{ x: 1050, y: 168 },
+	{ x: 900, y: 290 },
+	{ x: 788, y: 78 },
+	// where a branch comes back: the merge commits
+	{ x: 300, y: 396 },
+	{ x: 900, y: 408 },
+	{ x: 1050, y: 466 },
+];
+// units per second along a lane: ~1.2 px per unit on a laptop, so ~430 px/s
+const plan = choreograph(lanes, nodes, 360);
+// the travelling light: a bright point and a short fading tail, in units,
+// whatever the lane's length
+const HEAD = 0.5;
+const TAIL = 46;
+const s = (n: number) => `${n.toFixed(3)}s`;
+---
+
+<svg class="hero-graph" viewBox="0 0 1200 520" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+	<g class="lanes">
+		{plan.lanes.map((l) => <path pathLength="1" d={l.d} style={`--delay:${s(l.delay)};--dur:${s(l.dur)}`} />)}
+	</g>
+	<g class="tips">
+		{plan.lanes.map((l) => {
+			// a faint tail, and the light itself: both end exactly at the tip
+			const tail = TAIL / l.length;
+			const head = HEAD / l.length;
+			return (
+				<g style={`--delay:${s(l.delay)};--dur:${s(l.dur)}`}>
+					<path class="tail" pathLength="1" d={l.d} style={`--dash:${tail.toFixed(4)};--to:${(tail - 1).toFixed(4)}`} />
+					<path class="head" pathLength="1" d={l.d} style={`--dash:${head.toFixed(4)};--to:${(head - 1).toFixed(4)}`} />
+				</g>
+			);
+		})}
+	</g>
+	<g class="nodes">
+		{plan.nodes.map((n) => (
+			<g style={`--delay:${s(n.delay)}`}>
+				<circle class="ring" r="4" cx={n.cx} cy={n.cy} />
+				<circle class="dot" r="4" cx={n.cx} cy={n.cy} />
+			</g>
+		))}
+	</g>
+</svg>
+
+<style>
+	/* behind the hero's content, masked to keep a clear text column, fading
+	   down so the real live graph at 01 takes over */
+	.hero-graph {
+		position: absolute;
+		inset: -6% 0 auto;
+		width: 100%;
+		/* ~1050px tall on a laptop, the size the July design was drawn at */
+		height: 83%;
+		pointer-events: none;
+		z-index: 0;
+		/* the third layer keeps the two-line headline and the lede clear */
+		mask-image:
+			radial-gradient(58% 62% at 50% 20%, transparent, #000 76%),
+			linear-gradient(180deg, #000 55%, transparent),
+			radial-gradient(640px 220px at 50% 360px, transparent 76%, #000);
+		-webkit-mask-image:
+			radial-gradient(58% 62% at 50% 20%, transparent, #000 76%),
+			linear-gradient(180deg, #000 55%, transparent),
+			radial-gradient(640px 220px at 50% 360px, transparent 76%, #000);
+		-webkit-mask-composite: source-in;
+		mask-composite: intersect;
+	}
+	.hero-graph .lanes path {
+		fill: none;
+		stroke: var(--violet);
+		stroke-width: 1.5;
+		opacity: 0.32;
+		stroke-dasharray: 1;
+		stroke-dashoffset: 1;
+		/* linear: the tip moves at one speed, so the light and the dots that
+		   wait for it stay exactly on it */
+		animation: hg-draw var(--dur) linear var(--delay) both;
+	}
+	.hero-graph .tips path {
+		fill: none;
+		stroke-linecap: round;
+		stroke-dasharray: var(--dash) 3;
+		stroke-dashoffset: var(--dash);
+		opacity: 0;
+		animation: hg-tip var(--dur) linear var(--delay) both;
+	}
+	.hero-graph .tips .tail {
+		stroke: var(--violet);
+		stroke-width: 1.6;
+		--peak: 0.45;
+	}
+	.hero-graph .tips .head {
+		stroke: #dcd0ff;
+		stroke-width: 3.4;
+		--peak: 1;
+		filter: drop-shadow(0 0 5px rgba(195, 174, 255, 0.95));
+	}
+	.hero-graph circle {
+		fill: var(--violet);
+		transform-box: fill-box;
+		transform-origin: center;
+		opacity: 0;
+	}
+	.hero-graph .dot {
+		filter: drop-shadow(0 0 6px rgba(169, 140, 255, 0.9));
+		animation: hg-dot 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--delay) both;
+	}
+	/* the commit landing: one soft ring out from the dot, then gone */
+	.hero-graph .ring {
+		fill: none;
+		stroke: var(--violet-hi);
+		stroke-width: 1;
+		animation: hg-ring 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay) both;
+	}
+	@keyframes hg-draw {
+		to { stroke-dashoffset: 0; }
+	}
+	@keyframes hg-tip {
+		0% { stroke-dashoffset: var(--dash); opacity: 0; }
+		4% { opacity: var(--peak); }
+		82% { opacity: var(--peak); }
+		100% { stroke-dashoffset: var(--to); opacity: 0; }
+	}
+	@keyframes hg-dot {
+		0% { opacity: 0; transform: scale(0.3); }
+		45% { opacity: 1; transform: scale(1.45); }
+		100% { opacity: 0.85; transform: none; }
+	}
+	@keyframes hg-ring {
+		0% { opacity: 0; transform: scale(1); }
+		10% { opacity: 0.7; }
+		100% { opacity: 0; transform: scale(3.6); }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero-graph .lanes path { stroke-dashoffset: 0; animation: none; }
+		.hero-graph .tips,
+		.hero-graph .ring { display: none; }
+		.hero-graph .dot { opacity: 0.85; animation: none; }
+	}
+</style>

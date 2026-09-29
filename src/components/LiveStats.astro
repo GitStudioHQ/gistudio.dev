@@ -1,0 +1,49 @@
+---
+// Keeps the live facts on a page current between deploys. The build already
+// printed them (src/lib/stats.ts), so this only ever swaps one number for a
+// newer one of the same shape: no placeholder, no layout shift, and on any
+// failure (offline, `astro dev` with no /api, a bad answer) nothing happens.
+//
+// Contract: <span data-live="ext.installs">531</span> gets stats.text[key];
+// <a data-live-href="app.asset.arm64.dmg" href="…"> gets stats.href[key].
+// Keys: see TextKey / HrefKey in src/lib/stats.ts.
+---
+
+<script>
+	type Live = { text?: Record<string, unknown>; href?: Record<string, unknown>; stale?: unknown };
+
+	// Every link this can set is a GitHub release URL; refuse anything else.
+	const SAFE_HREF = /^https:\/\/github\.com\/GitStudioHQ\//;
+
+	function apply(s: Live | null) {
+		if (!s || typeof s !== 'object') return;
+		const text = s.text ?? {};
+		const href = s.href ?? {};
+		// Keys the API could only answer from its consts.ts fallback: the build-time value is at least as new.
+		const stale = new Set(Array.isArray(s.stale) ? s.stale : []);
+		document.querySelectorAll<HTMLElement>('[data-live]').forEach((el) => {
+			const k = el.dataset.live ?? '';
+			const v = stale.has(k) ? undefined : text[k];
+			if (typeof v === 'string' && v && el.textContent !== v) el.textContent = v;
+		});
+		document.querySelectorAll<HTMLElement>('[data-live-href]').forEach((el) => {
+			const k = el.dataset.liveHref ?? '';
+			const v = stale.has(k) ? undefined : href[k];
+			if (typeof v === 'string' && SAFE_HREF.test(v) && el.getAttribute('href') !== v) el.setAttribute('href', v);
+		});
+	}
+
+	function run() {
+		if (!document.querySelector('[data-live],[data-live-href]')) return;
+		fetch('/api/stats', { headers: { accept: 'application/json' } })
+			.then((r) => (r.ok && (r.headers.get('content-type') ?? '').includes('json') ? r.json() : null))
+			.then(apply)
+			.catch(() => {});
+	}
+
+	// After load, when the browser is idle: never competes with first paint.
+	const idle = () =>
+		'requestIdleCallback' in window ? window.requestIdleCallback(run, { timeout: 3000 }) : setTimeout(run, 200);
+	if (document.readyState === 'complete') idle();
+	else window.addEventListener('load', idle, { once: true });
+</script>

@@ -2,35 +2,56 @@
 import Site from '../layouts/Site.astro';
 import OsIcon from '../components/OsIcon.astro';
 import { Image } from 'astro:assets';
-import extIcon from '../assets/brand/ext-icon-192.png';
-import mergeIcon from '../assets/brand/merge-icon-192.png';
+import extIcon from '../assets/brand/gitstudio-icon.png';
+import mergeIcon from '../assets/brand/merge-studio-icon.png';
 import InstallCmd from '../components/InstallCmd.astro';
-import { EXT, MERGE, APP, GITHUB_REPO_URL, GITHUB_RELEASES_URL, DOCS_AI_URL } from '../consts';
+import { EXT, MERGE, APP, GITHUB_RELEASES_URL, DOCS_AI_URL } from '../consts';
+import { getStats } from '../lib/stats';
+
+// Versions, installer URLs and the VSIX checksum are read from the newest
+// releases at build time, and refreshed on view through data-live /
+// data-live-href (src/lib/stats.ts, src/components/LiveStats.astro).
+const stats = await getStats();
 
 const title = 'Download GitStudio Desktop — macOS, Windows & Linux';
 const description =
-	`Download GitStudio Desktop v${APP.version} — the free, open-source Git & GitHub client for macOS (Apple Silicon & Intel .dmg), Windows (x64 .exe), and Linux (.deb, .rpm, .AppImage, .tar.gz). One-line installers, Homebrew, SHA-256 checksums, and updates from inside the app. Also available as a VS Code & Cursor extension.`;
+	`Download GitStudio Desktop v${stats.app.version} — the free, open-source Git & GitHub client for macOS 12+ (Apple Silicon & Intel .dmg or .zip), Windows 10/11 (x64 .exe), and Linux (.deb, .rpm, .AppImage, .tar.gz). One-line installers, Homebrew, SHA-256 checksums, and updates from inside the app. Also available as a VS Code & Cursor extension.`;
 
-// Group the flat installer list from consts by OS for the per-OS sections.
+// Group the installer matrix (consts.ts rows, newest release's URLs) by OS for the per-OS sections.
 const byOs = {
-	macOS: APP.downloads.filter((d) => d.os === 'macOS'),
-	Windows: APP.downloads.filter((d) => d.os === 'Windows'),
-	Linux: APP.downloads.filter((d) => d.os === 'Linux'),
+	macOS: stats.app.installers.filter((d) => d.os === 'macOS'),
+	Windows: stats.app.installers.filter((d) => d.os === 'Windows'),
+	Linux: stats.app.installers.filter((d) => d.os === 'Linux'),
 };
+// URL → its data-live-href key, so the auto-detect script can mark the links it writes.
+const liveKey = Object.fromEntries(stats.app.installers.map((d) => [d.url, `app.asset.${d.key}`]));
 
 // Direct links the auto-detect card resolves to, straight from the real artifacts.
 const dl = {
-	macArm: byOs.macOS.find((d) => d.arch === 'Apple Silicon')?.url,
-	macIntel: byOs.macOS.find((d) => d.arch === 'Intel')?.url,
+	macArm: byOs.macOS.find((d) => d.arch === 'Apple Silicon' && d.format === '.dmg')?.url,
+	macIntel: byOs.macOS.find((d) => d.arch === 'Intel' && d.format === '.dmg')?.url,
 	winX64: byOs.Windows.find((d) => d.arch === 'x64')?.url,
 	linApp: byOs.Linux.find((d) => d.format === '.AppImage')?.url,
 	linDeb: byOs.Linux.find((d) => d.format === '.deb')?.url,
 };
 
 const oses = [
-	{ id: 'macos', name: 'macOS', icon: 'apple' as const, min: 'Apple Silicon & Intel · macOS 11+', cmd: APP.install.macos, alt: { label: 'or with Homebrew', cmd: APP.install.macosBrew }, dls: byOs.macOS, note: 'The <code>curl</code> line checks the download against <code>SHA256SUMS.txt</code>, puts the app in Applications, and clears the quarantine flag, so it opens first time. The Homebrew line taps GitStudioHQ/homebrew-gitstudio by itself and installs the cask, which clears the flag too; add <code>--force</code> if GitStudio.app is already in Applications. Took the <code>.dmg</code>? The build is unsigned, so after dragging the app in and before you open it, clear the flag once (if macOS already refused it, move GitStudio.app to <code>~/Applications</code> and run it there):', gatekeeper: 'xattr -d -r -s com.apple.quarantine /Applications/GitStudio.app' },
-	{ id: 'windows', name: 'Windows', icon: 'windows' as const, min: 'x64 · Windows 10 & 11', cmd: APP.install.windows, alt: null, dls: byOs.Windows, note: 'The PowerShell line fetches the installer, checks it against <code>SHA256SUMS.txt</code>, and runs it. The build is unsigned, so if SmartScreen appears choose <strong>More info → Run anyway</strong>. The installer lets you pick the directory. There is no ARM64 build.', gatekeeper: null },
-	{ id: 'linux', name: 'Linux', icon: 'linux' as const, min: 'x86-64 only', cmd: APP.install.linux, alt: null, dls: byOs.Linux, note: 'The <code>curl</code> line checks the <code>.AppImage</code> against <code>SHA256SUMS.txt</code> and puts it in <code>~/.local/bin</code> with a launcher entry. AppImages need <code>libfuse2</code> (<code>sudo apt install libfuse2</code>; <code>libfuse2t64</code> on Ubuntu 24.04), which the packages below do not. Or take a package: on Debian/Ubuntu <code>sudo apt install ./GitStudio-*.deb</code>; on Fedora/RHEL <code>sudo dnf install ./GitStudio-*.rpm</code>; the <code>.tar.gz</code> unpacks anywhere.', gatekeeper: null },
+	{ id: 'macos', name: 'macOS', icon: 'apple' as const, min: `Apple Silicon & Intel · ${APP.requirements.macos}`, cmd: APP.install.macos, alt: { label: 'or with Homebrew', cmd: APP.install.macosBrew }, dls: byOs.macOS, note: 'The <code>curl</code> line checks the download against <code>SHA256SUMS.txt</code>, puts the app in Applications, and clears the quarantine flag, so it opens first time. The Homebrew line taps GitStudioHQ/homebrew-gitstudio by itself and installs the cask, which clears the flag too; add <code>--force</code> if GitStudio.app is already in Applications. Took the <code>.dmg</code> or <code>.zip</code>? The app is ad-hoc signed but not notarized, so macOS says it could not verify it: click <strong>Done</strong>, then <strong>Open Anyway</strong> in System Settings → Privacy &amp; Security. Or, after dragging the app into Applications and before you open it, clear the flag once:', gatekeeper: 'xattr -d -r -s com.apple.quarantine /Applications/GitStudio.app' },
+	{ id: 'windows', name: 'Windows', icon: 'windows' as const, min: APP.requirements.windows, cmd: APP.install.windows, alt: null, dls: byOs.Windows, note: 'The PowerShell line fetches the installer, checks it against <code>SHA256SUMS.txt</code>, and runs it. The build is unsigned, so if SmartScreen appears choose <strong>More info → Run anyway</strong>. The installer lets you pick the directory. There is no ARM64 build.', gatekeeper: null },
+	{ id: 'linux', name: 'Linux', icon: 'linux' as const, min: APP.requirements.linux, cmd: APP.install.linux, alt: null, dls: byOs.Linux, note: 'The <code>curl</code> line checks the <code>.AppImage</code> against <code>SHA256SUMS.txt</code> and puts it in <code>~/.local/bin</code> with a launcher entry. AppImages need <code>libfuse2</code> (<code>sudo apt install libfuse2</code>; <code>libfuse2t64</code> on Ubuntu 24.04), which the packages below do not. Or take a package: on Debian/Ubuntu <code>sudo apt install ./GitStudio-*.deb</code>; on Fedora/RHEL <code>sudo dnf install ./GitStudio-*.rpm</code>; the <code>.tar.gz</code> unpacks anywhere.', gatekeeper: null },
+];
+
+// One list feeds both the visible questions at the foot of the page and the
+// FAQPage structured data, so the two can never say different things.
+const faqs = [
+	{ q: 'Which macOS build do I need — Apple Silicon or Intel?', a: 'Apple Silicon (M1 and later) uses the arm64 .dmg; older Intel Macs use the x64 .dmg. The download page tries to detect your Mac; Safari hides the chip, so when it cannot tell, both builds are offered side by side, and both are always listed below.' },
+	{ q: 'How do I get past Gatekeeper on macOS?', a: 'The build is ad-hoc signed but not signed with an Apple Developer ID or notarized yet, so macOS says it could not verify GitStudio the first time. The curl installer and the Homebrew cask both clear the quarantine flag for you. If you took the .dmg, click Done on that message and then Open Anyway in System Settings → Privacy & Security; or drag GitStudio into Applications and, before the first launch, run xattr -d -r -s com.apple.quarantine /Applications/GitStudio.app once.' },
+	{ q: 'AppImage, .deb, .rpm or .tar.gz on Linux?', a: 'The .AppImage runs anywhere with libfuse2 installed (sudo apt install libfuse2, or libfuse2t64 on Ubuntu 24.04) — chmod +x and run it, or let curl -fsSL https://gitstudio.dev/install.sh | bash place it for you. On Debian or Ubuntu, sudo apt install ./GitStudio-*.deb; on Fedora or RHEL, sudo dnf install ./GitStudio-*.rpm; the .tar.gz unpacks anywhere. The packages need no FUSE.' },
+	{ q: 'Do I need Git installed?', a: 'Yes. GitStudio runs the Git already on your computer and does not bundle one. On macOS, run xcode-select --install for Apple\'s command line tools, or brew install git. On Windows, install Git for Windows from git-scm.com. On Linux, install your distribution\'s git package (sudo apt install git, sudo dnf install git). git-scm.com/downloads has every option.' },
+	{ q: 'Is there a Windows ARM64 or Linux arm64 build?', a: 'No. Windows is x64 only and Linux is x86-64 only. macOS has native Apple Silicon and Intel builds.' },
+	{ q: 'How do I install GitStudio with Homebrew?', a: 'brew install --cask gitstudiohq/gitstudio/gitstudio — one line. Homebrew taps GitStudioHQ/homebrew-gitstudio by name (there is no homebrew-core formula), and the fully-qualified name is how Homebrew takes your consent for a third-party tap, so there is no brew trust step. The cask clears the macOS quarantine flag after installing. Add --force if GitStudio.app is already in Applications.' },
+	{ q: 'Does GitStudio Desktop update itself?', a: 'It checks GitHub Releases for a newer version and asks before downloading anything; the question stays until you answer it. Windows and the Linux AppImage update in place and restart into the new version. On macOS the app downloads the new .dmg to your Downloads folder and opens it — one drag to Applications. If you are on 2.2.0, install 2.2.1 or later once by hand; from then on updates ask for themselves.' },
+	{ q: 'What are the system requirements?', a: `macOS: ${APP.requirements.macos}, Apple Silicon or Intel. Windows: ${APP.requirements.windows}. Linux: ${APP.requirements.linux}. On every platform, Git itself must be installed; GitStudio does not bundle it.` },
 ];
 
 const jsonLd = [
@@ -42,8 +63,8 @@ const jsonLd = [
 		url: 'https://gitstudio.dev/download',
 		downloadUrl: GITHUB_RELEASES_URL,
 		applicationCategory: 'DeveloperApplication',
-		operatingSystem: 'macOS, Windows, Linux',
-		softwareVersion: APP.version,
+		operatingSystem: 'macOS 12+, Windows 10/11, Linux',
+		softwareVersion: stats.app.version,
 		license: 'https://www.apache.org/licenses/LICENSE-2.0',
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 	},
@@ -58,14 +79,7 @@ const jsonLd = [
 	{
 		'@context': 'https://schema.org',
 		'@type': 'FAQPage',
-		mainEntity: [
-			{ '@type': 'Question', name: 'Which macOS build do I need — Apple Silicon or Intel?', acceptedAnswer: { '@type': 'Answer', text: 'Apple Silicon (M1 and later) uses the arm64 .dmg; older Intel Macs use the x64 .dmg. The download page tries to detect your Mac; Safari hides the chip, so when it cannot tell, both builds are offered side by side, and both are always listed below.' } },
-			{ '@type': 'Question', name: 'How do I get past Gatekeeper on macOS?', acceptedAnswer: { '@type': 'Answer', text: 'The build is not signed with an Apple Developer ID yet, so a quarantined copy is refused as damaged on recent macOS. The curl installer and the Homebrew cask both clear the quarantine flag for you. If you took the .dmg, drag GitStudio into Applications and, before the first launch, run xattr -d -r -s com.apple.quarantine /Applications/GitStudio.app once. If macOS already refused it, that path stays blocked: move GitStudio.app to ~/Applications and run the same command there.' } },
-			{ '@type': 'Question', name: 'AppImage, .deb, .rpm or .tar.gz on Linux?', acceptedAnswer: { '@type': 'Answer', text: 'The .AppImage runs anywhere with libfuse2 installed (sudo apt install libfuse2, or libfuse2t64 on Ubuntu 24.04) — chmod +x and run it, or let curl -fsSL https://gitstudio.dev/install.sh | bash place it for you. On Debian or Ubuntu, sudo apt install ./GitStudio-*.deb; on Fedora or RHEL, sudo dnf install ./GitStudio-*.rpm; the .tar.gz unpacks anywhere. The packages need no FUSE.' } },
-			{ '@type': 'Question', name: 'Is there a Windows ARM64 or Linux arm64 build?', acceptedAnswer: { '@type': 'Answer', text: 'No. Windows is x64 only and Linux is x86-64 only. macOS has native Apple Silicon and Intel builds.' } },
-			{ '@type': 'Question', name: 'How do I install GitStudio with Homebrew?', acceptedAnswer: { '@type': 'Answer', text: 'brew install --cask gitstudiohq/gitstudio/gitstudio — one line. Homebrew taps GitStudioHQ/homebrew-gitstudio by name (there is no homebrew-core formula), and the fully-qualified name is how Homebrew takes your consent for a third-party tap, so there is no brew trust step. The cask clears the macOS quarantine flag after installing. Add --force if GitStudio.app is already in Applications.' } },
-			{ '@type': 'Question', name: 'Does GitStudio Desktop update itself?', acceptedAnswer: { '@type': 'Answer', text: 'It checks GitHub Releases for a newer version and asks before downloading anything. Windows and the Linux AppImage update in place and restart into the new version. On macOS the app downloads the new .dmg to your Downloads folder and opens it — one drag to Applications.' } },
-		],
+		mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 	},
 ];
 ---
@@ -73,7 +87,7 @@ const jsonLd = [
 <Site title={title} description={description} og="/og/download.png" jsonLd={jsonLd}>
 	<section class="hero">
 		<div class="container center">
-			<p class="eyebrow center" data-reveal>Download · v{APP.version}</p>
+			<p class="eyebrow center" data-reveal>Download · v<span data-live="app.version">{stats.app.version}</span></p>
 			<h1 data-reveal>Get GitStudio Desktop.</h1>
 			<p class="lede center" data-reveal>
 				The free, open-source Git &amp; GitHub client for macOS, Windows, and Linux. One line
@@ -94,11 +108,11 @@ const jsonLd = [
 				</div>
 				<div class="smart-body">
 					<p class="smart-eyebrow mono" id="smart-eyebrow">Recommended for your Mac</p>
-					<a class="btn btn-primary btn-lg smart-primary" id="smart-primary" href={dl.macArm}>
+					<a class="btn btn-primary btn-lg smart-primary" id="smart-primary" href={dl.macArm} data-live-href={liveKey[dl.macArm ?? '']}>
 						<span class="sp-main">Download for macOS</span>
-						<span class="sp-sub mono">Apple Silicon · .dmg · {APP.version}</span>
+						<span class="sp-sub mono">Apple Silicon · .dmg · <span data-live="app.version">{stats.app.version}</span></span>
 					</a>
-					<p class="smart-alt" id="smart-alt">Intel Mac? <a href={dl.macIntel}>Get the Intel build</a></p>
+					<p class="smart-alt" id="smart-alt">Intel Mac? <a href={dl.macIntel} data-live-href={liveKey[dl.macIntel ?? '']}>Get the Intel build</a></p>
 				</div>
 			</div>
 			<p class="smart-hint" data-reveal>On a different machine? <a href="#all">See every build below ↓</a></p>
@@ -129,7 +143,7 @@ const jsonLd = [
 						<p class="or mono" aria-hidden="true"><span>or download</span></p>
 						<div class="os-dls">
 							{os.dls.map((d) => (
-								<a class="dl-btn" href={d.url}>
+								<a class="dl-btn" href={d.url} data-live-href={`app.asset.${d.key}`}>
 									<span class="dl-arch">{d.arch}</span>
 									<code>{d.format}</code>
 								</a>
@@ -140,9 +154,15 @@ const jsonLd = [
 					</div>
 				))}
 			</div>
+			<p class="git-note" data-reveal>
+				<strong>You need Git installed.</strong> GitStudio runs the Git already on your computer
+				and does not bundle one: <code>xcode-select --install</code> on macOS (or
+				<code>brew install git</code>), <a href="https://git-scm.com/downloads/win" target="_blank" rel="noopener">Git for Windows</a>,
+				or your Linux distribution's <code>git</code> package.
+			</p>
 			<div class="center">
 				<p class="release-note" data-reveal>
-					v{APP.version} · Apache-2.0 · <code>SHA256SUMS.txt</code> &amp; older versions on
+					v<span data-live="app.version">{stats.app.version}</span> · Apache-2.0 · <a href={stats.app.sumsUrl} data-live-href="app.sums" target="_blank" rel="noopener"><code>SHA256SUMS.txt</code></a> &amp; older versions on
 					the <a href={GITHUB_RELEASES_URL} target="_blank" rel="noopener">GitHub Releases page</a>.
 				</p>
 				<p class="release-note" data-reveal>
@@ -175,7 +195,7 @@ const jsonLd = [
 						<Image src={extIcon} alt="" width="96" height="96" class="p-icon" />
 						<div>
 							<h3>GitStudio for VS Code &amp; Cursor</h3>
-							<p class="ex-meta">The whole Git workflow · v{EXT.version} · {EXT.license}</p>
+							<p class="ex-meta">The whole Git workflow · v<span data-live="ext.version">{stats.ext.version}</span> · {EXT.license}</p>
 						</div>
 					</div>
 					<InstallCmd cmd={`code --install-extension ${EXT.id}`} />
@@ -185,10 +205,14 @@ const jsonLd = [
 						<a href={EXT.openVsxUrl} target="_blank" rel="noopener">Open VSX</a>
 					</div>
 					<details class="vsix">
-						<summary>Prefer the raw VSIX? ({EXT.vsixSizeMb} MB)</summary>
-						<a class="btn btn-ghost btn-sm vsix-btn" href={EXT.vsixPath} download>Download {EXT.vsixFile}</a>
-						<InstallCmd cmd={`shasum -a 256 ${EXT.vsixFile}`} />
-						<p class="sha">Expected: <code>{EXT.vsixSha256}</code></p>
+						<summary>Prefer the raw VSIX? (<span data-live="ext.vsixSize">{stats.ext.vsix.sizeMb}</span> MB)</summary>
+						<a class="btn btn-ghost btn-sm vsix-btn" href={stats.ext.vsix.url} data-live-href="ext.vsix" download>Download {stats.ext.vsix.file}</a>
+						{stats.ext.vsix.sha256 && (
+							<>
+								<InstallCmd cmd={`shasum -a 256 ${stats.ext.vsix.file}`} />
+								<p class="sha">Expected: <code data-live="ext.sha256">{stats.ext.vsix.sha256}</code></p>
+							</>
+						)}
 					</details>
 				</div>
 
@@ -197,7 +221,7 @@ const jsonLd = [
 						<Image src={mergeIcon} alt="" width="96" height="96" class="p-icon" />
 						<div>
 							<h3>Merge Studio</h3>
-							<p class="ex-meta">The focused merge editor · v{MERGE.version} · {MERGE.license}</p>
+							<p class="ex-meta">The focused merge editor · v<span data-live="ms.version">{stats.ms.version}</span> · {MERGE.license}</p>
 						</div>
 					</div>
 					<InstallCmd cmd={`code --install-extension ${MERGE.id}`} />
@@ -209,6 +233,24 @@ const jsonLd = [
 				</div>
 			</div>
 			<p class="ext-foot" data-reveal><a href="/extensions">Compare the two extensions →</a></p>
+		</div>
+	</section>
+
+	<!-- QUESTIONS — the same list the FAQPage structured data is built from -->
+	<section class="section" id="questions">
+		<div class="container faq-wrap">
+			<div>
+				<p class="eyebrow" data-reveal>Install questions</p>
+				<h2 data-reveal>Before you install.</h2>
+			</div>
+			<div class="faqs" data-reveal>
+				{faqs.map((f) => (
+					<details>
+						<summary>{f.q}</summary>
+						<p>{f.a}</p>
+					</details>
+				))}
+			</div>
 		</div>
 	</section>
 
@@ -227,7 +269,7 @@ const jsonLd = [
 	</section>
 </Site>
 
-<script define:vars={{ dl }}>
+<script define:vars={{ dl, liveKey }}>
 	(function () {
 		const card = document.getElementById('smart-dl');
 		if (!card) return;
@@ -238,7 +280,9 @@ const jsonLd = [
 		const eyebrow = document.getElementById('smart-eyebrow');
 		const icons = card.querySelectorAll('.smart-logo [data-os]');
 		const showIcon = (os) => icons.forEach((s) => (s.hidden = s.getAttribute('data-os') !== os));
-		const set = (href, sub) => { if (href) primary.href = href; subEl.textContent = sub; };
+		// Links written here carry their data-live-href key too, so LiveStats can move them to a newer release.
+		const set = (href, sub) => { if (href) { primary.href = href; primary.setAttribute('data-live-href', liveKey[href] || ''); } subEl.textContent = sub; };
+		const link = (href, text, cls) => '<a' + (cls ? ' class="' + cls + '"' : '') + ' data-live-href="' + (liveKey[href] || '') + '" href="' + href + '">' + text + '</a>';
 
 		const ua = navigator.userAgent || '';
 		const uad = navigator.userAgentData;
@@ -272,7 +316,7 @@ const jsonLd = [
 		}
 		if (os === 'linux') {
 			set(dl.linApp, '.AppImage · x86-64');
-			altEl.innerHTML = 'Debian or Ubuntu? <a href="' + dl.linDeb + '">Get the .deb</a>';
+			altEl.innerHTML = 'Debian or Ubuntu? ' + link(dl.linDeb, 'Get the .deb');
 			return;
 		}
 
@@ -281,14 +325,14 @@ const jsonLd = [
 		const apply = (arch) => {
 			if (done) return;
 			done = true;
-			if (arch === 'intel') { set(dl.macIntel, 'Intel · .dmg'); altEl.innerHTML = 'On Apple Silicon? <a href="' + dl.macArm + '">Get the Apple Silicon build</a>'; }
-			else if (arch === 'arm') { set(dl.macArm, 'Apple Silicon · .dmg'); altEl.innerHTML = 'Intel Mac? <a href="' + dl.macIntel + '">Get the Intel build</a>'; }
+			if (arch === 'intel') { set(dl.macIntel, 'Intel · .dmg'); altEl.innerHTML = 'On Apple Silicon? ' + link(dl.macArm, 'Get the Apple Silicon build'); }
+			else if (arch === 'arm') { set(dl.macArm, 'Apple Silicon · .dmg'); altEl.innerHTML = 'Intel Mac? ' + link(dl.macIntel, 'Get the Intel build'); }
 			else {
 				// Could not tell (Safari reports "Apple GPU" for every Mac, Intel
 				// included). Offer both, as equals, rather than guess.
 				eyebrow.textContent = 'For your Mac';
 				set(dl.macArm, 'Apple Silicon · .dmg');
-				altEl.innerHTML = '<a class="btn btn-ghost smart-second" href="' + dl.macIntel + '">Intel Mac · .dmg</a>';
+				altEl.innerHTML = link(dl.macIntel, 'Intel Mac · .dmg', 'btn btn-ghost smart-second');
 			}
 		};
 		if (uad && uad.getHighEntropyValues) {
@@ -502,6 +546,17 @@ const jsonLd = [
 	}
 	.os-col :global(.ic) {
 		width: 100%;
+	}
+	.git-note {
+		margin: 1.6rem auto 0;
+		max-width: 72ch;
+		text-align: center;
+		font-size: 0.9rem;
+		color: var(--muted);
+		line-height: 1.7;
+	}
+	.git-note strong {
+		color: var(--ink);
 	}
 	.release-note {
 		margin: 2.2rem 0 0;

@@ -1,0 +1,120 @@
+---
+// ProductWindow — a real capture of the shipping software, shown at its
+// natural pixel scale in a quiet frame. The captures are 2× screenshots, so
+// the natural CSS width is half the file's width; the image is never shown
+// larger than that (no zoom, no soft upscaled text). When the column is
+// narrower than the capture, the frame crops it instead of shrinking it —
+// a window into the product, not a thumbnail of it.
+//
+//   minScale  how far it may shrink before it starts cropping instead
+//             (1 = always 1:1; 0.85 lets a wide editor fit a laptop column).
+//             On phones (≤760px) it always scales to fit: a sliver of a
+//             window would only show text cut mid-word.
+//   maxHeight crop the bottom at this many CSS px, fading into the page.
+//   bleed     the frame keeps its natural width and runs past its column to
+//             the edge of the page (the section must clip overflow-x).
+//
+// Same language as the extension cards on the home page: no outline, a faint
+// inner edge, a soft violet light, depth from shadow.
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+	src: ImageMetadata;
+	alt: string;
+	caption?: string;
+	class?: string;
+	priority?: boolean;
+	minScale?: number;
+	maxHeight?: number;
+	bleed?: boolean;
+	/** Where the crop keeps: 'left' (default) or 'right'. */
+	align?: 'left' | 'right';
+}
+
+const { src, alt, caption, class: className, priority = false, minScale = 1, maxHeight, bleed = false, align = 'left' } = Astro.props;
+const w = Math.round(src.width / 2);
+const style = [`--pw-w:${w}px`, `--pw-min:${minScale}`, maxHeight ? `--pw-h:${maxHeight}px` : ''].filter(Boolean).join(';');
+---
+
+<figure class:list={['pw', { 'pw--bleed': bleed, 'pw--cropped': !!maxHeight, 'pw--right': align === 'right' }, className]} style={style}>
+	<div class="pw-frame">
+		<Image
+			src={src}
+			alt={alt}
+			widths={[w, src.width]}
+			sizes={`${w}px`}
+			loading={priority ? 'eager' : 'lazy'}
+			fetchpriority={priority ? 'high' : 'auto'}
+		/>
+	</div>
+	{caption && <figcaption class="mono">{caption}</figcaption>}
+</figure>
+
+<style>
+	.pw {
+		margin: 0;
+		min-width: 0;
+	}
+	.pw-frame {
+		position: relative;
+		width: 100%;
+		max-width: var(--pw-w);
+		max-height: var(--pw-h, none);
+		overflow: hidden;
+		border-radius: 14px;
+		background: #13131e;
+		box-shadow:
+			0 0 0 1px rgba(255, 255, 255, 0.07),
+			0 0 60px -20px rgba(169, 140, 255, 0.28),
+			0 30px 70px -30px rgba(0, 0, 0, 0.85);
+	}
+	.pw--right .pw-frame {
+		margin-left: auto;
+	}
+	.pw-frame :global(img) {
+		display: block;
+		width: 100%;
+		max-width: var(--pw-w);
+		min-width: calc(var(--pw-w) * var(--pw-min));
+		height: auto;
+	}
+	.pw--right .pw-frame :global(img) {
+		margin-left: auto;
+	}
+	/* on a phone a crop of a full window would slice its text mid-word at
+	   the frame's edge: the whole window, scaled down, reads better */
+	@media (max-width: 760px) {
+		.pw-frame :global(img) {
+			min-width: 0;
+		}
+	}
+	/* cut at the bottom: the capture settles into the page, no hard edge */
+	.pw--cropped .pw-frame::after {
+		content: '';
+		position: absolute;
+		inset: auto 0 0;
+		height: 72px;
+		background: linear-gradient(180deg, transparent, rgba(11, 11, 19, 0.7));
+		pointer-events: none;
+	}
+	/* natural width, running off its column to the page edge */
+	.pw--bleed .pw-frame {
+		width: var(--pw-w);
+		max-width: none;
+	}
+	.pw--bleed .pw-frame :global(img) {
+		width: var(--pw-w);
+		min-width: 0;
+	}
+	figcaption {
+		margin-top: 0.9rem;
+		font-size: 0.72rem;
+		letter-spacing: 0.04em;
+		color: var(--faint);
+		text-align: center;
+	}
+	.pw--bleed figcaption {
+		text-align: left;
+	}
+</style>

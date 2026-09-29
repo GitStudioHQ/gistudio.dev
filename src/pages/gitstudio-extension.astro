@@ -1,21 +1,25 @@
 ---
 import Site from '../layouts/Site.astro';
-import Shot from '../components/Shot.astro';
-import graphPanel from '../assets/shots/graph-panel.png';
+import ProductWindow from '../components/ProductWindow.astro';
 import changesView from '../assets/shots/changes-view.png';
-import commitsRail from '../assets/shots/commits-rail.png';
 import branchDialog from '../assets/shots/branch-dialog.png';
+import extBlame from '../assets/shots/ext-blame.png';
+import extLineHistory from '../assets/shots/ext-line-history.png';
 import Icon from '../components/Icon.astro';
-import ListingCard from '../components/ListingCard.astro';
-import EditorChips from '../components/EditorChips.astro';
+import ExtHeroMeta from '../components/ExtHeroMeta.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
-import extIcon from '../assets/brand/ext-icon-192.png';
+import extIcon from '../assets/brand/gitstudio-icon.png';
 import GraphLive from '../components/GraphLive.astro';
 import { EXT, MERGE, GITHUB_REPO_URL } from '../consts';
+import { getStats } from '../lib/stats';
+
+// Version, command count and minimum VS Code are read at build time (and
+// refreshed on view through data-live) — see src/lib/stats.ts.
+const stats = await getStats();
 
 const title = 'GitStudio for VS Code, Cursor & VSCodium — Git client extension';
 const description =
-	'GitStudio is a free, open-source Git client extension for VS Code, Cursor, VSCodium, Windsurf, and code-server: a live commit graph, inline blame with a code-age heatmap, hunk/line staging, three-pane merge, interactive rebase with a universal Undo, worktrees, and in-editor GitHub pull requests. 77 commands, on the Marketplace and Open VSX.';
+	`GitStudio is a free, open-source Git client extension for VS Code, Cursor, VSCodium, Windsurf, and code-server: a live commit graph, inline blame with a code-age heatmap, hunk and line staging, stashes with drag and drop, a three-pane merge editor with a conflicts dashboard, interactive rebase with Undo, worktrees, and GitHub pull requests. ${stats.ext.commands} commands, on the Marketplace and Open VSX.`;
 
 const jsonLd = [
 	{
@@ -28,7 +32,7 @@ const jsonLd = [
 		sameAs: [EXT.marketplaceUrl, EXT.openVsxUrl],
 		applicationCategory: 'DeveloperApplication',
 		operatingSystem: 'VS Code, Cursor, VSCodium, Windsurf, code-server',
-		softwareVersion: EXT.version,
+		softwareVersion: stats.ext.version,
 		license: 'https://www.apache.org/licenses/LICENSE-2.0',
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 	},
@@ -45,9 +49,9 @@ const jsonLd = [
 		'@context': 'https://schema.org',
 		'@type': 'FAQPage',
 		mainEntity: [
-			{ '@type': 'Question', name: 'Which editors does the GitStudio extension support?', acceptedAnswer: { '@type': 'Answer', text: 'VS Code, Cursor, VSCodium, Windsurf, and code-server — any editor built on VS Code 1.78 or newer. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.' } },
+			{ '@type': 'Question', name: 'Which editors does the GitStudio extension support?', acceptedAnswer: { '@type': 'Answer', text: `VS Code, Cursor, VSCodium, Windsurf, and code-server — any editor built on VS Code ${stats.ext.minVsCode} or newer. VS Code installs from the Microsoft Marketplace; the others install the identical build from Open VSX.` } },
 			{ '@type': 'Question', name: 'How do I install GitStudio in Cursor?', acceptedAnswer: { '@type': 'Answer', text: 'Search “GitStudio” in Cursor’s Extensions view (Cursor reads the Open VSX registry), or run cursor --install-extension gitstudio.gitstudio from a shell.' } },
-			{ '@type': 'Question', name: 'Is the GitStudio extension free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes — every feature is free on public and private repos. It is Apache-2.0 licensed and open source, with no account and telemetry off by default.' } },
+			{ '@type': 'Question', name: 'Is the GitStudio extension free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes — every feature is free on public and private repos. It is Apache-2.0 licensed and open source, with no account and no usage tracking. It sends anonymous crash reports when a command fails; gitstudio.errorReporting.enabled, or VS Code\'s own telemetry setting, turns them off.' } },
 		],
 	},
 ];
@@ -61,34 +65,34 @@ const jsonLd = [
 				<a href="/extensions">Extensions</a> <span aria-hidden="true">/</span>
 				<span>GitStudio</span>
 			</nav>
-			<p class="eyebrow" data-reveal>GitStudio extension · VS Code &amp; Cursor · v{EXT.version}</p>
+			<p class="eyebrow" data-reveal>GitStudio extension</p>
 			<h1 data-reveal>The full Git workflow in VS Code and Cursor.</h1>
 			<p class="lede" data-reveal>
 				One extension that puts the full Git workflow in your editor: a commit graph, inline blame,
-				hunk and line staging, a three-pane merge editor, interactive rebase, worktrees, and GitHub
-				pull requests. {EXT.commands} commands across five sidebar views. Free and open source.
+				hunk and line staging, stashes, a three-pane merge editor, interactive rebase, worktrees, and
+				GitHub pull requests. <span data-live="ext.commands">{stats.ext.commands}</span> commands, four sidebar views, and a Commit Graph panel.
+				Free and open source.
 			</p>
 			<div class="cta-row" data-reveal>
-				<a class="btn btn-primary btn-lg" href="#install">Install now</a>
-				<a class="btn btn-ghost btn-lg" href={GITHUB_REPO_URL} target="_blank" rel="noopener">View source</a>
+				<a class="btn btn-primary btn-lg" href={EXT.marketplaceUrl} target="_blank" rel="noopener">Install from Marketplace</a>
+				<a class="btn btn-ghost btn-lg" href={EXT.openVsxUrl} target="_blank" rel="noopener">Open VSX</a>
 			</div>
-			<div class="listing-wrap" data-reveal style="--reveal-delay:.06s">
-				<ListingCard
+			<div data-reveal style="--reveal-delay:.06s">
+				<ExtHeroMeta
 					icon={extIcon}
-					name="GitStudio"
-					tagline="The whole Git workflow, in one extension"
-					meta={[`v${EXT.version}`, 'Apache-2.0', `${EXT.commands} commands`, 'VS Code 1.78+']}
-					primaryHref={EXT.marketplaceUrl}
-					primaryLabel="Install from Marketplace"
-					secondaryHref={EXT.openVsxUrl}
-					secondaryLabel="Open VSX"
+					facts={[
+						{ live: 'ext.version', text: stats.ext.version, pre: 'v' },
+						{ live: 'ext.installs', text: stats.text['ext.installs'], post: ' installs', title: 'Installs from the VS Code Marketplace' },
+						{ live: 'ext.downloads', text: stats.text['ext.downloads'], post: ' downloads', title: 'Downloads from Open VSX' },
+						{ text: EXT.license },
+						{ text: 'Source on GitHub', href: GITHUB_REPO_URL },
+					]}
 				/>
 			</div>
-			<EditorChips class="hero-editors" data-reveal />
 		</div>
 		<div class="container heromock" data-reveal>
 			<GraphLive />
-			<p class="live-note mono">The graph component that ships in the extension, rendering this repo's history. Scroll and click through it.</p>
+			<p class="live-note mono">GitStudio's own graph component, rendering the history of the GitStudio repository. Scroll and click through it.</p>
 		</div>
 	</section>
 
@@ -98,21 +102,20 @@ const jsonLd = [
 			<h2 data-reveal>What the extension does.</h2>
 			<div class="pillars">
 				{[
-					{ n: '01', icon: 'graph', name: 'Visualize', desc: 'Understand any repo at a glance.', items: ['Virtualized commit graph — fast at tens of thousands of commits, with colored lanes, ref chips, and keyboard navigation', 'Sidebar Commits view: compact topology, author avatars on the nodes, search by message · author · SHA · refs', 'Inline blame + full-file annotations with a code-age heatmap', 'File history, line history, revision stepping, reflog time-machine'] },
-					{ n: '02', icon: 'stage', name: 'Change', desc: 'Stage and commit with precision.', items: ['Hunk- and line-level staging from any editor or diff', 'Side-by-side and unified diffs with word-level highlighting', 'Three-pane merge editor with one-click accept ribbons — conflicts auto-open as they appear', 'Guided commit box: amend, sign-off, author override, Commit & Push'] },
-					{ n: '03', icon: 'rebase', name: 'Rewrite', desc: 'Rewrite history without losing it.', items: ['Drag-to-reorder interactive rebase: pick · reword · edit · squash · fixup · drop', 'Universal Undo — a reflog snapshot before every destructive op, one command to reverse it', 'Pushed history falls back to a safe revert; force-push uses --force-with-lease'] },
-					{ n: '04', icon: 'branch', name: 'Manage', desc: 'Branches, remotes, tags, worktrees.', items: ['Branches, remotes, tags, stashes, worktrees — five views, full operations', 'Branch compare: ahead/behind, commits between refs, changed files as native diffs', 'Live sync: push/pull from the status bar and Changes header, per-branch ↑↓ badges', 'Pull a branch without checking it out — fast-forward straight from its submenu'] },
-					{ n: '05', icon: 'pr', name: 'Collaborate', desc: 'GitHub PRs without the browser.', items: ['List, open, and check out pull requests from the sidebar', 'Review with inline comments and submit — approve, comment, request changes', 'Create and merge PRs in-editor, with the GitHub sign-in your editor already has'] },
-					{ n: '06', icon: 'sparkle', name: 'Assist', desc: 'Optional AI. Your keys.', items: ['Commit messages drafted from your staged diff — the ✨ button in the commit box', 'Explain-this-diff and change summaries on demand', "Bring your own Anthropic key, or go zero-key via GitHub Copilot's model", 'Off by default — and it never gates or breaks a Git operation'] },
+					{ n: '01', icon: 'graph', name: 'Visualize', desc: 'Understand any repo at a glance.', items: ['Virtualized commit graph — fast at tens of thousands of commits, with colored lanes, ref chips, and keyboard navigation', 'Filter the graph to one branch or a few; search by message · author · SHA · refs', 'Inline blame + full-file annotations with a code-age heatmap, and Show in Graph from the blame hover', 'File history, line history, revision stepping, reflog time-machine'] },
+					{ n: '02', icon: 'stage', name: 'Change', desc: 'Stage and commit with precision.', items: ['Hunk- and line-level staging from any editor or diff — or tick changes JetBrains-style, if you prefer', 'Stashes live in Changes, file by file: drag a stash onto your changes to apply it, drag files onto Stashes to stash exactly those', 'Side-by-side and unified diffs with word-level highlighting', 'Guided commit box: amend, sign-off, author override, Commit & Push'] },
+					{ n: '03', icon: 'rebase', name: 'Rewrite', desc: 'Rewrite history without losing it.', items: ['Drag-to-reorder interactive rebase: pick · reword · edit · squash · fixup · drop — set several commits at once', 'Select several commits: cherry-pick, revert, squash, or drop them together, or compare two', 'Universal Undo — a reflog snapshot before every destructive op, one command to reverse it; pushed history falls back to a safe revert', 'Every force push is leased with --force-with-lease'] },
+					{ n: '04', icon: 'branch', name: 'Manage', desc: 'Branches, remotes, tags, worktrees.', items: ['A branch menu you drive from the keyboard — fuzzy search, remotes grouped, Reset to remote', 'Worktrees, a row each: its changes and unpushed commits, Pull and Push, Stash & Remove', 'Branch compare: ahead/behind, commits between refs, changed files as native diffs', 'Switch Repository, for folders that hold several repositories'] },
+					{ n: '05', icon: 'pr', name: 'Collaborate', desc: 'GitHub pull requests in the editor.', items: ['A Pull Requests list: open, merged, closed, search and filters, checks and review state', 'A page for each pull request — conversation, commits, checks, files — and merge from it', 'Review in the editor and submit from the page; New pull request is one form', 'Uses the GitHub sign-in your editor already has'] },
+					{ n: '06', icon: 'sparkle', name: 'Assist', desc: 'Optional AI, on your terms.', items: ['Commit messages drafted from your staged diff — the ✨ button in the commit box', 'Explain a diff, summarize changes, review your changes before you commit', 'No key with GitHub Copilot or Cursor models; or your own Anthropic or OpenAI-compatible key (OpenRouter, Ollama, LM Studio); or the Claude Code, Codex, or Gemini CLI', 'On demand only — it never gates or breaks a Git operation'] },
 				].map((p, i) => (
-					<div class="card pillar" data-reveal style={`--reveal-delay:${(i % 2) * 0.07}s`}>
+					<div class="pillar" data-reveal style={`--reveal-delay:${(i % 2) * 0.07}s`}>
 						<div class="ph">
 							<span class="icon-tile"><Icon name={p.icon as any} /></span>
 							<div class="pht">
 								<h3>{p.name}</h3>
 								<span class="pd">{p.desc}</span>
 							</div>
-							<span class="pn">{p.n}</span>
 						</div>
 						<ul>
 							{p.items.map((it) => (
@@ -127,27 +130,28 @@ const jsonLd = [
 
 	<section class="section">
 		<div class="container">
-			<p class="eyebrow" data-reveal>Straight from the product</p>
-			<h2 data-reveal>The extension in use.</h2>
-			<p class="lede" data-reveal>
-				The Commit Graph panel and the sidebar views of the GitStudio extension.
-			</p>
-			<div class="tour-big" data-reveal>
-				<Shot
-					src={graphPanel}
-					alt="The full GitStudio Commit Graph panel: colored branch lanes, ref chips, author avatars riding the commit nodes, changes bars, and commit details"
-					caption="The full Commit Graph panel — lanes, chips, avatars on nodes, per-commit changes."
-				/>
-			</div>
 			<div class="tour">
-				<div data-reveal>
-					<Shot src={changesView} crop="680/1000" alt="The Changes view: staged and unstaged groups, the guided commit box, and live Push/Pull buttons" caption="Changes — guided commit box, instant staging" />
+				<div class="tour-copy" data-reveal>
+					<p class="eyebrow">In the sidebar</p>
+					<h2>The extension in use.</h2>
+					<p class="lede">
+						The Changes view, with staged and unstaged files, the guided commit box and live Push
+						and Pull; and the branch menu, where every action on a branch is a keystroke away.
+					</p>
 				</div>
-				<div data-reveal style="--reveal-delay:.08s">
-					<Shot src={commitsRail} crop="660/1000" alt="The Commits sidebar view: compact two-line rows, topology rail, mini author avatars, scoped search" caption="Commits — the sidebar-native rail" />
-				</div>
-				<div data-reveal style="--reveal-delay:.16s">
-					<Shot src={branchDialog} crop="680/1000" alt="The branch dialog: per-branch ahead/behind badges, in-place fetch, pull without checkout" caption="Branches — ↑↓ badges, fetch in place" />
+				<div class="tour-shots" data-reveal style="--reveal-delay:.08s">
+					<ProductWindow
+						src={changesView}
+						maxHeight={520}
+						alt="The GitStudio Changes view: the commit message box with Amend and Sign-off, Commit 2 and Push, and the changed files grouped as staged and unstaged"
+						caption="Changes"
+					/>
+					<ProductWindow
+						src={branchDialog}
+						maxHeight={520}
+						alt="The GitStudio branch menu on fix/live-sync: Checkout, Pull 7 into the branch, New Branch, Compare with main, Merge, Rebase, New Worktree, Rename, Copy Branch Name and Delete"
+						caption="Branches"
+					/>
 				</div>
 			</div>
 		</div>
@@ -168,6 +172,24 @@ const jsonLd = [
 				</p>
 			</div>
 		</div>
+		<div class="container wide-shot shot-stack">
+			<div data-reveal style="--reveal-delay:.08s">
+				<ProductWindow
+					src={extBlame}
+					minScale={0.84}
+					alt="GitStudio's full-file blame in VS Code: a date and author for every line, shaded by age"
+					caption="Full-file blame on syncStatus.ts: a date and an author on every line, the gutter shaded by age, and inline blame on the current line."
+				/>
+			</div>
+			<div data-reveal style="--reveal-delay:.08s">
+				<ProductWindow
+					src={extLineHistory}
+					minScale={0.84}
+					alt="GitStudio's Line History in VS Code listing the commits that changed the selected lines"
+					caption="Line History for lines 13–36 of the same file: the three commits that shaped them."
+				/>
+			</div>
+		</div>
 	</section>
 
 	<section class="section">
@@ -178,17 +200,18 @@ const jsonLd = [
 				<p class="lede">
 					Every GitStudio shortcut lives under a single conflict-free chord —
 					<span class="kbd">Ctrl+Alt+G</span> (<span class="kbd">Cmd+Alt+G</span> on macOS),
-					then a letter. In the commit box, <span class="kbd">Enter</span> commits.
-					All bindings are remappable.
+					then a letter. All bindings are remappable.
 				</p>
 			</div>
 			<div class="keys" data-reveal style="--reveal-delay:.08s">
 				{[
+					{ k: 'G', what: 'Open the branch menu' },
 					{ k: 'B', what: 'Toggle file blame' },
 					{ k: 'H', what: 'Show line history' },
 					{ k: 'D', what: 'Open changes vs HEAD' },
 					{ k: 'S', what: 'Stage selected lines' },
 					{ k: 'U', what: 'Unstage selected lines' },
+					{ k: 'T', what: 'Stage or unstage the change at this line' },
 					{ k: 'Z', what: 'Undo last Git operation' },
 				].map((k) => (
 					<div class="keyrow">
@@ -207,7 +230,7 @@ const jsonLd = [
 			<h2 data-reveal>Install for your editor.</h2>
 			<p class="lede" data-reveal>
 				Search <strong>“GitStudio”</strong> in your editor's Extensions view, or grab the exact
-				command below. Requires VS Code {EXT.minVsCode}+ (or any editor built on it) and git on
+				command below. Requires VS Code <span data-live="ext.minVsCode">{stats.ext.minVsCode}</span>+ (or any editor built on it) and git on
 				your PATH. Prefer an artifact? The <a href="/download#extension">download page</a> has the
 				VSIX with a SHA-256.
 			</p>
@@ -222,13 +245,13 @@ const jsonLd = [
 				<a class="card rel" href={MERGE.route} data-reveal>
 					<p class="rel-eyebrow mono">Just want conflict resolution?</p>
 					<h3>Merge Studio</h3>
-					<p>The focused three-pane merge editor on its own — tiny, fast, MIT. GitStudio already includes it; this is for people who want only that.</p>
+					<p>The same merge editor and conflicts dashboard, on their own. GitStudio already includes them; Merge Studio is for people who want only that.</p>
 					<span class="link-arrow">See Merge Studio</span>
 				</a>
 				<a class="card rel" href="/" data-reveal style="--reveal-delay:.08s">
 					<p class="rel-eyebrow mono">Part of GitStudio</p>
 					<h3>The desktop app</h3>
-					<p>The same engine in a native macOS, Windows, and Linux client — with a built-in terminal, the full GitHub client, and an AI assistant on your own keys.</p>
+					<p>The same engine in a desktop client for macOS, Windows, and Linux — with a built-in terminal, the full GitHub client, and an AI assistant on your own keys.</p>
 					<span class="link-arrow">See the desktop app</span>
 				</a>
 			</div>
@@ -261,19 +284,26 @@ const jsonLd = [
 		flex-wrap: wrap;
 		margin-top: 2rem;
 	}
-	.listing-wrap {
-		margin-top: 2rem;
-		max-width: 720px;
-	}
-	.hero-editors {
-		margin-top: 1.6rem;
-	}
 	.live-note {
 		margin-top: 0.8rem;
 		font-size: 0.7rem;
 		letter-spacing: 0.04em;
 		color: var(--faint);
 		text-align: center;
+	}
+	/* blame and line history: full windows, at the capture's own width
+	   (1280 px at 1:1) or a little under it */
+	.wide-shot {
+		max-width: 1344px;
+		margin-top: clamp(2rem, 4vw, 3rem);
+	}
+	.wide-shot :global(.pw-frame) {
+		margin-inline: auto;
+	}
+	.shot-stack {
+		display: flex;
+		flex-direction: column;
+		gap: clamp(2rem, 4vw, 3rem);
 	}
 	.heromock {
 		margin-top: 3.2rem;
@@ -286,6 +316,16 @@ const jsonLd = [
 		grid-template-columns: 1fr 1fr;
 		gap: 1.1rem;
 		margin-top: 2.4rem;
+	}
+	/* the extension cards' surface: no outline, a faint inner edge, depth */
+	.pillar {
+		border-radius: 20px;
+		padding: 1.7rem 1.75rem 1.8rem;
+		background: linear-gradient(180deg, #13131f, #0f0f19);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.045),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+			0 24px 50px -36px rgba(0, 0, 0, 0.9);
 	}
 	.pillar .ph {
 		display: flex;
@@ -301,12 +341,6 @@ const jsonLd = [
 	}
 	.pillar h3 {
 		margin: 0;
-	}
-	.pn {
-		margin-left: auto;
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		color: var(--violet);
 	}
 	.pd {
 		color: var(--faint);
@@ -339,14 +373,24 @@ const jsonLd = [
 		opacity: 0.7;
 	}
 
-	.tour-big {
-		margin-top: 2.4rem;
-	}
+	/* copy on the left, the two sidebar views at their natural size */
 	.tour {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1.3rem;
-		margin-top: 1.3rem;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: clamp(2rem, 5vw, 4.5rem);
+		align-items: center;
+	}
+	.tour-copy .lede {
+		max-width: 44ch;
+	}
+	.tour-shots {
+		display: grid;
+		grid-template-columns: repeat(2, 340px);
+		gap: 20px;
+		align-items: start;
+	}
+	.tour-shots > :last-child {
+		margin-top: 56px;
 	}
 	.f-copy.narrow {
 		max-width: 760px;
@@ -429,6 +473,15 @@ const jsonLd = [
 		.tour,
 		.rel-grid {
 			grid-template-columns: 1fr;
+		}
+	}
+	@media (max-width: 760px) {
+		.tour-shots {
+			grid-template-columns: minmax(0, 340px);
+			justify-content: center;
+		}
+		.tour-shots > :last-child {
+			margin-top: 0;
 		}
 	}
 </style>

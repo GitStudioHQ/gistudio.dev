@@ -6,7 +6,9 @@ interface Props {
 const { title, class: className } = Astro.props;
 ---
 
-<figure class:list={['window', className]} role="img" aria-label={title ? `Stylized product view: ${title}` : 'Stylized product view'}>
+<!-- A plain labelled figure, not role="img": what it frames (the live graph)
+     is interactive, and an image role would hide that from assistive tech. -->
+<figure class:list={['window', className]} aria-label={title ?? 'Product view'}>
 	<div class="titlebar">
 		<div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
 		{title && <span class="title">{title}</span>}
