@@ -70,6 +70,13 @@
       "continue": true
     },
     {
+      "src": "^/.+\\.md$",
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      },
+      "continue": true
+    },
+    {
       "src": "^/$",
       "headers": {
         "Link": "</.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/ai-catalog.json>; rel=\"ai-catalog\"; type=\"application/ai-catalog+json\", </.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\", </llms.txt>; rel=\"describedby\"; type=\"text/plain\", </sitemap-index.xml>; rel=\"sitemap\"; type=\"application/xml\", </index.md>; rel=\"alternate\"; type=\"text/markdown\"",
