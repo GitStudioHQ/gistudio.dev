@@ -1,4 +1,10 @@
+# Content Signals (https://contentsignals.org): GitStudio is free and open
+# source and wants to be found, quoted and learned from.
 User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
 Sitemap: https://gitstudio.dev/sitemap-index.xml
+
+# AI catalog (Agentic Resource Discovery): skills, the API catalog, llms.txt.
+Agentmap: https://gitstudio.dev/.well-known/ai-catalog.json

@@ -1,0 +1,419 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GitStudio stats API",
+    "version": "1.0.0",
+    "summary": "Live product facts for GitStudio: versions, install and download counts, and download URLs.",
+    "description": "A public, read-only JSON endpoint that the gitstudio.dev pages use to show current versions and counts. It needs no authentication and accepts no parameters. Values come from GitHub Releases, Open VSX and the Visual Studio Marketplace; when a source cannot be reached, the affected values fall back to hand-checked numbers and are listed in `stale`. Responses are cached at the CDN for up to 15 minutes.",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    },
+    "contact": {
+      "name": "GitStudio",
+      "url": "https://github.com/GitStudioHQ/gitstudio/issues"
+    }
+  },
+  "externalDocs": {
+    "description": "Stats API documentation",
+    "url": "https://gitstudio.dev/docs/stats-api.md"
+  },
+  "servers": [
+    {
+      "url": "https://gitstudio.dev"
+    }
+  ],
+  "security": [],
+  "paths": {
+    "/api/stats": {
+      "get": {
+        "operationId": "getStats",
+        "summary": "Get current GitStudio versions, counts and download URLs",
+        "description": "Returns the newest versions of GitStudio Desktop, the GitStudio extension and Merge Studio, their install and download counts, and the URLs of the newest installers and VSIX files. Only GET and HEAD are allowed; other methods return 405.",
+        "tags": [
+          "stats"
+        ],
+        "responses": {
+          "200": {
+            "description": "The current stats.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "s-maxage=900 when every source answered, s-maxage=120 otherwise, with stale-while-revalidate."
+              },
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "const": "*"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stats"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed. Only GET and HEAD are supported.",
+            "headers": {
+              "Allow": {
+                "schema": {
+                  "type": "string",
+                  "const": "GET, HEAD"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Installer": {
+        "type": "object",
+        "required": [
+          "os",
+          "arch",
+          "format",
+          "key",
+          "url"
+        ],
+        "properties": {
+          "os": {
+            "type": "string",
+            "description": "macOS, Windows or Linux.",
+            "examples": [
+              "macOS"
+            ]
+          },
+          "arch": {
+            "type": "string",
+            "description": "The build's architecture or flavour.",
+            "examples": [
+              "Apple Silicon"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "description": "File extension of the installer.",
+            "examples": [
+              ".dmg"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "description": "Stable key, also used in href as app.asset.<key>.",
+            "examples": [
+              "arm64.dmg"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Download URL on GitHub Releases."
+          }
+        }
+      },
+      "Stats": {
+        "type": "object",
+        "required": [
+          "fetchedAt",
+          "live",
+          "ext",
+          "ms",
+          "app",
+          "text",
+          "href",
+          "stale"
+        ],
+        "properties": {
+          "fetchedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the sources were read."
+          },
+          "live": {
+            "type": "object",
+            "description": "Which sources answered. A false source means its values are fallbacks.",
+            "required": [
+              "github",
+              "mergeStudioGithub",
+              "openVsx",
+              "marketplace",
+              "manifest"
+            ],
+            "properties": {
+              "github": {
+                "type": "boolean"
+              },
+              "mergeStudioGithub": {
+                "type": "boolean"
+              },
+              "openVsx": {
+                "type": "boolean"
+              },
+              "marketplace": {
+                "type": "boolean"
+              },
+              "manifest": {
+                "type": "boolean"
+              }
+            }
+          },
+          "ext": {
+            "type": "object",
+            "required": [
+              "version",
+              "marketplaceInstalls",
+              "openVsxDownloads",
+              "rating",
+              "ratingCount",
+              "commands",
+              "minVsCode",
+              "vsix"
+            ],
+            "properties": {
+              "version": {
+                "type": "string",
+                "description": "Newest published version.",
+                "examples": [
+                  "1.16.0"
+                ]
+              },
+              "marketplaceInstalls": {
+                "type": "integer",
+                "description": "Installs from the Visual Studio Marketplace."
+              },
+              "openVsxDownloads": {
+                "type": "integer",
+                "description": "Downloads from Open VSX (every VSIX download, updates included)."
+              },
+              "rating": {
+                "type": "number",
+                "description": "Average Marketplace rating, 0 to 5."
+              },
+              "ratingCount": {
+                "type": "integer",
+                "description": "Number of Marketplace ratings."
+              },
+              "commands": {
+                "type": "integer",
+                "description": "Commands the extension contributes."
+              },
+              "minVsCode": {
+                "type": "string",
+                "description": "Lowest supported VS Code version (engines.vscode).",
+                "examples": [
+                  "1.78"
+                ]
+              },
+              "vsix": {
+                "type": "object",
+                "required": [
+                  "url",
+                  "sizeMb",
+                  "tag",
+                  "file",
+                  "sha256"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The VSIX on GitHub Releases."
+                  },
+                  "sizeMb": {
+                    "type": "string",
+                    "description": "Size in MB, one decimal.",
+                    "examples": [
+                      "3.1"
+                    ]
+                  },
+                  "tag": {
+                    "type": "string",
+                    "description": "The release tag the VSIX belongs to."
+                  },
+                  "file": {
+                    "type": "string",
+                    "examples": [
+                      "gitstudio.vsix"
+                    ]
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "SHA-256 of the VSIX."
+                  }
+                }
+              }
+            },
+            "description": "The GitStudio extension (gitstudio.gitstudio)."
+          },
+          "ms": {
+            "type": "object",
+            "required": [
+              "version",
+              "marketplaceInstalls",
+              "openVsxDownloads",
+              "rating",
+              "ratingCount",
+              "commands",
+              "minVsCode",
+              "vsix"
+            ],
+            "properties": {
+              "version": {
+                "type": "string",
+                "description": "Newest published version.",
+                "examples": [
+                  "1.16.0"
+                ]
+              },
+              "marketplaceInstalls": {
+                "type": "integer",
+                "description": "Installs from the Visual Studio Marketplace."
+              },
+              "openVsxDownloads": {
+                "type": "integer",
+                "description": "Downloads from Open VSX (every VSIX download, updates included)."
+              },
+              "rating": {
+                "type": "number",
+                "description": "Average Marketplace rating, 0 to 5."
+              },
+              "ratingCount": {
+                "type": "integer",
+                "description": "Number of Marketplace ratings."
+              },
+              "commands": {
+                "type": "integer",
+                "description": "Commands the extension contributes."
+              },
+              "minVsCode": {
+                "type": "string",
+                "description": "Lowest supported VS Code version (engines.vscode).",
+                "examples": [
+                  "1.78"
+                ]
+              },
+              "vsix": {
+                "type": "object",
+                "required": [
+                  "url",
+                  "sizeMb",
+                  "tag"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The VSIX on GitHub Releases."
+                  },
+                  "sizeMb": {
+                    "type": "string",
+                    "description": "Size in MB, one decimal.",
+                    "examples": [
+                      "3.1"
+                    ]
+                  },
+                  "tag": {
+                    "type": "string",
+                    "description": "The release tag the VSIX belongs to."
+                  }
+                }
+              }
+            },
+            "description": "The Merge Studio extension (gitstudio.merge-studio)."
+          },
+          "app": {
+            "type": "object",
+            "description": "GitStudio Desktop.",
+            "required": [
+              "version",
+              "minor",
+              "tag",
+              "releaseUrl",
+              "sumsUrl",
+              "downloads",
+              "installers"
+            ],
+            "properties": {
+              "version": {
+                "type": "string",
+                "examples": [
+                  "2.3.0"
+                ]
+              },
+              "minor": {
+                "type": "string",
+                "examples": [
+                  "2.3"
+                ]
+              },
+              "tag": {
+                "type": "string",
+                "examples": [
+                  "app-v2.3.0"
+                ]
+              },
+              "releaseUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "The GitHub release page."
+              },
+              "sumsUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "SHA256SUMS.txt for every installer."
+              },
+              "downloads": {
+                "type": "integer",
+                "description": "Installer downloads summed over every desktop release."
+              },
+              "installers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Installer"
+                }
+              }
+            }
+          },
+          "text": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "The same facts formatted for display, keyed like ext.version or app.downloads. A count that came from a fallback ends in '+'."
+          },
+          "href": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Download links keyed like ext.vsix, ms.vsix, app.release, app.sums and app.asset.<key>."
+          },
+          "stale": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Keys of text and href whose value is a fallback rather than live."
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "stats",
+      "description": "Product facts"
+    }
+  ]
+}

@@ -15,8 +15,16 @@ const jsonLd = {
 	datePublished: pubDate.toISOString(),
 	...(updatedDate && { dateModified: updatedDate.toISOString() }),
 	author: { '@type': 'Organization', name: 'GitStudio', url: 'https://gitstudio.dev/' },
+	publisher: {
+		'@type': 'Organization',
+		name: 'GitStudio',
+		url: 'https://gitstudio.dev/',
+		logo: { '@type': 'ImageObject', url: 'https://gitstudio.dev/icon-512.png' },
+	},
 	image: new URL(ogImage ?? '/og/blog.png', Astro.site).toString(),
 	url: new URL(Astro.url.pathname, Astro.site).toString(),
+	mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).toString(),
+	isPartOf: { '@type': 'Blog', name: 'The GitStudio blog', url: 'https://gitstudio.dev/blog/' },
 };
 ---
 
