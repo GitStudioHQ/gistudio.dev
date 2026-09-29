@@ -3,9 +3,13 @@ import Site from '../layouts/Site.astro';
 import { Image } from 'astro:assets';
 import Icon from '../components/Icon.astro';
 import EditorChips from '../components/EditorChips.astro';
-import extIcon from '../assets/brand/ext-icon-192.png';
-import mergeIcon from '../assets/brand/merge-icon-192.png';
-import { EXT, MERGE, EDITORS, OPENVSX_DOWNLOADS } from '../consts';
+import extIcon from '../assets/brand/gitstudio-icon.png';
+import mergeIcon from '../assets/brand/merge-studio-icon.png';
+import { EXT, MERGE, EDITORS } from '../consts';
+import { getStats } from '../lib/stats';
+
+// Versions and counts: build time + data-live on view (src/lib/stats.ts).
+const stats = await getStats();
 
 const title = 'GitStudio editor extensions for VS Code, Cursor & Open VSX';
 const description =
@@ -68,16 +72,16 @@ const jsonLd = [
 							<h3>GitStudio</h3>
 							<p class="ex-tag">The whole Git workflow</p>
 						</div>
-						<span class="ver mono">v{EXT.version}</span>
+						<span class="ver mono">v<span data-live="ext.version">{stats.ext.version}</span></span>
 					</div>
 					<p class="ex-copy">
 						Commit graph, blame, history, hunk &amp; line staging, stashes, three-pane merge with a
-						conflicts dashboard, interactive rebase, worktrees, and GitHub pull requests.
-						{EXT.commands} commands, four sidebar views and a graph panel, {EXT.license}.
+						conflicts dashboard, interactive rebase, worktrees, and GitHub pull requests.{' '}
+						<span data-live="ext.commands">{stats.ext.commands}</span> commands, four sidebar views and a graph panel, {EXT.license}.
 					</p>
 					<ul class="best">
 						<li>Best if you want your whole Git workflow inside the editor</li>
-						<li>{OPENVSX_DOWNLOADS.gitstudio} downloads on Open VSX, and counting</li>
+						<li><span data-live="ext.downloads">{stats.text['ext.downloads']}</span> downloads on Open VSX, and counting</li>
 					</ul>
 					<span class="link-arrow">Explore GitStudio</span>
 				</a>
@@ -89,7 +93,7 @@ const jsonLd = [
 							<h3>Merge Studio</h3>
 							<p class="ex-tag">Just conflict resolution</p>
 						</div>
-						<span class="ver mono">v{MERGE.version}</span>
+						<span class="ver mono">v<span data-live="ms.version">{stats.ms.version}</span></span>
 					</div>
 					<p class="ex-copy">
 						The focused three-pane merge &amp; conflict editor that started it all: colour-coded
@@ -98,7 +102,7 @@ const jsonLd = [
 					</p>
 					<ul class="best">
 						<li>Best if you only want a first-class merge editor</li>
-						<li>{OPENVSX_DOWNLOADS.mergeStudio} downloads on Open VSX · ★ {MERGE.marketplaceStars.toFixed(1)} on the Marketplace</li>
+						<li><span data-live="ms.downloads">{stats.text['ms.downloads']}</span> downloads on Open VSX · ★ <span data-live="ms.rating">{stats.text['ms.rating']}</span> on the Marketplace</li>
 					</ul>
 					<span class="link-arrow">See Merge Studio</span>
 				</a>

@@ -2,6 +2,7 @@
 import Site from '../layouts/Site.astro';
 import Icon from '../components/Icon.astro';
 import GraphLive from '../components/GraphLive.astro';
+import HeroGraph from '../components/HeroGraph.astro';
 import Shot from '../components/Shot.astro';
 import ExtensionsFeature from '../components/ExtensionsFeature.astro';
 import DownloadSection from '../components/DownloadSection.astro';
@@ -13,7 +14,12 @@ import appMerge from '../assets/shots/app-merge.png';
 import appConflicts from '../assets/shots/app-conflicts.png';
 import SupportBand from '../components/SupportBand.astro';
 import { GITHUB_ORG_URL, GITHUB_REPO_URL, APP } from '../consts';
+import { getStats } from '../lib/stats';
 
+// The newest app-v* release, read at build time (src/lib/stats.ts); the
+// data-live spans below keep it current on view. The screenshot captions keep
+// the version they were taken on (APP.version in consts.ts).
+const stats = await getStats();
 const minor = APP.version.split('.').slice(0, 2).join('.');
 const title = 'GitStudio — a free, open-source Git and GitHub client for macOS, Windows & Linux';
 const description =
@@ -25,7 +31,7 @@ const jsonLd = [
 	{
 		'@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'GitStudio Desktop', description,
 		url: 'https://gitstudio.dev/', applicationCategory: 'DeveloperApplication', operatingSystem: 'macOS 12+, Windows 10/11, Linux',
-		softwareVersion: APP.version, license: 'https://www.apache.org/licenses/LICENSE-2.0', downloadUrl: 'https://gitstudio.dev/download',
+		softwareVersion: stats.app.version, license: 'https://www.apache.org/licenses/LICENSE-2.0', downloadUrl: 'https://gitstudio.dev/download',
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 	},
 ];
@@ -46,8 +52,9 @@ const workflow = [
 <Site title={title} description={description} jsonLd={jsonLd}>
 	<!-- ============ HERO ============ -->
 	<section class="hero">
+		<HeroGraph />
 		<div class="container">
-			<p class="eyebrow center hero-eyebrow">GitStudio Desktop {minor}<span class="hide-xs"> · macOS, Windows, Linux</span></p>
+			<p class="eyebrow center hero-eyebrow">GitStudio Desktop <span data-live="app.minor">{stats.app.minor}</span><span class="hide-xs"> · macOS, Windows, Linux</span></p>
 			<h1>The full Git and GitHub workflow in one desktop app.</h1>
 			<p class="lede center-lede">
 				A commit graph, a three-pane merge editor, interactive rebase, pull requests and issues,
@@ -62,7 +69,7 @@ const workflow = [
 				</a>
 			</div>
 			<ul class="facts" aria-label="Facts">
-				<li class="chip"><span class="dot" aria-hidden="true"></span>v{APP.version}</li>
+				<li class="chip"><span class="dot" aria-hidden="true"></span>v<span data-live="app.version">{stats.app.version}</span></li>
 				<li class="chip">Apache-2.0</li>
 				<li class="chip">No account</li>
 				<li class="chip">No usage tracking</li>

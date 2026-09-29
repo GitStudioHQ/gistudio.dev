@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Regenerates every raster icon in public/ from the one vector source,
-// public/favicon.svg (the brand mark, identical to src/assets/brand/gitstudio-favicon.svg).
+// public/favicon.svg — a copy of the brand master, brand/gitstudio-icon.svg in the
+// gitstudio repo (the cube with the violet merge-Y), also at
+// src/assets/brand/gitstudio-icon.svg. Copy the new master over both, then run this.
 //
 //   node scripts/favicons.mjs
 //
@@ -26,8 +28,8 @@ const svg = readFileSync(join(PUBLIC, 'favicon.svg'), 'utf8');
 // Full-bleed variant: square background, no hairline border. iOS and Android
 // apply their own mask, and a transparent corner would show as black on iOS.
 const fullBleed = svg
-	.replace(/ rx="116"/g, '')
-	.replace(/<rect x="2" y="2"[^>]*\/>\n?/, '');
+	.replace(/(<rect width="512" height="512") rx="[\d.]+"/, '$1')
+	.replace(/<rect x="1\.5" y="1\.5"[^>]*\/>\n?/, '');
 if (fullBleed === svg) throw new Error('favicon.svg changed shape; update the full-bleed rewrite');
 
 const render = (source, size) =>

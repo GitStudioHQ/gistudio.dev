@@ -2,13 +2,18 @@
 // The download section of the home page: three OS columns, each led by the
 // one-line installer (it verifies the checksum and, on macOS, clears the
 // Gatekeeper flag), then the direct downloads, then the one thing to know if
-// you took the file yourself. Every URL and command comes from consts.ts, the
-// same source the /download page reads, so the two can never disagree.
+// you took the file yourself. Every command comes from consts.ts and every URL
+// from src/lib/stats.ts (the newest app-v* release), the same sources the
+// /download page reads, so the two can never disagree.
 import OsIcon from './OsIcon.astro';
 import { APP, GITHUB_RELEASES_URL } from '../consts';
+import { getStats, type Installer } from '../lib/stats';
 
-const dl = (os: string, pick: (d: (typeof APP.downloads)[number]) => boolean) =>
-	APP.downloads.find((d) => d.os === os && pick(d))?.url ?? GITHUB_RELEASES_URL;
+const stats = await getStats();
+const dl = (os: string, pick: (d: Installer) => boolean) =>
+	stats.app.installers.find((d) => d.os === os && pick(d))?.url ?? GITHUB_RELEASES_URL;
+// URL → data-live-href key, so a release moves these links without a rebuild (LiveStats.astro).
+const liveKey: Record<string, string> = Object.fromEntries(stats.app.installers.map((d) => [d.url, `app.asset.${d.key}`]));
 
 interface Cmd {
 	label: string;
@@ -81,7 +86,7 @@ const cols: Col[] = [
 <section class="dl section" id="download">
 	<div class="container dl-wrap">
 		<div class="dl-head" data-reveal>
-			<p class="eyebrow center">Install · v{APP.version}</p>
+			<p class="eyebrow center">Install · v<span data-live="app.version">{stats.app.version}</span></p>
 			<h2>Get GitStudio Desktop.</h2>
 			<p class="lede dl-sub">
 				macOS, Linux and Windows — free and open source. No account, no license key, nothing to
@@ -99,12 +104,12 @@ const cols: Col[] = [
 
 					<div class="dl-cmd is-hero">
 						<code tabindex="0"><span class="dl-cmd-p" aria-hidden="true">{c.prompt}</span>{c.hero}</code>
-						<button class="copy-btn" type="button" data-copy={c.hero} aria-label={c.heroLabel}>copy</button>
+						<button class="copy-btn" type="button" data-copy={c.hero} aria-label={c.heroLabel}>Copy</button>
 					</div>
 
 					<div class="dl-sep" aria-hidden="true"><span>or download</span></div>
 
-					<a class="dl-btn dl-btn-primary" href={c.primary.href} aria-label={c.primary.aria}>
+					<a class="dl-btn dl-btn-primary" href={c.primary.href} data-live-href={liveKey[c.primary.href]} aria-label={c.primary.aria}>
 						<svg class="dl-btn-ico" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<path d="M8 2.5v7" /><path d="M4.75 6.5 8 9.75 11.25 6.5" /><path d="M3 13h10" />
 						</svg>
@@ -114,7 +119,7 @@ const cols: Col[] = [
 					{c.alts.length > 0 && (
 						<div class="dl-btn-alts">
 							{c.alts.map((a) => (
-								<a class="dl-btn dl-btn-alt" href={a.href} aria-label={a.aria}>{a.label}</a>
+								<a class="dl-btn dl-btn-alt" href={a.href} data-live-href={liveKey[a.href]} aria-label={a.aria}>{a.label}</a>
 							))}
 						</div>
 					)}
@@ -125,7 +130,7 @@ const cols: Col[] = [
 								<p class="dl-note-label">{c.also.label}</p>
 								<div class="dl-cmd dl-cmd-mini">
 									<code tabindex="0"><span class="dl-cmd-p" aria-hidden="true">{c.also.prompt ?? c.prompt}</span>{c.also.cmd}</code>
-									<button class="copy-btn" type="button" data-copy={c.also.cmd} aria-label={`Copy the ${c.name} ${c.also.label.replace(/^or with |:$/g, '')} command`}>copy</button>
+									<button class="copy-btn" type="button" data-copy={c.also.cmd} aria-label={`Copy the ${c.name} ${c.also.label.replace(/^or with |:$/g, '')} command`}>Copy</button>
 								</div>
 							</div>
 						)}
@@ -135,7 +140,7 @@ const cols: Col[] = [
 								{c.took.cmd && (
 									<div class="dl-cmd dl-cmd-mini">
 										<code tabindex="0"><span class="dl-cmd-p" aria-hidden="true">{c.took.prompt ?? c.prompt}</span>{c.took.cmd}</code>
-										<button class="copy-btn" type="button" data-copy={c.took.cmd} aria-label={`Copy the ${c.name} unblock command`}>copy</button>
+										<button class="copy-btn" type="button" data-copy={c.took.cmd} aria-label={`Copy the ${c.name} unblock command`}>Copy</button>
 									</div>
 								)}
 							</div>
@@ -234,34 +239,52 @@ const cols: Col[] = [
 		letter-spacing: -0.01em;
 	}
 
-	/* command boxes */
+	/* command boxes: a quiet surface with no rule and no glow at rest. Hover,
+	   or keyboard focus inside, lifts it with a soft violet glow; the copy
+	   button is always visible. */
 	.dl-cmd {
 		display: flex;
 		align-items: center;
 		gap: 0.6rem;
-		background: var(--bg-0);
-		border: 1px solid var(--hairline-strong);
-		border-radius: var(--r-sm);
-		padding: 0.62rem 0.6rem 0.62rem 0.8rem;
+		background: rgba(255, 255, 255, 0.035);
+		border-radius: 10px;
+		padding: 0.5rem 0.5rem 0.5rem 0.85rem;
+		transition: background 0.18s ease, box-shadow 0.18s ease;
 	}
 	.dl-cmd.is-hero {
-		border-color: var(--violet-line);
-		background: linear-gradient(180deg, var(--violet-wash), var(--bg-0) 60%);
-		box-shadow: 0 8px 26px -14px rgba(169, 140, 255, 0.6);
+		background: rgba(169, 140, 255, 0.07);
+		padding-block: 0.6rem;
+	}
+	.dl-cmd:hover,
+	.dl-cmd:focus-within {
+		background: rgba(169, 140, 255, 0.1);
+		box-shadow: 0 0 22px -6px rgba(169, 140, 255, 0.32);
+	}
+	.dl-cmd:has(:focus-visible) {
+		box-shadow: 0 0 0 2px rgba(169, 140, 255, 0.55), 0 0 22px -6px rgba(169, 140, 255, 0.32);
 	}
 	.dl-cmd-mini {
-		padding: 0.42rem 0.42rem 0.42rem 0.7rem;
+		padding: 0.36rem 0.36rem 0.36rem 0.75rem;
 	}
+	/* the command itself: none of the global inline-code box */
 	.dl-cmd code {
 		flex: 1;
 		min-width: 0;
+		background: none;
+		border: 0;
+		border-radius: 0;
+		padding: 0;
 		font-family: var(--font-mono);
-		font-size: 0.72rem;
+		font-size: 0.74rem;
 		line-height: 1.55;
 		color: var(--ink);
 		white-space: nowrap;
 		overflow-x: auto;
 		scrollbar-width: none;
+		overflow-wrap: normal;
+	}
+	.dl-cmd code:focus-visible {
+		outline: none;
 	}
 	.dl-cmd code::-webkit-scrollbar {
 		display: none;
@@ -274,31 +297,48 @@ const cols: Col[] = [
 		color: var(--violet);
 		font-weight: 700;
 		user-select: none;
-		margin-right: 0.5rem;
+		margin-right: 0.55rem;
 	}
 	.copy-btn {
 		flex: none;
-		font-family: var(--font-mono);
-		font-size: 0.66rem;
-		letter-spacing: 0.04em;
-		padding: 0.3rem 0.55rem;
-		border-radius: 6px;
-		border: 1px solid var(--hairline-strong);
-		background: var(--bg-2);
-		color: var(--muted);
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-family: var(--font-sans);
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.01em;
+		padding: 0.38rem 0.6rem;
+		border-radius: 7px;
+		border: 0;
+		background: rgba(255, 255, 255, 0.07);
+		color: var(--text);
 		cursor: pointer;
-		transition: color 0.15s ease, border-color 0.15s ease;
+		transition: color 0.15s ease, background 0.15s ease;
+	}
+	.copy-btn::before {
+		content: '';
+		width: 12px;
+		height: 12px;
+		background: currentColor;
+		-webkit-mask: var(--i-copy) center / contain no-repeat;
+		mask: var(--i-copy) center / contain no-repeat;
+		--i-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-1v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1V2Zm2 2h4a2 2 0 0 1 2 2v4h1a.5.5 0 0 0 .5-.5V2a.5.5 0 0 0-.5-.5H6a.5.5 0 0 0-.5.5v2H6Zm-3 1.5a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5H3Z'/%3E%3C/svg%3E");
+	}
+	.is-hero .copy-btn {
+		background: rgba(169, 140, 255, 0.16);
+		color: var(--violet-hi);
 	}
 	.copy-btn:hover {
 		color: var(--ink);
-		border-color: var(--violet-line);
+		background: rgba(169, 140, 255, 0.24);
 	}
 	.copy-btn.copied {
 		color: var(--add);
-		border-color: color-mix(in srgb, var(--add) 40%, transparent);
+		background: rgba(76, 195, 138, 0.12);
 	}
-	.copy-btn.copied::after {
-		content: '';
+	.copy-btn.copied::before {
+		--i-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 1 1 1.06-1.06l2.72 2.72 6.72-6.72a.75.75 0 0 1 1.06 0Z'/%3E%3C/svg%3E");
 	}
 
 	.dl-sep {
