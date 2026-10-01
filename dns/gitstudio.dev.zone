@@ -1,0 +1,26 @@
+; gitstudio.dev, for a DNSSEC-capable DNS host (Cloudflare: DNS > Records > Import).
+;
+; Vercel DNS cannot sign zones, and DNS for AI Discovery (DNS-AID) only counts
+; when validating resolvers get authenticated answers. So the zone moves to a
+; host that signs it; the site stays on Vercel. After importing:
+;   1. turn DNSSEC on at the host, then add the DS record it gives you at the registrar;
+;   2. switch the registrar's nameservers to the host's;
+;   3. keep every record DNS-only (no proxy), so Vercel still serves and certifies the site.
+$ORIGIN gitstudio.dev.
+$TTL 3600
+
+; The site, on Vercel (the host flattens the apex CNAME).
+@                 IN CNAME 3912a47d1111f614.vercel-dns-017.com.
+
+; Certificate authorities Vercel uses.
+@                 IN CAA   0 issue "letsencrypt.org"
+@                 IN CAA   0 issue "sectigo.com"
+@                 IN CAA   0 issue "pki.goog"
+
+; Google Search Console ownership (the sc-domain:gitstudio.dev property).
+@                 IN TXT   "google-site-verification=wFw4h_S7OPOM2TJ2f9avp9dXD3qCPrI38r-9O6WLFkc"
+
+; DNS-AID entrypoint: agents find the site's AI catalog over HTTPS.
+; key65400 is a private-use SvcParamKey carrying the draft's "well-known" path
+; until that key is registered.
+_index._agents    IN SVCB  1 gitstudio.dev. alpn="h2,http/1.1" port=443 mandatory=alpn,port key65400="/.well-known/ai-catalog.json"

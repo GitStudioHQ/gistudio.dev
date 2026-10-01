@@ -13,6 +13,8 @@
 // Outputs (all square):
 //   favicon.ico           16, 32, 48 (PNG frames)   browsers that ignore SVG icons
 //   favicon-16.png, favicon-32.png                   legacy references
+//   favicon-96.png        96                         the one Google Search shows; it wants
+//                                                    a square multiple of 48px
 //   apple-touch-icon.png  180, opaque, full-bleed    iOS rounds the corners itself
 //   icon-192.png, icon-512.png                       web manifest, "any"
 //   icon-maskable-512.png full-bleed                 web manifest, "maskable" (the
@@ -72,6 +74,7 @@ for (const size of [16, 32, 48]) frames.push({ size, buf: await render(svg, size
 await out('favicon.ico', ico(frames));
 await out('favicon-16.png', frames[0].buf);
 await out('favicon-32.png', frames[1].buf);
+await out('favicon-96.png', await render(svg, 96));
 await out(
 	'apple-touch-icon.png',
 	await sharp(await render(fullBleed, 180)).flatten({ background: '#0c0c16' }).png({ compressionLevel: 9 }).toBuffer(),
