@@ -1,6 +1,6 @@
 ---
 title: 'How to publish a VS Code extension on both marketplaces'
-description: 'A complete, no-gaps guide: build, publish, get approved, and get verified on the VS Code Marketplace AND Open VSX — including how to choose a publisher name that the content filter will actually accept.'
+description: 'How to build, publish and verify a VS Code extension on the VS Code Marketplace and Open VSX, with a publisher name the filter accepts.'
 pubDate: 'Jun 22 2026'
 heroImage: '../../assets/blog-placeholder-1.jpg'
 ---

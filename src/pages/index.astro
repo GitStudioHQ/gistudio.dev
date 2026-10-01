@@ -21,9 +21,9 @@ import { getStats } from '../lib/stats';
 // data-live spans below keep it current on view. The screenshot captions name
 // no version, so a newer release never makes them wrong.
 const stats = await getStats();
-const title = 'GitStudio — a free, open-source Git and GitHub client for macOS, Windows & Linux';
+const title = 'GitStudio — a free Git client for macOS, Windows & Linux';
 const description =
-	'GitStudio is a free, open-source Git and GitHub client for macOS, Windows, and Linux: a fast commit graph, repositories as tabs, several commits at once, a three-pane merge editor with a conflicts dashboard, interactive rebase, pull requests and issues, a real terminal, and an AI assistant on your own keys.';
+	'A free, open-source Git and GitHub client for macOS, Windows and Linux: a fast commit graph, repository tabs, a merge editor and interactive rebase.';
 
 const jsonLd = [
 	{ '@context': 'https://schema.org', '@type': 'Organization', name: 'GitStudio', url: 'https://gitstudio.dev/', logo: 'https://gitstudio.dev/icon-512.png', sameAs: [GITHUB_ORG_URL, 'https://marketplace.visualstudio.com/publishers/gitstudio', 'https://open-vsx.org/namespace/gitstudio'] },

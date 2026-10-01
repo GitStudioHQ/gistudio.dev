@@ -1,6 +1,6 @@
 ---
 title: 'Microsoft said my name was "suspicious content"'
-description: 'What the VS Code Marketplace "Publisher Metadata has suspicious content" error actually is, how I figured it out after days of fighting it, and why the support reply is a rubber stamp. Plus: Open VSX is quietly the bigger marketplace.'
+description: 'What the VS Code Marketplace "Publisher Metadata has suspicious content" error really is, how I got past it, and why Open VSX is the bigger marketplace.'
 pubDate: 'Jun 22 2026'
 heroImage: '../../assets/blog-placeholder-2.jpg'
 ---
