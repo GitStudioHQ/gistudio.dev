@@ -69,7 +69,7 @@ const cards = [
 		<article class="xc" data-reveal style={`--reveal-delay:${i * 0.08}s`}>
 			<div class="xc-text">
 				<div class="xc-id">
-					<Image class="xc-icon" src={c.icon} alt="" width={40} height={40} densities={[1, 2, 3]} />
+					<Image class="xc-icon" src={c.icon} alt={`${c.name} icon`} width={40} height={40} densities={[1, 2, 3]} />
 					<H class="xc-name">
 						<a class="xc-link" href={c.route}>{c.name}</a>
 					</H>
