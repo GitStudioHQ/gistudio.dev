@@ -15,7 +15,7 @@ const stats = await getStats();
 
 const title = 'Download GitStudio Desktop — macOS, Windows & Linux';
 const description =
-	`Download GitStudio Desktop v${stats.app.version} — the free, open-source Git & GitHub client for macOS 12+ (Apple Silicon & Intel .dmg or .zip), Windows 10/11 (x64 .exe), and Linux (.deb, .rpm, .AppImage, .tar.gz). One-line installers, Homebrew, SHA-256 checksums, and updates from inside the app. Also available as a VS Code & Cursor extension.`;
+	`Download GitStudio Desktop v${stats.app.version} for macOS (Apple Silicon & Intel), Windows 10/11 and Linux (.deb, .rpm, .AppImage). One-line installers included.`;
 
 // Group the installer matrix (consts.ts rows, newest release's URLs) by OS for the per-OS sections.
 const byOs = {
