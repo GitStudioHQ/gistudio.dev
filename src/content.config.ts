@@ -9,7 +9,11 @@ const blog = defineCollection({
 	schema: ({ image }) =>
 		z.object({
 			title: z.string(),
+			// The line under the headline, on the blog list and in the RSS feed.
 			description: z.string(),
+			// What search results and link previews show, when `description` is longer
+			// than the ~160 characters they display.
+			metaDescription: z.string().max(160).optional(),
 			// Transform string to Date object
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),

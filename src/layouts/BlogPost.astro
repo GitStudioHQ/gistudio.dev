@@ -5,7 +5,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, ogImage } = Astro.props;
+const { title, description, metaDescription, pubDate, updatedDate, ogImage } = Astro.props;
 
 const jsonLd = {
 	'@context': 'https://schema.org',
@@ -30,7 +30,7 @@ const jsonLd = {
 
 <Site
 	title={`${title} · GitStudio`}
-	description={description}
+	description={metaDescription ?? description}
 	jsonLd={jsonLd}
 	og={ogImage ?? '/og/blog.png'}
 	ogAlt={title}
