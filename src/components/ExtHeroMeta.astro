@@ -14,16 +14,18 @@ import { EDITORS } from '../consts';
 type Fact = { text: string; live?: string; pre?: string; post?: string; title?: string; href?: string };
 interface Props {
 	icon: ImageMetadata;
+	/** The product the icon belongs to, for its alt text. */
+	name: string;
 	facts: Fact[];
 }
-const { icon, facts } = Astro.props;
+const { icon, name, facts } = Astro.props;
 
 const editorList = EDITORS.map((e) => e.label);
 const editorsText = editorList.slice(0, -1).join(', ') + ', and ' + editorList[editorList.length - 1];
 ---
 
 <div class="xm">
-	<Image class="xm-icon" src={icon} alt="" width={36} height={36} densities={[1, 2, 3]} />
+	<Image class="xm-icon" src={icon} alt={`${name} icon`} width={36} height={36} densities={[1, 2, 3]} />
 	<div class="xm-text">
 		<p class="xm-facts">
 			{facts.map((f, i) => (
