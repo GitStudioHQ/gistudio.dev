@@ -6,6 +6,9 @@
 //
 //   node scripts/favicons.mjs
 //
+// Then bump `icons` in src/components/BaseHead.astro and the ?v= in
+// public/site.webmanifest, or search engines keep showing the old icon.
+//
 // The rasters it replaces had been rendered at the wrong pixel ratio: the icon
 // sat in the top-left quarter of apple-touch-icon.png and of every favicon.ico
 // frame, and favicon-16/32.png were a single flat colour.

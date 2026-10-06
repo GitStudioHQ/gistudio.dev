@@ -35,6 +35,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const path = Astro.url.pathname.replace(/\/+$/, '');
 const markdownURL = new URL(path ? `${path}.md` : '/index.md', Astro.site);
 const ogURL = new URL(og, Astro.site);
+// Bump when the icons change. Google keeps a favicon by its URL and was still
+// showing the old, wrongly scaled one a week after the files were fixed; a new
+// URL makes it fetch the icon again. Keep it in step with site.webmanifest.
+const icons = '?v=2';
 ---
 
 <!-- Global Metadata -->
@@ -42,12 +46,12 @@ const ogURL = new URL(og, Astro.site);
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="theme-color" content="#0c0c16" />
 <meta name="color-scheme" content="dark" />
-<link rel="icon" href="/favicon.ico" sizes="32x32" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href={`/favicon.ico${icons}`} sizes="32x32" />
+<link rel="icon" type="image/svg+xml" href={`/favicon.svg${icons}`} />
 <!-- Google Search picks a square multiple of 48px; give it two. -->
-<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
-<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="96x96" href={`/favicon-96.png${icons}`} />
+<link rel="icon" type="image/png" sizes="192x192" href={`/icon-192.png${icons}`} />
+<link rel="apple-touch-icon" href={`/apple-touch-icon.png${icons}`} />
 <link rel="manifest" href="/site.webmanifest" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="alternate" type="application/rss+xml" title={`${SITE_TITLE} blog`} href={new URL('rss.xml', Astro.site)} />
