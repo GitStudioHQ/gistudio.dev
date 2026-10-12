@@ -1,33 +1,43 @@
 #!/usr/bin/env node
-// Regenerates every raster icon in public/ from the one vector source,
+// Regenerates every icon from the one vector source,
 // public/favicon.svg — a copy of the brand master, brand/gitstudio-icon.svg in the
 // gitstudio repo (the cube with the violet merge-Y), also at
 // src/assets/brand/gitstudio-icon.svg. Copy the new master over both, then run this.
 //
 //   node scripts/favicons.mjs
 //
-// Then bump `icons` in src/components/BaseHead.astro and the ?v= in
-// public/site.webmanifest, or search engines keep showing the old icon.
+// The icons the page head names go to src/assets/icons/ as well, and BaseHead
+// imports them from there, so the build serves each at a URL carrying a hash of
+// its contents. Google keeps a favicon by its URL: for weeks after the files
+// in public/ were fixed it still showed the July apple-touch-icon.png it had
+// stored. A changed icon now always reaches it at a URL it has never fetched.
+// public/ keeps every icon at its usual name too, for what asks for those names
+// without reading the page: /favicon.ico, /apple-touch-icon.png, the web
+// manifest, and the logo in the structured data.
 //
 // The rasters it replaces had been rendered at the wrong pixel ratio: the icon
 // sat in the top-left quarter of apple-touch-icon.png and of every favicon.ico
 // frame, and favicon-16/32.png were a single flat colour.
 //
-// Outputs (all square):
-//   favicon.ico           16, 32, 48 (PNG frames)   browsers that ignore SVG icons
+// Outputs (all square; * also in src/assets/icons/):
+// * favicon.ico           16, 32, 48 (PNG frames)   browsers that ignore SVG icons
 //   favicon-16.png, favicon-32.png                   legacy references
-//   favicon-96.png        96                         the one Google Search shows; it wants
+// * favicon-96.png        96                         the one Google Search shows; it wants
 //                                                    a square multiple of 48px
-//   apple-touch-icon.png  180, opaque, full-bleed    iOS rounds the corners itself
-//   icon-192.png, icon-512.png                       web manifest, "any"
+// * apple-touch-icon.png  180, opaque, full-bleed    iOS rounds the corners itself
+// * icon-192.png                                     web manifest, "any"; the head
+//   icon-512.png                                     web manifest, "any"; the logo
 //   icon-maskable-512.png full-bleed                 web manifest, "maskable" (the
 //                                                    mark sits well inside the 80% safe zone)
-import { readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
-const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const PUBLIC = join(ROOT, 'public');
+const LINKED = join(ROOT, 'src', 'assets', 'icons');
+mkdirSync(LINKED, { recursive: true });
 const svg = readFileSync(join(PUBLIC, 'favicon.svg'), 'utf8');
 
 // Full-bleed variant: square background, no hairline border. iOS and Android
@@ -40,14 +50,19 @@ if (fullBleed === svg) throw new Error('favicon.svg changed shape; update the fu
 const render = (source, size) =>
 	sharp(Buffer.from(source), { density: Math.max(72, Math.ceil((72 * size) / 512) * 4) })
 		.resize(size, size, { fit: 'fill', kernel: 'lanczos3' })
+		// The SVG is rasterised at a high density, which sharp would record in
+		// the PNG (up to 288 dpi). Anything that sizes an image by its dpi would
+		// draw it a fraction of its size; 72 dpi means one pixel is one pixel.
+		.withMetadata({ density: 72 })
 		.png({ compressionLevel: 9 })
 		.toBuffer();
 
-const out = async (name, buf) => {
+const out = async (name, buf, { linked = false } = {}) => {
 	writeFileSync(join(PUBLIC, name), buf);
+	if (linked) writeFileSync(join(LINKED, name), buf);
 	// sharp cannot read an .ico back; its frames are the PNGs printed above it.
 	const dims = name.endsWith('.ico') ? '16+32+48' : await sharp(buf).metadata().then((m) => `${m.width}x${m.height}`);
-	console.log(`${name.padEnd(24)} ${dims} ${buf.length} B`);
+	console.log(`${(linked ? '* ' : '  ') + name.padEnd(24)} ${dims} ${buf.length} B`);
 };
 
 // An .ico is a directory of images; modern ones hold PNGs verbatim.
@@ -74,14 +89,20 @@ const ico = (pngs) => {
 
 const frames = [];
 for (const size of [16, 32, 48]) frames.push({ size, buf: await render(svg, size) });
-await out('favicon.ico', ico(frames));
+copyFileSync(join(PUBLIC, 'favicon.svg'), join(LINKED, 'favicon.svg'));
+await out('favicon.ico', ico(frames), { linked: true });
 await out('favicon-16.png', frames[0].buf);
 await out('favicon-32.png', frames[1].buf);
-await out('favicon-96.png', await render(svg, 96));
+await out('favicon-96.png', await render(svg, 96), { linked: true });
 await out(
 	'apple-touch-icon.png',
-	await sharp(await render(fullBleed, 180)).flatten({ background: '#0c0c16' }).png({ compressionLevel: 9 }).toBuffer(),
+	await sharp(await render(fullBleed, 180))
+		.flatten({ background: '#0c0c16' })
+		.withMetadata({ density: 72 })
+		.png({ compressionLevel: 9 })
+		.toBuffer(),
+	{ linked: true },
 );
-await out('icon-192.png', await render(svg, 192));
+await out('icon-192.png', await render(svg, 192), { linked: true });
 await out('icon-512.png', await render(svg, 512));
 await out('icon-maskable-512.png', await render(fullBleed, 512));
