@@ -13,6 +13,8 @@ import appAssistant from '../assets/shots/app-assistant.png';
 import appBrowse from '../assets/shots/app-browse.png';
 import appMerge from '../assets/shots/app-merge.png';
 import appConflicts from '../assets/shots/app-conflicts.png';
+import appFilesTree from '../assets/shots/app-files-tree.png';
+import appEditMessage from '../assets/shots/app-edit-message.png';
 import SupportBand from '../components/SupportBand.astro';
 import { GITHUB_ORG_URL, GITHUB_REPO_URL, APP } from '../consts';
 import { getStats } from '../lib/stats';
@@ -88,7 +90,7 @@ const workflow = [
 		<div class="container hero-shot">
 			<Shot
 				src={appCommits}
-				alt="GitStudio Desktop's Commits view: a lane graph of the gitstudio repository with three commits selected and actions for all three in the details pane"
+				alt="GitStudio Desktop's Commits view: a lane graph of the gitstudio repository with the app-v2.6.0 tag, three commits selected, and Cherry-pick, Revert, Squash, Drop and Copy SHAs for all three in the details pane"
 				caption="GitStudio Desktop on its own repository: three commits selected at once, and every action for all three in one place."
 				priority
 			/>
@@ -113,12 +115,28 @@ const workflow = [
 						<li>Select several commits to cherry-pick, revert, squash, or drop them in one go, compare two, or copy their SHAs. Each one can be undone.</li>
 						<li>Filter the graph to one branch or a few, and search by message, author, SHA, or ref.</li>
 						<li>Open a file from a commit and its diff takes the panel at the bottom, full width.</li>
+						<li>See the files a commit changed as a list or as a folder tree.</li>
+						<li>Edit the message of any commit, not only the last one. GitStudio replays the commits after it, and Undo puts them back.</li>
 					</ul>
 				</div>
 				<div class="f-visual" data-reveal style="--reveal-delay:.1s">
 					<GraphLive />
 					<p class="live-note mono">The graph above is GitStudio's own graph component, rendering the history of the GitStudio repository. Scroll and click through it.</p>
 				</div>
+			</div>
+			<div class="container" data-reveal style="--reveal-delay:.1s;margin-top:2.4rem">
+				<Shot
+					src={appFilesTree}
+					alt="A commit selected in GitStudio Desktop's graph, its details beside it: the full message, the branch it was pushed to, Checkout, Branch, Tag, Cherry-pick, Revert, Rebase and Reset, and the eight files it changed as a folder tree under apps/desktop and packages/ai, with lines added and removed per folder and per file"
+					caption="A commit's details in GitStudio 2.6: its files as a folder tree, with lines added and removed per folder."
+				/>
+			</div>
+			<div class="container" data-reveal style="--reveal-delay:.15s;margin-top:1.6rem">
+				<Shot
+					src={appEditMessage}
+					alt="GitStudio Desktop's Edit commit message dialog over the commit graph, for a commit two below the top: it says the two later commits will be replayed with new SHAs, that editing a pushed commit needs a force push, and that Undo is available afterwards"
+					caption="Edit message on an older commit: GitStudio says what will be replayed and whether it needs a force push before it does anything."
+				/>
 			</div>
 		</section>
 
@@ -148,15 +166,15 @@ const workflow = [
 			<div class="container" data-reveal style="--reveal-delay:.1s">
 				<Shot
 					src={appConflicts}
-					alt="GitStudio Desktop's conflict dashboard for a merge in progress: four conflicted files, each with Accept Yours, Accept Theirs and Merge buttons"
-					caption="A real merge stopped on four files. The dashboard names both sides, and Continue Merge waits until every file is resolved."
+					alt="GitStudio Desktop's Changes view during a merge: feat/natural-sort into main, three conflicted files, each with Accept Yours, Accept Theirs and Merge buttons, Abort Merge, and Continue Merge waiting"
+					caption="A real merge stopped on three files. The dashboard names both sides, and Continue Merge waits until every file is resolved."
 				/>
 			</div>
 			<div class="container" data-reveal style="--reveal-delay:.15s;margin-top:1.6rem">
 				<Shot
 					src={appMerge}
-					alt="GitStudio Desktop's three-pane merge editor resolving a real conflict: yours on the left, the result in the middle, theirs on the right"
-					caption="Merge… on prList.ts: one conflict in orange, two changes the same on both sides, one from one side only, and a legend that says which is which."
+					alt="GitStudio Desktop's three-pane merge editor on fileTree.ts during a real merge: changes from main on the left, the result in the middle, changes from feat/natural-sort on the right, three conflicts marked in orange"
+					caption="Merge… on fileTree.ts: three conflicts in orange, one change from one side only, and a legend that says which is which."
 				/>
 			</div>
 		</section>
@@ -195,15 +213,15 @@ const workflow = [
 			<div class="container" data-reveal style="--reveal-delay:.1s">
 				<Shot
 					src={appPrs}
-					alt="Pull request #22 open as a full page in GitStudio Desktop: a Merged pill, the title, the rendered description, tabs for conversation, commits, checks and files, and a rail with the approving reviewer, who merged it, the branches, passing checks, and the size of the change"
-					caption="A pull request in GitStudio 2.0: the whole thread on one page, with the review, the checks, and the branches in the rail."
+					alt="A pull request open as a full page in GitStudio Desktop: an Open pill, the title, the conversation with comments and reactions, tabs for commits, checks and files, Checkout, Approve, Review and Merge, and a rail with reviewers, assignees, labels, milestone, branches, passing checks and the size of the change"
+					caption="A pull request in GitStudio 2.6: the whole thread on one page, with the reviewers, the checks, and the branches in the rail."
 				/>
 			</div>
 			<div class="container" data-reveal style="--reveal-delay:.15s;margin-top:1.6rem">
 				<Shot
 					src={appBrowse}
-					alt="GitStudio Desktop reading libgit2/libgit2 straight from GitHub: the file tree, a rail saying the repository is on GitHub and nothing is on your disk, a Clone and open button, and a top bar that still names the repository you are working in"
-					caption="Reading libgit2 on GitHub without cloning it, in GitStudio 2.0. The top bar still names the repository Push and Fetch act on."
+					alt="GitStudio Desktop reading libgit2/libgit2 straight from GitHub: the file list, a rail saying the repository is on GitHub and nothing of it is on your disk, its stats and topics, a Clone and open button, and a top bar that still says it is working in gitstudio"
+					caption="Reading libgit2 on GitHub without cloning it, in GitStudio 2.6. The top bar still names the repository Push and Fetch act on."
 				/>
 			</div>
 		</section>
@@ -231,8 +249,8 @@ const workflow = [
 				<div class="f-visual" data-reveal style="--reveal-delay:.1s">
 					<Shot
 						src={appAssistant}
-						alt="The assistant in GitStudio Desktop answering 'What did the last three commits change?' on the gitstudio repository: the git log and git show calls it made, then one bullet per commit, with the session set to Read-only and a Qwen3-Coder model from LM Studio"
-						caption="The assistant in GitStudio 2.0, explaining the last three commits in a read-only session on a local model. Every tool call it made is in the transcript."
+						alt="The assistant in GitStudio Desktop answering 'What changed in the last five commits?' on the gitstudio repository: the Log, Show and Search Commits calls it made, then one line per commit, with the session set to Allow commits and Claude on the user's own key"
+						caption="The assistant in GitStudio 2.6, explaining the last five commits with Claude on your own key. Every tool call it made is in the transcript."
 					/>
 				</div>
 			</div>
