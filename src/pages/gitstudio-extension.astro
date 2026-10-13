@@ -5,6 +5,8 @@ import changesView from '../assets/shots/changes-view.png';
 import branchDialog from '../assets/shots/branch-dialog.png';
 import extBlame from '../assets/shots/ext-blame.png';
 import extLineHistory from '../assets/shots/ext-line-history.png';
+import extGraphPanel from '../assets/shots/ext-graph-panel.png';
+import extFilesTree from '../assets/shots/ext-files-tree.png';
 import Icon from '../components/Icon.astro';
 import ExtHeroMeta from '../components/ExtHeroMeta.astro';
 import InstallMatrix from '../components/InstallMatrix.astro';
@@ -131,6 +133,38 @@ const jsonLd = [
 
 	<section class="section">
 		<div class="container">
+			<div class="f-copy narrow" data-reveal>
+				<p class="eyebrow">The Commit Graph panel</p>
+				<h2>Every branch, tag and merge, in the panel.</h2>
+				<p class="lede">
+					The graph opens in VS Code's panel: lanes for every branch, ref chips for branches and
+					tags, and the size of each change. Select a commit and its details open beside the
+					graph, with the files it changed as a list or as a folder tree.
+				</p>
+			</div>
+		</div>
+		<div class="container wide-shot shot-stack">
+			<div data-reveal style="--reveal-delay:.08s">
+				<ProductWindow
+					src={extGraphPanel}
+					minScale={0.84}
+					alt="The GitStudio Commit Graph panel in VS Code, maximised: uncommitted changes at the top, then coloured lanes with main, hotfix, feature and release branches, origin chips, the v1.0.0 and v1.1.0-beta.1 tags, and merges"
+					caption="The Commit Graph panel, maximised: branches as lanes, branch and tag chips, and the size of each change."
+				/>
+			</div>
+			<div data-reveal style="--reveal-delay:.08s">
+				<ProductWindow
+					src={extFilesTree}
+					minScale={0.84}
+					alt="A merge commit selected in the GitStudio Commit Graph, its details beside the graph listing the files it changed as a folder tree under docs, src and test, with lines added and removed per folder and per file"
+					caption="A merge selected: its files as a folder tree, with lines added and removed per folder."
+				/>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
 			<div class="tour">
 				<div class="tour-copy" data-reveal>
 					<p class="eyebrow">In the sidebar</p>
@@ -144,13 +178,13 @@ const jsonLd = [
 					<ProductWindow
 						src={changesView}
 						maxHeight={520}
-						alt="The GitStudio Changes view: the commit message box with Amend and Sign-off, Commit 2 and Push, and the changed files grouped as staged and unstaged"
+						alt="The GitStudio Changes view: Push 2 and Pull 1, a commit message with Amend, Sign-off and Author, Commit 2 and Commit &amp; Push, then staged and unstaged files and two stashes"
 						caption="Changes"
 					/>
 					<ProductWindow
 						src={branchDialog}
 						maxHeight={520}
-						alt="The GitStudio branch menu on fix/live-sync: Checkout, Pull 7 into the branch, New Branch, Compare with main, Merge, Rebase, New Worktree, Rename, Copy Branch Name and Delete"
+						alt="The GitStudio branch menu opened from main: a search box, Fetch, Pull, Push, New Branch and Checkout Tag or Revision, then local branches with how far each is ahead or behind its remote, the origin remote, and four tags"
 						caption="Branches"
 					/>
 				</div>
@@ -179,7 +213,7 @@ const jsonLd = [
 					src={extBlame}
 					minScale={0.84}
 					alt="GitStudio's full-file blame in VS Code: a date and author for every line, shaded by age"
-					caption="Full-file blame on syncStatus.ts: a date and an author on every line, the gutter shaded by age, and inline blame on the current line."
+					caption="Full-file blame on build.ts: a date and an author on every line, the gutter shaded by age, and inline blame on the current line."
 				/>
 			</div>
 			<div data-reveal style="--reveal-delay:.08s">
@@ -187,7 +221,7 @@ const jsonLd = [
 					src={extLineHistory}
 					minScale={0.84}
 					alt="GitStudio's Line History in VS Code listing the commits that changed the selected lines"
-					caption="Line History for lines 13–36 of the same file: the three commits that shaped them."
+					caption="Line History for lines 19–23 of the same file: the four commits that shaped them."
 				/>
 			</div>
 		</div>
