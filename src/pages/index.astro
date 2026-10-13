@@ -13,8 +13,8 @@ import appAssistant from '../assets/shots/app-assistant.png';
 import appBrowse from '../assets/shots/app-browse.png';
 import appMerge from '../assets/shots/app-merge.png';
 import appConflicts from '../assets/shots/app-conflicts.png';
-import appFilesTree from '../assets/shots/app-files-tree.png';
-import appEditMessage from '../assets/shots/app-edit-message.png';
+import appRebase from '../assets/shots/app-rebase.png';
+import appBranches from '../assets/shots/app-branches.png';
 import SupportBand from '../components/SupportBand.astro';
 import { GITHUB_ORG_URL, GITHUB_REPO_URL, APP } from '../consts';
 import { getStats } from '../lib/stats';
@@ -126,16 +126,16 @@ const workflow = [
 			</div>
 			<div class="container" data-reveal style="--reveal-delay:.1s;margin-top:2.4rem">
 				<Shot
-					src={appFilesTree}
-					alt="A commit selected in GitStudio Desktop's graph, its details beside it: the full message, the branch it was pushed to, Checkout, Branch, Tag, Cherry-pick, Revert, Rebase and Reset, and the eight files it changed as a folder tree under apps/desktop and packages/ai, with lines added and removed per folder and per file"
-					caption="A commit's details in GitStudio 2.6: its files as a folder tree, with lines added and removed per folder."
+					src={appRebase}
+					alt="GitStudio Desktop's interactive rebase of the last ten commits on main: each commit with its action, one reworded with its new message in an inline editor, one squashed and one fixed up into the commit named beside them, one dropped and struck through, one set to Edit so the rebase pauses there, and a footer reading 10 to 7 commits, 2 folded, 1 dropped, beside Start rebase"
+					caption="Interactive rebase, planned before it runs: reword in place, squash and fixup say what they fold into, and the footer counts what the rebase will leave."
 				/>
 			</div>
 			<div class="container" data-reveal style="--reveal-delay:.15s;margin-top:1.6rem">
 				<Shot
-					src={appEditMessage}
-					alt="GitStudio Desktop's Edit commit message dialog over the commit graph, for a commit two below the top: it says the two later commits will be replayed with new SHAs, that editing a pushed commit needs a force push, and that Undo is available afterwards"
-					caption="Edit message on an older commit: GitStudio says what will be replayed and whether it needs a force push before it does anything."
+					src={appBranches}
+					alt="GitStudio Desktop's Branches view: fourteen local branches with tabs for remotes, tags and stashes, filters for active and stale, each branch with its author's avatar, how far it is ahead or behind, when it was last committed to, current and merged badges, and Checkout, Pull or Publish"
+					caption="Branches: who works on each one, how far it is from its remote, which are merged, and one click to check out, pull or publish."
 				/>
 			</div>
 		</section>
