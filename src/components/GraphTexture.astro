@@ -4,9 +4,12 @@
 // merging back now and then, a commit dot here and there. Wraps the page's
 // sections (it is the positioning box); the lanes sit behind everything.
 //
-// It lives in the gutters only (the space outside the 1140px content
-// column), so it never runs behind text and never costs body text contrast.
-// Where the gutters are too narrow for it (below 1360px wide) it is off.
+// From 1360px wide it lives in the gutters only (the space outside the
+// 1140px content column), so it never runs behind text. Narrower than that
+// the gutters are too thin for it, so it is drawn at half size with each
+// trunk a few pixels in from the screen edge: branches that leave a trunk
+// outwards run off the screen, and the ones that go inwards cross the
+// content's edge as the faintest lines on the page.
 //
 // The drawing is one seamless 200 × 2400 tile, repeated down the page as a
 // background image: the left gutter gets it as drawn, the right gutter gets
@@ -113,6 +116,29 @@ const uri = (mirror: boolean) => `url("data:image/svg+xml,${encodeURIComponent(s
 		border-radius: 50%;
 		background: #d6c8ff;
 		box-shadow: 0 0 8px 2px rgba(169, 140, 255, 0.6);
+	}
+	/* narrower than 1360px: half size, a trunk just inside each screen edge.
+	   Last in the sheet, so it wins over the rules above. */
+	@media (max-width: 1359.98px) {
+		.gt {
+			display: block;
+			opacity: 0.7;
+		}
+		.gt-side {
+			width: calc(var(--tileW) / 2);
+			background-size: calc(var(--tileW) / 2) calc(var(--tileH) / 2);
+		}
+		.gt-left {
+			left: calc(10px - var(--trunk) / 2);
+		}
+		.gt-right {
+			right: calc(10px - var(--trunk) / 2);
+			background-position: 0 calc(var(--tileH) / -4);
+		}
+		.gt-light {
+			left: calc(var(--trunk) / 2 - 1px);
+			height: 60px;
+		}
 	}
 </style>
 

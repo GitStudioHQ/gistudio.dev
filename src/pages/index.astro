@@ -213,15 +213,15 @@ const workflow = [
 			<div class="container" data-reveal style="--reveal-delay:.1s">
 				<Shot
 					src={appPrs}
-					alt="A pull request open as a full page in GitStudio Desktop: an Open pill, the title, the conversation with comments and reactions, tabs for commits, checks and files, Checkout, Approve, Review and Merge, and a rail with reviewers, assignees, labels, milestone, branches, passing checks and the size of the change"
-					caption="A pull request in GitStudio 2.6: the whole thread on one page, with the reviewers, the checks, and the branches in the rail."
+					alt="Pull request #22 open as a full page in GitStudio Desktop: a Merged pill, the title, the rendered description, tabs for conversation, commits, checks and files, and a rail with the approving reviewer, who merged it, the branches, passing checks, and the size of the change"
+					caption="A pull request in GitStudio 2.0: the whole thread on one page, with the review, the checks, and the branches in the rail."
 				/>
 			</div>
 			<div class="container" data-reveal style="--reveal-delay:.15s;margin-top:1.6rem">
 				<Shot
 					src={appBrowse}
-					alt="GitStudio Desktop reading libgit2/libgit2 straight from GitHub: the file list, a rail saying the repository is on GitHub and nothing of it is on your disk, its stats and topics, a Clone and open button, and a top bar that still says it is working in gitstudio"
-					caption="Reading libgit2 on GitHub without cloning it, in GitStudio 2.6. The top bar still names the repository Push and Fetch act on."
+					alt="GitStudio Desktop reading libgit2/libgit2 straight from GitHub: the file tree, a rail saying the repository is on GitHub and nothing is on your disk, a Clone and open button, and a top bar that still names the repository you are working in"
+					caption="Reading libgit2 on GitHub without cloning it, in GitStudio 2.0. The top bar still names the repository Push and Fetch act on."
 				/>
 			</div>
 		</section>
@@ -249,8 +249,8 @@ const workflow = [
 				<div class="f-visual" data-reveal style="--reveal-delay:.1s">
 					<Shot
 						src={appAssistant}
-						alt="The assistant in GitStudio Desktop answering 'What changed in the last five commits?' on the gitstudio repository: the Log, Show and Search Commits calls it made, then one line per commit, with the session set to Allow commits and Claude on the user's own key"
-						caption="The assistant in GitStudio 2.6, explaining the last five commits with Claude on your own key. Every tool call it made is in the transcript."
+						alt="The assistant in GitStudio Desktop answering 'What did the last three commits change?' on the gitstudio repository: the git log and git show calls it made, then one bullet per commit, with the session set to Read-only and a Qwen3-Coder model from LM Studio"
+						caption="The assistant in GitStudio 2.0, explaining the last three commits in a read-only session on a local model. Every tool call it made is in the transcript."
 					/>
 				</div>
 			</div>
