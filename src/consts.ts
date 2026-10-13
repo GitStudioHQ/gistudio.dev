@@ -31,21 +31,21 @@ export const EXT = {
 	product: 'the GitStudio extension',
 	route: '/gitstudio-extension',
 	id: 'gitstudio.gitstudio',
-	version: '1.16.0',
+	version: '1.19.0',
 	license: 'Apache-2.0',
 	marketplaceUrl: 'https://marketplace.visualstudio.com/items?itemName=gitstudio.gitstudio',
 	openVsxUrl: 'https://open-vsx.org/extension/gitstudio/gitstudio',
 	// The VSIX is the GitHub release asset, not a copy in public/: the copy
 	// sat at 1.0.0 for twelve extension releases. Size and SHA-256 are of the
 	// ext-v* release asset (shasum -a 256 gitstudio.vsix).
-	vsixPath: 'https://github.com/GitStudioHQ/gitstudio/releases/download/ext-v1.16.0/gitstudio.vsix',
+	vsixPath: 'https://github.com/GitStudioHQ/gitstudio/releases/download/ext-v1.19.0/gitstudio.vsix',
 	vsixFile: 'gitstudio.vsix',
-	vsixSizeMb: '3.1',
-	vsixSha256: 'e394b79f86bdfacb0457fa7c6cee274523c92d38dd8fb4714c304b2320d1f80f',
+	vsixSizeMb: '4.3',
+	vsixSha256: 'ad9356c0993e4fabe2ef16127e0b3b00b8d0a1083ead784ffafd153eb2dded75',
 	// engines.vscode in the shipped package.json.
 	minVsCode: '1.78',
 	// contributes.commands in the shipped package.json.
-	commands: 137,
+	commands: 138,
 };
 
 /** Merge Studio — live on both registries. */
@@ -54,7 +54,7 @@ export const MERGE = {
 	product: 'the Merge Studio extension',
 	route: '/merge-studio-extension',
 	id: 'gitstudio.merge-studio',
-	version: '1.1.0',
+	version: '1.4.0',
 	// Merge Studio's own files are MIT; the GitStudio merge packages it bundles
 	// are Apache-2.0 (package.json: "MIT AND Apache-2.0", see its NOTICE).
 	license: 'MIT + Apache-2.0',
@@ -63,12 +63,12 @@ export const MERGE = {
 	marketplaceUrl: 'https://marketplace.visualstudio.com/items?itemName=gitstudio.merge-studio',
 	openVsxUrl: 'https://open-vsx.org/extension/gitstudio/merge-studio',
 	minVsCode: '1.82',
-	vsixSizeMb: '3.2',
+	vsixSizeMb: '3.8',
 	// Average rating on the Marketplace (3 ratings, checked 2026-09-29).
 	marketplaceStars: 5.0,
 };
 
-const APP_VERSION = '2.3.0';
+const APP_VERSION = '2.6.0';
 const APP_TAG = `app-v${APP_VERSION}`;
 const APP_DL = `https://github.com/GitStudioHQ/gitstudio/releases/download/${APP_TAG}`;
 
@@ -162,9 +162,9 @@ export const registryUrl = (
  * GitHub release. A fallback count is printed with a trailing "+".
  */
 export const FALLBACK_COUNTS = {
-	ext: { marketplaceInstalls: 531, openVsxDownloads: 8738, rating: 5.0, ratingCount: 2 },
-	ms: { marketplaceInstalls: 576, openVsxDownloads: 2810, ratingCount: 3, commands: 13 },
-	app: { downloads: 466 },
+	ext: { marketplaceInstalls: 700, openVsxDownloads: 10157, rating: 5.0, ratingCount: 4 },
+	ms: { marketplaceInstalls: 681, openVsxDownloads: 3859, ratingCount: 3, commands: 14 },
+	app: { downloads: 678 },
 };
 
 /**

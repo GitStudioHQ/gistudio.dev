@@ -10,6 +10,10 @@
 // geometry (src/lib/graphMotif.ts), so this is CSS only — no script.
 //
 // prefers-reduced-motion: the finished drawing, still.
+//
+// Phones get the same drawing pulled into portrait (x halved, y stretched
+// 1.6×). The wide one is cropped to its middle on a narrow screen, which is
+// exactly where it has no lanes, so on a phone the hero showed none.
 import { choreograph } from '../lib/graphMotif';
 
 // viewBox 0 0 1200 520. Left half, then its mirror on the right.
@@ -38,6 +42,35 @@ const nodes = [
 ];
 // units per second along a lane: ~1.2 px per unit on a laptop, so ~430 px/s
 const plan = choreograph(lanes, nodes, 360);
+
+// the portrait version: every x halved, every y × 1.6
+const NX = 0.5;
+const NY = 1.6;
+const squeeze = (d: string) => {
+	const tokens = d.match(/[MVHLC]|-?\d*\.?\d+/g) ?? [];
+	let cmd = '';
+	let pair = 0; // in M, L and C the numbers alternate x, y
+	return tokens
+		.map((t) => {
+			if (/[MVHLC]/.test(t)) {
+				cmd = t;
+				pair = 0;
+				return t;
+			}
+			const isX = cmd === 'H' || (cmd !== 'V' && pair++ % 2 === 0);
+			return String(+(Number(t) * (isX ? NX : NY)).toFixed(2));
+		})
+		.join(' ');
+};
+const narrow = choreograph(
+	lanes.map((l) => ({ ...l, d: squeeze(l.d) })),
+	nodes.map((n) => ({ x: n.x * NX, y: n.y * NY })),
+	300,
+);
+const drawings = [
+	{ cls: 'hero-graph hg-wide', viewBox: '0 0 1200 520', plan },
+	{ cls: 'hero-graph hg-narrow', viewBox: `0 0 ${1200 * NX} ${520 * NY}`, plan: narrow },
+];
 // the travelling light: a bright point and a short fading tail, in units,
 // whatever the lane's length
 const HEAD = 0.5;
@@ -45,12 +78,13 @@ const TAIL = 46;
 const s = (n: number) => `${n.toFixed(3)}s`;
 ---
 
-<svg class="hero-graph" viewBox="0 0 1200 520" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+{drawings.map((dr) => (
+<svg class={dr.cls} viewBox={dr.viewBox} aria-hidden="true" preserveAspectRatio="xMidYMid slice">
 	<g class="lanes">
-		{plan.lanes.map((l) => <path pathLength="1" d={l.d} style={`--delay:${s(l.delay)};--dur:${s(l.dur)}`} />)}
+		{dr.plan.lanes.map((l) => <path pathLength="1" d={l.d} style={`--delay:${s(l.delay)};--dur:${s(l.dur)}`} />)}
 	</g>
 	<g class="tips">
-		{plan.lanes.map((l) => {
+		{dr.plan.lanes.map((l) => {
 			// a faint tail, and the light itself: both end exactly at the tip
 			const tail = TAIL / l.length;
 			const head = HEAD / l.length;
@@ -63,7 +97,7 @@ const s = (n: number) => `${n.toFixed(3)}s`;
 		})}
 	</g>
 	<g class="nodes">
-		{plan.nodes.map((n) => (
+		{dr.plan.nodes.map((n) => (
 			<g style={`--delay:${s(n.delay)}`}>
 				<circle class="ring" r="4" cx={n.cx} cy={n.cy} />
 				<circle class="dot" r="4" cx={n.cx} cy={n.cy} />
@@ -71,6 +105,7 @@ const s = (n: number) => `${n.toFixed(3)}s`;
 		))}
 	</g>
 </svg>
+))}
 
 <style>
 	/* behind the hero's content, masked to keep a clear text column, fading
@@ -94,6 +129,32 @@ const s = (n: number) => `${n.toFixed(3)}s`;
 			radial-gradient(640px 220px at 50% 360px, transparent 76%, #000);
 		-webkit-mask-composite: source-in;
 		mask-composite: intersect;
+	}
+	/* one drawing per screen shape */
+	.hg-narrow {
+		display: none;
+	}
+	@media (max-width: 720px) {
+		.hg-wide {
+			display: none;
+		}
+		.hg-narrow {
+			display: block;
+			inset: -2% 0 auto;
+			height: 92%;
+			/* the text runs the full width of a phone, so the lanes pass behind
+			   it: fainter here, and fading out towards the bottom */
+			opacity: 0.75;
+			/* the headline sits in a soft clearing */
+			mask-image:
+				radial-gradient(80% 13% at 50% 16%, rgba(0, 0, 0, 0.2), #000 85%),
+				linear-gradient(180deg, #000 60%, transparent);
+			-webkit-mask-image:
+				radial-gradient(80% 13% at 50% 16%, rgba(0, 0, 0, 0.2), #000 85%),
+				linear-gradient(180deg, #000 60%, transparent);
+			-webkit-mask-composite: source-in;
+			mask-composite: intersect;
+		}
 	}
 	.hero-graph .lanes path {
 		fill: none;
