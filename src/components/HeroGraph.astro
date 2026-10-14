@@ -142,15 +142,19 @@ const s = (n: number) => `${n.toFixed(3)}s`;
 			display: block;
 			inset: -2% 0 auto;
 			height: 92%;
-			/* the text runs the full width of a phone, so the lanes pass behind
-			   it: fainter here, and fading out towards the bottom */
+			/* fainter here, and fading out towards the bottom */
 			opacity: 0.75;
-			/* the headline sits in a soft clearing */
+			/* The text runs the full width of a phone, so no lane can pass
+			   beside it: a lane behind it cut through the letters ("A comm|it
+			   graph"). The headline and the lede sit in one clear band, and
+			   the lanes come out from under it around the buttons. The band
+			   ends at the bottom of the lede at 360px (the tallest wrap, ~51%
+			   of this box); a wider phone wraps shorter and clears more. */
 			mask-image:
-				radial-gradient(80% 13% at 50% 16%, rgba(0, 0, 0, 0.2), #000 85%),
+				linear-gradient(180deg, #000 5%, transparent 10%, transparent 53%, #000 61%),
 				linear-gradient(180deg, #000 60%, transparent);
 			-webkit-mask-image:
-				radial-gradient(80% 13% at 50% 16%, rgba(0, 0, 0, 0.2), #000 85%),
+				linear-gradient(180deg, #000 5%, transparent 10%, transparent 53%, #000 61%),
 				linear-gradient(180deg, #000 60%, transparent);
 			-webkit-mask-composite: source-in;
 			mask-composite: intersect;

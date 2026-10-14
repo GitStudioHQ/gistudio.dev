@@ -15,7 +15,8 @@
     "test:stats": "node scripts/stats.mjs --test",
     "og": "node scripts/og.mjs",
     "favicons": "node scripts/favicons.mjs",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "graph-data": "node scripts/graph-data.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.0",

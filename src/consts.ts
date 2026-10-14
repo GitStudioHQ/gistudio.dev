@@ -31,17 +31,17 @@ export const EXT = {
 	product: 'the GitStudio extension',
 	route: '/gitstudio-extension',
 	id: 'gitstudio.gitstudio',
-	version: '1.19.0',
+	version: '1.20.0',
 	license: 'Apache-2.0',
 	marketplaceUrl: 'https://marketplace.visualstudio.com/items?itemName=gitstudio.gitstudio',
 	openVsxUrl: 'https://open-vsx.org/extension/gitstudio/gitstudio',
 	// The VSIX is the GitHub release asset, not a copy in public/: the copy
 	// sat at 1.0.0 for twelve extension releases. Size and SHA-256 are of the
 	// ext-v* release asset (shasum -a 256 gitstudio.vsix).
-	vsixPath: 'https://github.com/GitStudioHQ/gitstudio/releases/download/ext-v1.19.0/gitstudio.vsix',
+	vsixPath: 'https://github.com/GitStudioHQ/gitstudio/releases/download/ext-v1.20.0/gitstudio.vsix',
 	vsixFile: 'gitstudio.vsix',
-	vsixSizeMb: '4.3',
-	vsixSha256: 'ad9356c0993e4fabe2ef16127e0b3b00b8d0a1083ead784ffafd153eb2dded75',
+	vsixSizeMb: '4.4',
+	vsixSha256: 'e52f3fee9ae0b3879a7d392cab9f275e95ed3ba6c163ed34247290925030047f',
 	// engines.vscode in the shipped package.json.
 	minVsCode: '1.78',
 	// contributes.commands in the shipped package.json.
@@ -54,7 +54,7 @@ export const MERGE = {
 	product: 'the Merge Studio extension',
 	route: '/merge-studio-extension',
 	id: 'gitstudio.merge-studio',
-	version: '1.4.0',
+	version: '1.4.1',
 	// Merge Studio's own files are MIT; the GitStudio merge packages it bundles
 	// are Apache-2.0 (package.json: "MIT AND Apache-2.0", see its NOTICE).
 	license: 'MIT + Apache-2.0',
@@ -68,7 +68,7 @@ export const MERGE = {
 	marketplaceStars: 5.0,
 };
 
-const APP_VERSION = '2.6.0';
+const APP_VERSION = '2.6.1';
 const APP_TAG = `app-v${APP_VERSION}`;
 const APP_DL = `https://github.com/GitStudioHQ/gitstudio/releases/download/${APP_TAG}`;
 
@@ -153,7 +153,7 @@ export const registryUrl = (
 ) => (editorKey === 'vscode' ? ext.marketplaceUrl : ext.openVsxUrl);
 
 /**
- * Hand-checked counts, the fallback for src/lib/stats.ts (checked 2026-09-29).
+ * Hand-checked counts, the fallback for src/lib/stats.ts (checked 2026-10-14).
  * Marketplace: extensionquery statistics `install` / `averagerating` /
  * `ratingcount`. Open VSX: open-vsx.org/api/gitstudio/<name> `downloadCount`
  * — Open VSX counts every VSIX download (updates included), so pages say
@@ -162,9 +162,9 @@ export const registryUrl = (
  * GitHub release. A fallback count is printed with a trailing "+".
  */
 export const FALLBACK_COUNTS = {
-	ext: { marketplaceInstalls: 700, openVsxDownloads: 10157, rating: 5.0, ratingCount: 4 },
-	ms: { marketplaceInstalls: 681, openVsxDownloads: 3859, ratingCount: 3, commands: 14 },
-	app: { downloads: 678 },
+	ext: { marketplaceInstalls: 713, openVsxDownloads: 10435, rating: 5.0, ratingCount: 4 },
+	ms: { marketplaceInstalls: 687, openVsxDownloads: 4123, ratingCount: 3, commands: 14 },
+	app: { downloads: 727 },
 };
 
 /**

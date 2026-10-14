@@ -1,10 +1,12 @@
 ---
 // THE REAL THING: the shipping <gitstudio-graph> Lit element from
 // @gitstudio/webview-ui, bundled verbatim into /vendor/gitstudio-graph.js and
-// mounted here with this repo's actual history (160 commits, laid out by the
-// real engine). The element themes itself off the --vscode-* custom-property
-// seam — exactly how the desktop app skins it — so we hand it the site's
-// brand tokens through the same seam.
+// mounted here with GitStudio's real public history (the latest 106 commits
+// of main, laid out by the real engine; regenerate public/vendor/graph-data.json
+// with `npm run graph-data -- --repo <gitstudio checkout>`). The element
+// themes itself off the --vscode-* custom-property seam — exactly how the
+// desktop app skins it — so we hand it the site's brand tokens through the
+// same seam.
 import WindowFrame from './WindowFrame.astro';
 
 interface Props {
