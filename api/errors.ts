@@ -236,7 +236,10 @@ const GIT_INSIDE = /[:：\s]((?:fatal|error): [^\n]*)$/;
 
 /** Lines that are never the failure: progress, banners, advice, a rebase's exec, file lists. */
 const NOISE =
-  /^(?:\s|hint:|remote:|To |From |\*\*|Cloning into|Receiving |Resolving |Counting |Compressing |Writing |Enumerating |Total |Unpacking |Updating |Fast-forward|Already up to date|Auto-merging |Delta compression|POST git-|Your branch |Please |and the repository exists|If you wish to|Otherwise,|You can |Use '|Executing: |Could not execute|Not committing merge|Resolve all conflicts|To abort|and then run|When you have resolved)/;
+  /^(?:\s|hint:|remote:|To |From |\*\*|Cloning into|Receiving |Resolving |Counting |Compressing |Writing |Enumerating |Total |Unpacking |Updating |Fast-forward|Already up to date|Auto-merging |Delta compression|POST git-|Your branch |Please |and the repository exists|If you wish to|Otherwise,|You can |Use '|Executing: |Could not execute|Not committing merge|Resolve all conflicts|To abort|and then run|When you have resolved|On branch |HEAD detached |Not currently on any branch|You are currently |You are in the middle of|interactive rebase in progress|Last commands? done|Next commands? to do|No commands remaining|Changes to be committed|Changes not staged for commit|Untracked files|Unmerged paths|All conflicts fixed|(?:both (?:modified|added|deleted)|(?:added|deleted) by (?:us|them)|modified|new file|deleted|renamed|copied|typechange):\s)/;
+
+/** git status's last word on the tree: the failure only when nothing more particular was said. */
+const STATUS_SUMMARY = /^(?:nothing to commit|nothing added to commit|no changes added to commit)\b/;
 
 /** A line git or an app writes starts with a letter; a hook's report often doesn't. */
 const PROSE = /^\p{L}/u;
@@ -244,13 +247,13 @@ const PROSE = /^\p{L}/u;
 /** git's verdict lines out of its (already scrubbed) output; at most four. */
 export function serverVerdict(s: string | undefined): string | undefined {
   if (!s) return s;
-  const lines = s
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter((l) => l !== "")
-    .map((l) => (VERDICT.test(l) ? l : (GIT_INSIDE.exec(l)?.[1] ?? l)));
+  const raw = s.split(/\r?\n/).filter((l) => l.trim() !== "");
+  const lines = raw.map((l) => l.trim()).map((l) => (VERDICT.test(l) ? l : (GIT_INSIDE.exec(l)?.[1] ?? l)));
   const verdicts = lines.filter((l) => VERDICT.test(l));
-  const kept = verdicts.length > 0 ? verdicts : lines.filter((l) => !NOISE.test(l) && PROSE.test(l)).slice(0, 1);
+  // An indented line is a file list's or an example's: never the sentence that says what failed.
+  const prose = lines.filter((l, i) => !/^\s/.test(raw[i]) && !NOISE.test(l) && PROSE.test(l));
+  const said = prose.find((l) => !STATUS_SUMMARY.test(l)) ?? prose[0];
+  const kept = verdicts.length > 0 ? verdicts : said === undefined ? [] : [said];
   return [...new Set(kept)]
     .slice(0, 4)
     .map((l) => clipForScrub(l, 200))
@@ -332,15 +335,38 @@ function configKey(kv: string | undefined): string {
 
 const THROWN_GIT = /^(?:Error: )?git ([\s\S]{1,4000}?) (?:exited with code (-?\d{1,4})|failed)(?:: ([\s\S]*))?$/;
 
+/** git's commands: what a command line of git's starts with. "git was not
+ *  found" and "git is busy" are sentences of the app's, not commands. */
+const GIT_SUBCOMMANDS: ReadonlySet<string> = new Set([
+  "add", "am", "annotate", "apply", "archive", "bisect", "blame", "branch", "bundle", "cat-file",
+  "check-attr", "check-ignore", "check-ref-format", "checkout", "checkout-index", "cherry", "cherry-pick",
+  "clean", "clone", "commit", "commit-graph", "commit-tree", "config", "count-objects", "credential",
+  "describe", "diff", "diff-files", "diff-index", "diff-tree", "difftool", "fetch", "for-each-ref",
+  "format-patch", "fsck", "gc", "grep", "hash-object", "hook", "init", "interpret-trailers", "lfs", "log",
+  "ls-files", "ls-remote", "ls-tree", "maintenance", "merge", "merge-base", "merge-file", "merge-tree",
+  "mergetool", "mktag", "mktree", "mv", "name-rev", "notes", "prune", "pull", "push", "range-diff",
+  "read-tree", "rebase", "reflog", "remote", "repack", "replace", "rerere", "reset", "restore", "rev-list",
+  "rev-parse", "revert", "rm", "shortlog", "show", "show-ref", "sparse-checkout", "stash", "status",
+  "submodule", "switch", "symbolic-ref", "tag", "update-index", "update-ref", "var", "verify-commit",
+  "verify-tag", "version", "whatchanged", "worktree", "write-tree",
+]);
+
+/** Whether `args` reads as git's: its own options first, or one of its commands. */
+const gitArgs = (args: string): boolean => {
+  const first = args.split(/\s+/, 1)[0] ?? "";
+  return first.startsWith("-") || GIT_SUBCOMMANDS.has(first);
+};
+
 /** A thrown "git <args> exited with code N: <stderr>" as its shape and verdict. */
 export function serverMessage(s: string | undefined): string | undefined {
   if (!s) return s;
   const m = THROWN_GIT.exec(s);
+  if (m && !gitArgs(m[1])) return s;
   if (!m) {
     // An old client cut its message at 300 characters, sometimes before
     // "exited with code N": the arguments are all there is, and all go.
     const cut = /^(?:Error: )?git ([a-z][\s\S]*)$/.exec(s);
-    return cut ? `git ${serverCommandShape(cut[1].replace(/ …$/, "").split(/\s+/).filter(Boolean))} …` : s;
+    return cut && gitArgs(cut[1]) ? `git ${serverCommandShape(cut[1].replace(/ …$/, "").split(/\s+/).filter(Boolean))} …` : s;
   }
   const said = serverVerdict(m[3] ?? "");
   const how = m[2] === undefined ? "failed" : `exited with code ${m[2]}`;
@@ -598,9 +624,12 @@ export function scrubHosts(input: string): string {
     .replace(HOST_IN_CONTEXT, (_m, lead: string, token: string) => lead + hostToken(token))
     .replace(HOST_BEFORE, (_m, token: string) => hostToken(token))
     .replace(HOST_THEN, (_m, lead: string, token: string) => lead + hostToken(token))
-    .replace(HOST_PORT_AFTER, (m: string, token: string) =>
-      /^[^:]+\]?:\d{2,5}[.:]?$/.test(token) ? hostToken(token) : m,
-    )
+    .replace(HOST_PORT_AFTER, (m: string, token: string) => {
+      const host = token.slice(0, token.indexOf(":")).toLowerCase();
+      // "failed at lib.ts:44" is a file and its line, not a host and its port.
+      const file = host.includes(".") && FILE_EXTS.has(host.slice(host.lastIndexOf(".") + 1));
+      return /^[^:]+\]?:\d{2,5}[.:]?$/.test(token) && !NOT_HOST_WORDS.has(host) && !file ? hostToken(token) : m;
+    })
     .replace(REACH_HOST, (h: string) => hostOr(h))
     .replace(AI_HOST_FIRST, (_m, token: string) => hostToken(token))
     .replace(AI_STREAM_FROM, (_m, token: string) => hostToken(token))

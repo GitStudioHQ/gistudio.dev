@@ -218,6 +218,20 @@ test("an old client's thrown git command keeps its options, not its arguments", 
   assert.equal(serverMessage(cutOnce), cutOnce, "idempotent");
 });
 
+test("review: git status's preamble is not the verdict; a sentence that starts with git is not a command; a file's line is not a port", () => {
+  assert.equal(
+    serverVerdict("On branch <ref>\nYou are currently cherry-picking commit 1a2b3c4.\n\nnothing to commit, working tree clean\nThe previous cherry-pick is now empty, possibly due to conflict resolution."),
+    "The previous cherry-pick is now empty, possibly due to conflict resolution.",
+  );
+  assert.equal(serverVerdict("On branch <ref>\nnothing to commit, working tree clean"), "nothing to commit, working tree clean");
+  assert.equal(serverVerdict("On branch <ref>\nUntracked files:\n\tacme-notes.txt\n\nnothing added to commit but untracked files present"), "nothing added to commit but untracked files present");
+  assert.equal(serverMessage("git was not found on your PATH."), "git was not found on your PATH.");
+  assert.equal(serverMessage("git is busy with another operation"), "git is busy with another operation");
+  assert.equal(serverMessage("git checkout acme-billing exited with code 1: error: x"), "git checkout <arg> exited with code 1: error: x");
+  assert.equal(serverScrub("failed at lib.ts:44"), "failed at lib.ts:44");
+  assert.equal(serverScrub("Ollama at llm-box:11434 is unreachable"), "Ollama at <host>:11434 is unreachable");
+});
+
 test("serverScrub takes out the accounts and repositories forges name", () => {
   assert.equal(serverScrub("Could not resolve to a User with the login of jane-doe."), "Could not resolve to a User with the login of <account>.");
   assert.equal(serverScrub("remote: error: Gitea: User jane-doe does not have write permission"), "remote: error: Gitea: User <account> does not have write permission");
